@@ -14,92 +14,14 @@ window.__ModuleLoader__.load({
 		const ImageGallery = attachment.ImageGallery;
 		const h = React.createElement;
 		Object.defineProperty(exports, Symbol.toStringTag, { value: "Module" });
-		//#region src/core/fuzzy.ts
-		/**
-		* Pure fuzzy subsequence matching for @-mention file candidates. Zero deps,
-		* zero DOM. The greedy-leftmost scorer is deliberately distinct from the
-		* command-surface matcher (ui-commands) so the two stay clone-free.
-		*/
-		/** Path boundary chars earn extra weight when a query char lands on them. */
-		const BOUNDARY = new Set([
-			"/",
-			".",
-			"-",
-			"_"
-		]);
-		/**
-		* Boundary bonus: a query char at index 0 or right after a path separator or
-		* name separator is a strong match signal.
-		* @param haystack - the string being matched within.
-		* @param index - the matched char's position.
-		* @returns the bonus (8 at a boundary, 0 elsewhere).
-		*/
-		function boundaryBonus(haystack, index) {
-			return index === 0 || BOUNDARY.has(haystack.charAt(index - 1)) ? 8 : 0;
-		}
-		/**
-		* Score the greedy leftmost-subsequence alignment of `query` within
-		* `haystack`. Existence follows the standard two-pointer scan (correct); the
-		* score ranks candidates: +1 per match, +8 per boundary match, +4 per
-		* consecutive match, -1 per skipped haystack character.
-		* @param haystack - the string to match within (lowercased by the caller).
-		* @param query - the query (lowercased by the caller).
-		* @returns the alignment score, or undefined when no subsequence exists.
-		*/
-		function fuzzyScore(haystack, query) {
-			if (query === "") return 0;
-			if (query.length > haystack.length) return void 0;
-			let score = 0;
-			let cursor = 0;
-			let previous = -2;
-			for (let q = 0; q < query.length; q++) {
-				const target = query.charAt(q);
-				let found = -1;
-				for (let scan = cursor; scan < haystack.length; scan++) if (haystack.charAt(scan) === target) {
-					found = scan;
-					break;
-				}
-				if (found === -1) return void 0;
-				score += 1 + boundaryBonus(haystack, found) + (found === previous + 1 ? 4 : 0) - (found - cursor);
-				previous = found;
-				cursor = found + 1;
-			}
-			return score;
-		}
-		/**
-		* Case-insensitive fuzzy filter over a keyed item list, ordered by prefix match
-		* first, then score, then original index (stable). Returns the input unchanged
-		* when the query is blank.
-		* @param items - the candidate items.
-		* @param keyOf - extracts the matchable string from one item.
-		* @param query - the raw query text.
-		* @returns matching items in display order.
-		*/
-		function fuzzyFilter(items, keyOf, query) {
-			const q = query.toLowerCase();
-			if (q === "") return items;
-			const ranked = [];
-			items.forEach((item, index) => {
-				const score = fuzzyScore(keyOf(item).toLowerCase(), q);
-				if (score !== void 0) ranked.push({
-					item,
-					index,
-					score
-				});
-			});
-			ranked.sort((left, right) => {
-				const leftPrefix = keyOf(left.item).toLowerCase().startsWith(q) ? 1 : 0;
-				return (keyOf(right.item).toLowerCase().startsWith(q) ? 1 : 0) - leftPrefix || right.score - left.score || left.index - right.index;
-			});
-			return ranked.map((match) => match.item);
-		}
-		//#endregion
 		//#region src/client/files.ts
 		/** Default listing caps: keep the common case config-free. */
 		const DEFAULT_CONFIG = {
 			maxDepth: 12,
 			maxEntries: 500
 		};
+		/** Quiet window (ms) coalescing keystrokes into one backend sync. */
+		const DEBOUNCE_MS = 180;
 		/** Leading candidate/chip icon for a regular file (U+1F4C4). */
 		const FILE_ICON = String.fromCodePoint(0x1F4C4);
 		/** Leading candidate/chip icon for a directory (U+1F4C1). */
@@ -126,6 +48,57 @@ window.__ModuleLoader__.load({
 		function parentRel(rel) {
 			const at = rel.lastIndexOf("/");
 			return at === -1 ? "" : rel.slice(0, at);
+		}
+		/** Path/name boundary chars earn extra weight when a query char lands on them. */
+		const BOUNDARY = new Set([
+			"/",
+			".",
+			"-",
+			"_"
+		]);
+		/**
+		* Score one @-mention query against a `rel` path: greedy leftmost-subsequence
+		* alignment — +1 per matched char, +8 when a char lands on a path/name
+		* boundary, +4 for consecutive chars, −1 per skipped haystack char. The
+		* server already filtered the listing to subsequence matches, so this only
+		* ranks them; higher is better.
+		* @param rel - the entry's relative path (matchable text).
+		* @param query - the raw query text.
+		* @returns the alignment score, or -Infinity when no subsequence exists.
+		*/
+		function matchScore(rel, query) {
+			const haystack = rel.toLowerCase();
+			const needle = query.toLowerCase();
+			if (needle === "") return 0;
+			let score = 0;
+			let cursor = 0;
+			let previous = -2;
+			for (let q = 0; q < needle.length; q++) {
+				const target = needle.charAt(q);
+				let found = -1;
+				for (let scan = cursor; scan < haystack.length; scan++) if (haystack.charAt(scan) === target) {
+					found = scan;
+					break;
+				}
+				if (found === -1) return Number.NEGATIVE_INFINITY;
+				score += 1 + (found === 0 || BOUNDARY.has(haystack.charAt(found - 1)) ? 8 : 0) + (found === previous + 1 ? 4 : 0) - (found - cursor);
+				previous = found;
+				cursor = found + 1;
+			}
+			return score;
+		}
+		/**
+		* Rank server-returned entries by descending match score (best first); equal
+		* scores keep their listing order (stable). A blank query is untouched.
+		* @param entries - the server-filtered entries.
+		* @param query - the raw query text.
+		* @returns entries ordered by descending score.
+		*/
+		function rankByScore(entries, query) {
+			if (query === "") return entries;
+			const ranked = entries.map((entry, index) => ({ entry, index, score: matchScore(entry.rel, query) }));
+			ranked.sort((left, right) => (right.score - left.score) || (left.index - right.index));
+			return ranked.map((match) => match.entry);
 		}
 		/**
 		* Resolve the project root to enumerate: the current session's cwd wins, then
@@ -386,6 +359,7 @@ window.__ModuleLoader__.load({
 				...config
 			});
 			let cache;
+			const emptyBySession = new Map();
 			const rootOf = () => {
 				const sessions = ctx.sessions.list.getSnapshot();
 				const workspaces = ctx.workspaces.list.getSnapshot();
@@ -413,34 +387,99 @@ window.__ModuleLoader__.load({
 				}
 				return path;
 			};
+			/**
+			* Map (server-filtered) entries to menu candidates. MenuView keys rows by
+			* candidate name, so a repeated basename (e.g. several index.ts) gets an
+			* invisible suffix to keep the React key unique; the visible label stays
+			* the bare name.
+			*/
+			const toCandidates = (entries) => {
+				const seen = new Map();
+				return entries.map((entry) => {
+					const base = entry.name;
+					let count = seen.get(base);
+					if (count === void 0) count = 0;
+					seen.set(base, count + 1);
+					const name = count === 0 ? base : base + ZWSP.repeat(count);
+					const parent = parentRel(entry.rel);
+					return {
+						name,
+						icon: entry.kind === "dir" ? DIR_ICON : FILE_ICON,
+						...(parent === "" ? {} : { description: parent }),
+						entry
+					};
+				});
+			};
+			/**
+			* Debounce window promise: resolve when the quiet period elapses or the
+			* request's signal aborts (menu close / newer keystroke), whichever comes
+			* first — so a superseded request never reaches the server.
+			* @param ms - quiet window in milliseconds.
+			* @param signal - the candidate request's abort signal.
+			* @returns a promise resolving on quiet-elapsed or abort.
+			*/
+			const waitQuiet = (ms, signal) => new Promise((resolve) => {
+				let timer;
+				const onAbort = () => {
+					window.clearTimeout(timer);
+					resolve();
+				};
+				timer = window.setTimeout(() => {
+					signal.removeEventListener("abort", onAbort);
+					resolve();
+				}, ms);
+				if (signal.aborted) {
+					window.clearTimeout(timer);
+					resolve();
+					return;
+				}
+				signal.addEventListener("abort", onAbort, { once: true });
+			});
 			const source = {
 				trigger: "@",
 				name: "file",
 				order: 1,
-				async candidates(_session, { query, signal }) {
+				async candidates(session, { query, signal }) {
+					const sessionId = session.sessionId;
 					const root = rootOf();
 					if (root === void 0) return [];
+					// Stop condition 1: the menu closed or a newer keystroke superseded
+					// this request — never produce candidates for it.
+					if (signal.aborted) return [];
+					// Stop condition 2: a zero-match query has no zero-match extension
+					// (the caret only appends inside a token), so a typed extension is
+					// answered locally with no server round-trip; the empty ready group
+					// auto-closes the menu.
+					const empty = emptyBySession.get(sessionId);
+					if (query !== "" && empty !== void 0 && empty.root === root && query.startsWith(empty.query)) return [];
+					const needle = query.trim();
 					try {
-						const entries = fuzzyFilter(await list(root, signal), (entry) => entry.rel, query).slice(0, 50);
-						// MenuView keys rows by candidate name, so a repeated basename
-						// (e.g. several index.ts) gets an invisible suffix to keep the
-						// React key unique; the visible label stays the bare name.
-						const seen = new Map();
-						return entries.map((entry) => {
-							const base = entry.name;
-							let count = seen.get(base);
-							if (count === void 0) count = 0;
-							seen.set(base, count + 1);
-							const name = count === 0 ? base : base + ZWSP.repeat(count);
-							const parent = parentRel(entry.rel);
-							return {
-								name,
-								icon: entry.kind === "dir" ? DIR_ICON : FILE_ICON,
-								...(parent === "" ? {} : { description: parent }),
-								entry
-							};
-						});
+						let entries;
+						if (needle === "") {
+							// Empty query: serve the warm full listing instantly — no server hit.
+							entries = await list(root, signal);
+						} else {
+							// Stop condition 3 (debounce): the query is sent to the backend
+							// only after a quiet period, never per keystroke; the wait and
+							// the walk are aborted on menu close or a newer query.
+							await waitQuiet(DEBOUNCE_MS, signal);
+							if (signal.aborted) return [];
+							const listing = await ctx.workspaces.listProjectFiles(root, {
+								maxDepth: cfg.maxDepth,
+								maxEntries: cfg.maxEntries,
+								query: needle
+							}, signal);
+							entries = listing.entries;
+						}
+						if (signal.aborted) return [];
+						// The server already fuzzy-filters the listing (ordered subsequence
+						// on rel); rank by match score (descending) and cap the rows.
+						const matches = rankByScore(entries, query).slice(0, 50);
+						if (query !== "" && matches.length === 0) emptyBySession.set(sessionId, { query, root });
+						else emptyBySession.delete(sessionId);
+						return toCandidates(matches);
 					} catch (error) {
+						if (signal.aborted) return [];
 						console.warn("file-mentions: candidates failed", error);
 						return [];
 					}
