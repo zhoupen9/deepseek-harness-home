@@ -1,0 +1,15 @@
+{
+  "name": "dsh-profile-tui",
+  "private": true,
+  "dsh": {
+    "profile": {
+      "bundles": [
+        "@deepseek-ai/dsh-base",
+        "@huiliyi37/dsh-tianshu-tui"
+      ]
+    }
+  },
+  "dependencies": {
+    "@huiliyi37/dsh-tianshu-tui": "0.1.2-rc.7"
+  }
+}

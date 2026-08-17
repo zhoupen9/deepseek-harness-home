@@ -1,0 +1,29 @@
+# Your patch layer for this dsh profile, applied after every bundle layer:
+# a top-level YAML array of loader patch entries (id-targeted config
+# overrides, disables, and insert lists; `!!js` expressions allowed).
+
+# Pin the directory-picker seam to the in-app "browse" interaction. The
+# adaptive row resolves to "native" (OS chooser) on this host, which leaves
+# host.listDirectory unavailable and breaks the Files tab's directory tree.
+# The browse pair is the backend (host.listDirectory/createDirectory) plus the
+# matching workspace-flow surface.
+- id: directory-picker
+  disabled: true
+
+- insert:
+    - id: directory-picker-browse
+      name: '@deepseek-ai/dsh-host-directory-picker-browse'
+    - id: directory-picker-browse-ui
+      name: '@deepseek-ai/dsh-client-ui-directory-picker-browse'
+
+- insert:
+    - id: font-inter-monaspace
+      name: '@deepseek-ai/dsh-font-inter-monaspace'
+    - id: ui-changed-files
+      name: '@deepseek-ai/dsh-client-ui-changed-files'
+    - id: ui-files
+      name: '@deepseek-ai/dsh-client-ui-files'
+    - id: ui-file-mentions
+      name: '@deepseek-ai/dsh-client-ui-file-mentions'
+    - id: simple-mode
+      name: '@deepseek-ai/dsh-simple-mode'

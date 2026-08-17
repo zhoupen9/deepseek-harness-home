@@ -1,0 +1,13 @@
+# Local identity / credentials
+.anonymous-user-id
+.credentials.yaml
+
+# Local runtime state
+sessions/
+storages/
+
+# Dependencies (regenerable via pnpm install)
+node_modules/
+
+# Local settings (contains private API endpoint)
+settings.yaml

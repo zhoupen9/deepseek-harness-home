@@ -1,0 +1,22 @@
+{
+  "name": "@deepseek-ai/dsh-client-ui-changed-files",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Session changed-files view tab for Web: a Changes tab (after Chat and Trajectory) with expandable per-file git-style diffs",
+  "type": "module",
+  "main": "lib/index.js",
+  "exports": {
+    ".": "./lib/index.js",
+    "./client": "./lib/client.js",
+    "./package.json": "./package.json"
+  },
+  "dsh": {
+    "client": {
+      "inject": [
+        "@deepseek-ai/dsh-client-runtime",
+        "@deepseek-ai/dsh-client-ui-conversation"
+      ],
+      "platform": "web"
+    }
+  }
+}
