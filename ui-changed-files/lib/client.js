@@ -23,7 +23,6 @@ window.__ModuleLoader__.load({
     const React = require('react');
     const primitives = require('@deepseek-ai/dsh-client-ui-primitives');
     const {
-      DiffBlock,
       IconEditOutline16,
       IconChevronDownOutline14,
       IconChevronRightOutline14,
@@ -45,11 +44,99 @@ window.__ModuleLoader__.load({
       '}',
       '.dcf-header {',
       '  display: flex;',
-      '  align-items: center;',
-      '  gap: 8px;',
+      '  flex-direction: column;',
+      '  gap: 6px;',
       '  padding: 12px 16px;',
       '  border-bottom: 1px solid var(--dsw-alias-border-l2);',
       '  flex-shrink: 0;',
+      '}',
+      '.dcf-headerRow {',
+      '  display: flex;',
+      '  align-items: center;',
+      '  gap: 8px;',
+      '  min-width: 0;',
+      '}',
+      '.dcf-status {',
+      '  display: flex;',
+      '  flex-direction: column;',
+      '  gap: 2px;',
+      '  min-width: 0;',
+      '}',
+      '.dcf-statusLine {',
+      '  display: flex;',
+      '  align-items: center;',
+      '  gap: 8px;',
+      '  min-width: 0;',
+      '  font-size: 12px;',
+      '  line-height: 18px;',
+      '  color: var(--dsw-alias-label-secondary);',
+      '}',
+      '.dcf-statusLabel {',
+      '  overflow: hidden;',
+      '  text-overflow: ellipsis;',
+      '  white-space: nowrap;',
+      '  min-width: 0;',
+      '}',
+      '.dcf-wsPath {',
+      '  overflow: hidden;',
+      '  text-overflow: ellipsis;',
+      '  white-space: nowrap;',
+      '  font-family: var(--ds-font-family-code, ui-monospace, monospace);',
+      '  font-size: 11px;',
+      '  line-height: 16px;',
+      '  color: var(--dsw-alias-label-tertiary);',
+      '}',
+      '.dcf-statusMeta {',
+      '  flex-shrink: 0;',
+      '  font-size: 11px;',
+      '  line-height: 16px;',
+      '  color: var(--dsw-alias-label-tertiary);',
+      '}',
+      '.dcf-batch {',
+      '  border-bottom: 1px solid var(--dsw-alias-border-l1);',
+      '}',
+      '.dcf-batchRow {',
+      '  display: flex;',
+      '  align-items: center;',
+      '  gap: 8px;',
+      '  width: 100%;',
+      '  padding: 8px 12px;',
+      '  background: none;',
+      '  border: none;',
+      '  cursor: pointer;',
+      '  text-align: left;',
+      '  color: var(--dsw-alias-label-primary);',
+      '  font-family: var(--dsw-font-family);',
+      '  font-size: 12px;',
+      '  font-weight: 600;',
+      '  line-height: 18px;',
+      '  box-sizing: border-box;',
+      '}',
+      '.dcf-batchRow:hover {',
+      '  background: var(--dsw-alias-interactive-bg-hover);',
+      '}',
+      '.dcf-batchBadge {',
+      '  flex-shrink: 0;',
+      '  display: inline-flex;',
+      '  align-items: center;',
+      '  justify-content: center;',
+      '  min-width: 20px;',
+      '  height: 20px;',
+      '  padding: 0 6px;',
+      '  border-radius: 10px;',
+      '  background: var(--dsw-alias-interactive-bg-hover);',
+      '  color: var(--dsw-alias-label-secondary);',
+      '  font-size: 11px;',
+      '  font-weight: 600;',
+      '  line-height: 18px;',
+      '}',
+      '.dcf-batchSpacer {',
+      '  flex: 1;',
+      '  min-width: 0;',
+      '}',
+      '.dcf-batchBody {',
+      '  border-top: 1px solid var(--dsw-alias-border-l1);',
+      '  padding-left: 8px;',
       '}',
       '.dcf-title {',
       '  flex: 1;',
@@ -130,6 +217,46 @@ window.__ModuleLoader__.load({
       '.dcf-diff {',
       '  padding: 4px 0 8px 0;',
       '  border-top: 1px solid var(--dsw-alias-border-l1);',
+      '}',
+      '.dcf-diffBlock {',
+      '  margin-top: 8px;',
+      '  border-radius: 6px;',
+      '  overflow: hidden;',
+      '  background: var(--dsw-alias-markdown-code-block);',
+      '}',
+      '.dcf-diffBody {',
+      '  padding: 8px 10px;',
+      '  overflow-x: auto;',
+      '  overflow-y: hidden;',
+      '  font-family: var(--ds-font-family-code, ui-monospace, monospace);',
+      '  font-size: 12px;',
+      '  line-height: 20px;',
+      '  color: var(--dsw-alias-label-primary);',
+      '}',
+      '.dcf-diffLine {',
+      '  min-height: 20px;',
+      '  white-space: pre;',
+      '}',
+      '.dcf-diffPath {',
+      '  font-weight: 600;',
+      '  color: var(--dsw-alias-label-primary);',
+      '}',
+      '.dcf-diffGap {',
+      '  color: var(--dsw-alias-label-tertiary);',
+      '}',
+      '.dcf-diffDel {',
+      '  background: color-mix(in srgb, var(--dsw-alias-state-error-primary) 16%, transparent);',
+      '}',
+      '.dcf-diffDel::before {',
+      '  content: "- ";',
+      '  color: var(--dsw-alias-state-error-primary);',
+      '}',
+      '.dcf-diffAdd {',
+      '  background: color-mix(in srgb, var(--dsw-alias-state-success-primary) 16%, transparent);',
+      '}',
+      '.dcf-diffAdd::before {',
+      '  content: "+ ";',
+      '  color: var(--dsw-alias-state-success-primary);',
       '}',
     ].join('\n');
 
@@ -257,25 +384,31 @@ window.__ModuleLoader__.load({
     }
 
     /**
-     * Aggregate every changed file from a session's conversation snapshot.
-     * Settled tool results whose result render intent is a 'diff' card
-     * contribute their applied hunks; they are grouped by path in first-seen
-     * order. Running calls and non-diff cards contribute nothing.
+     * Accumulate one hunk into a per-batch file map, grouping by path in
+     * first-seen order and totalling added/removed line counts.
      */
-    function collectChangedFiles(snapshot) {
-      if (!snapshot || !Array.isArray(snapshot.nodes)) return [];
-      const byPath = new Map();
-      function addHunk(path, oldText, newText) {
-        let entry = byPath.get(path);
-        if (entry === undefined) {
-          entry = { path, hunks: [], added: 0, removed: 0 };
-          byPath.set(path, entry);
-        }
-        entry.hunks.push({ path, oldText, newText });
-        if (oldText !== null) entry.removed += countLines(oldText);
-        entry.added += countLines(newText);
+    function addHunk(byPath, path, oldText, newText) {
+      let entry = byPath.get(path);
+      if (entry === undefined) {
+        entry = { path, hunks: [], added: 0, removed: 0 };
+        byPath.set(path, entry);
       }
-      function walk(block) {
+      entry.hunks.push({ path, oldText, newText });
+      if (oldText !== null) entry.removed += countLines(oldText);
+      entry.added += countLines(newText);
+    }
+
+    /**
+     * Group every changed file by its parent root tool call. One top-level
+     * 'tool-result' node (plus its recursive subCalls) is one change batch:
+     * each batch is a chronological unit of edits. A file touched by two
+     * different root calls therefore appears once per batch. Batches with no
+     * file hunks (read-only tools) are dropped. Ordered ascending by the root
+     * node's seq (monotonic), falling back to time.
+     */
+    function collectChangeBatches(snapshot) {
+      if (!snapshot || !Array.isArray(snapshot.nodes)) return [];
+      function walk(block, byPath) {
         if (block == null) return;
         if (block.kind === 'tool-result') {
           const rv = block.resultView;
@@ -284,7 +417,7 @@ window.__ModuleLoader__.load({
               if (hunk == null || typeof hunk.path !== 'string') continue;
               const oldText = hunk.oldText == null ? null : String(hunk.oldText);
               const newText = typeof hunk.newText === 'string' ? hunk.newText : '';
-              addHunk(hunk.path, oldText, newText);
+              addHunk(byPath, hunk.path, oldText, newText);
             }
           } else if (block.isError !== true) {
             // Code-mode sub-dispatches emit no resultView for write/edit
@@ -292,18 +425,185 @@ window.__ModuleLoader__.load({
             // reconstruct the hunks from the mutation call's arguments.
             const derived = deriveCallDiffs(block.call);
             if (derived != null) {
-              for (const hunk of derived) addHunk(hunk.path, hunk.oldText, hunk.newText);
+              for (const hunk of derived) addHunk(byPath, hunk.path, hunk.oldText, hunk.newText);
             }
           }
         }
         if (Array.isArray(block.subCalls)) {
-          for (const child of block.subCalls) walk(child);
+          for (const child of block.subCalls) walk(child, byPath);
         }
       }
+      const batches = [];
       for (const node of snapshot.nodes) {
-        if (node != null && node.kind === 'tool-result') walk(node);
+        if (node == null || node.kind !== 'tool-result') continue;
+        const byPath = new Map();
+        walk(node, byPath);
+        const files = Array.from(byPath.values());
+        if (files.length === 0) continue;
+        const seq = typeof node.seq === 'number' ? node.seq : Infinity;
+        const time = typeof node.time === 'number' ? node.time : null;
+        batches.push({
+          batchKey: typeof node.seq === 'number' ? node.seq : (time != null ? time : batches.length),
+          seq: seq,
+          time: time,
+          files: files,
+        });
       }
-      return Array.from(byPath.values());
+      batches.sort(function (a, b) {
+        return (a.seq - b.seq) || (a.time != null && b.time != null ? a.time - b.time : 0);
+      });
+      return batches;
+    }
+
+    /**
+     * Split a diff side's text into content lines. Empty text is zero lines;
+     * a single trailing newline is a terminator, not an extra empty line (the
+     * same rule the stock DiffBlock uses).
+     */
+    function contentLines(text) {
+      if (text === '') return [];
+      const body = text.endsWith('\n') ? text.slice(0, -1) : text;
+      return body.split('\n');
+    }
+
+    /** Per-row-kind class suffix for the diff lines. */
+    const DIFF_ROW_CLASS = {
+      path: 'dcf-diffPath',
+      del: 'dcf-diffDel',
+      add: 'dcf-diffAdd',
+      gap: 'dcf-diffGap',
+    };
+
+    /**
+     * Flatten one file's hunks into an ordered row list: a path header opens
+     * each new path, an ellipsis gap marks a same-file second hunk, then the
+     * removed lines (dark red) and the added lines (dark green).
+     */
+    function buildDiffRows(hunks) {
+      const rows = [];
+      let prevPath = undefined;
+      for (const hunk of hunks) {
+        if (hunk == null) continue;
+        const path = hunk.path;
+        if (path !== prevPath) rows.push({ kind: 'path', text: path });
+        else rows.push({ kind: 'gap', text: '\u22ef' });
+        prevPath = path;
+        if (hunk.oldText != null) {
+          for (const line of contentLines(hunk.oldText)) rows.push({ kind: 'del', text: line });
+        }
+        for (const line of contentLines(hunk.newText)) rows.push({ kind: 'add', text: line });
+      }
+      return rows;
+    }
+
+    /**
+     * Keyword set for the lightweight per-line highlighter (TS/JS/Python/shell
+     * share most of these). Matched verbatim (case-sensitive) against
+     * identifier runs; everything else renders as plain text.
+     */
+    const HIGHLIGHT_KEYWORDS = new Set([
+      'abstract','as','async','await','break','case','catch','class','const','continue','debugger',
+      'declare','default','delete','do','else','enum','export','extends','false','finally','for','from',
+      'function','get','if','implements','import','in','instanceof','interface','is','keyof','let',
+      'namespace','new','null','of','private','protected','public','readonly','return','satisfies',
+      'set','static','super','switch','this','throw','true','try','type','typeof','undefined','var',
+      'void','while','with','yield','assert','infer','never','any','unknown','number','string',
+      'boolean','object','symbol','bigint',
+      'def','elif','pass','lambda','raise','global','nonlocal','assert','not','and','or','None','True','False','self','print',
+      'echo','local','then','fi','esac','done','until',
+    ]);
+
+    /** Extension -> language id (the same mapping the ui-files viewer uses). */
+    const LANG_BY_EXTENSION = {
+      ts: 'ts', tsx: 'tsx', mts: 'ts', cts: 'ts',
+      js: 'js', jsx: 'jsx', mjs: 'js', cjs: 'js',
+      json: 'json', jsonc: 'json',
+      py: 'py', rb: 'rb', go: 'go', rs: 'rs', java: 'java',
+      c: 'c', h: 'c', cc: 'cpp', cpp: 'cpp', hpp: 'cpp', cxx: 'cpp',
+      cs: 'cs', kt: 'kotlin', swift: 'swift', php: 'php',
+      sh: 'sh', bash: 'sh', zsh: 'sh',
+      yaml: 'yaml', yml: 'yaml', toml: 'toml', ini: 'ini',
+      md: 'md', markdown: 'md', mdx: 'mdx',
+      html: 'html', htm: 'html', css: 'css', scss: 'scss', less: 'less',
+      sql: 'sql', xml: 'xml', lua: 'lua',
+    };
+
+    /** Derive a language id from a path's extension; undefined when unknown. */
+    function langFromPath(path) {
+      if (typeof path !== 'string' || path === '') return undefined;
+      const dot = path.lastIndexOf('.');
+      if (dot <= 0) return undefined;
+      const ext = path.slice(dot + 1).toLowerCase();
+      return Object.prototype.hasOwnProperty.call(LANG_BY_EXTENSION, ext) ? LANG_BY_EXTENSION[ext] : undefined;
+    }
+
+    /** Languages that use '#' comments rather than slash comments. */
+    const HASH_COMMENT_LANGS = new Set(['py','rb','sh','yaml','yml','toml','ini','sql','lua']);
+
+    /** Per-line token regexes (C-style vs hash-style comments). */
+    const RE_C_COMMENT = /(\/\/[^\n]*|\/\*[\s\S]*?\*\/|'(?:[^'\\\n]|\\.)*'|"(?:[^"\\\n]|\\.)*"|`(?:[^`\\]|\\.)*`|\b\d+(?:\.\d+)?\b|\b[A-Za-z_$][\w$]*\b)/g;
+    const RE_HASH_COMMENT = /(#[^\n]*|'(?:[^'\\\n]|\\.)*'|"(?:[^"\\\n]|\\.)*"|`(?:[^`\\]|\\.)*`|\b\d+(?:\.\d+)?\b|\b[A-Za-z_$][\w$]*\b)/g;
+
+    /**
+     * Tokenize one diff line into colored runs. This is a lightweight
+     * best-effort highlighter: the shiki highlighter is internal to
+     * ui-primitives and not exported to plugins, so we color comments, strings,
+     * numbers, and keywords through the theme's `--shiki-*` tokens instead.
+     * Returns null for an unknown/absent language (the line renders plain).
+     */
+    function tokenizeLine(text, lang) {
+      if (text === '' || lang == null) return null;
+      const re = HASH_COMMENT_LANGS.has(lang) ? RE_HASH_COMMENT : RE_C_COMMENT;
+      const out = [];
+      let cursor = 0;
+      for (const m of text.matchAll(re)) {
+        if (m.index > cursor) out.push({ text: text.slice(cursor, m.index), color: null });
+        const tok = m[0];
+        const c0 = tok.charCodeAt(0);
+        let color = null;
+        if (c0 === 47 || c0 === 35) color = 'var(--shiki-token-comment)'; // / or #
+        else if (c0 === 39 || c0 === 34 || c0 === 96) color = 'var(--shiki-token-string)'; // ' " `
+        else if (c0 >= 48 && c0 <= 57) color = 'var(--shiki-token-constant)'; // 0-9
+        else if (HIGHLIGHT_KEYWORDS.has(tok)) color = 'var(--shiki-token-keyword)';
+        out.push({ text: tok, color: color });
+        cursor = m.index + tok.length;
+      }
+      if (cursor < text.length) out.push({ text: text.slice(cursor), color: null });
+      return out;
+    }
+
+    /**
+     * Render one diff line's children: highlighted spans for a known language,
+     * otherwise the bare text.
+     */
+    function renderDiffLine(text, lang) {
+      const runs = tokenizeLine(text, lang);
+      if (runs == null) return text;
+      return runs.map(function (run, i) {
+        return run.color == null ? run.text : h('span', { key: i, style: { color: run.color } }, run.text);
+      });
+    }
+
+    /**
+     * A file's inline diff. Renders removed lines on a dark-red background and
+     * added lines on a dark-green background, with `- `/`+ ` prefixes drawn via
+     * CSS so copy semantics stay obvious without relying on color alone. This
+     * replaces the stock DiffBlock (whose hashed CSS-module classes cannot be
+     * restyled from an out-of-tree plugin) so the +/- backgrounds are ours.
+     */
+    function ChangesDiff(props) {
+      const hunks = props.hunks;
+      const lang = props.lang;
+      const rows = React.useMemo(function () { return buildDiffRows(hunks); }, [hunks]);
+      if (rows.length === 0) return null;
+      return h('div', { className: 'dcf-diffBlock' },
+        h('div', { className: 'dcf-diffBody' },
+          rows.map(function (row, index) {
+            return h('div', { key: index, className: 'dcf-diffLine ' + DIFF_ROW_CLASS[row.kind] },
+              renderDiffLine(row.text, lang));
+          }),
+        ),
+      );
     }
 
     // ---- The view component ----
@@ -311,22 +611,53 @@ window.__ModuleLoader__.load({
     function ChangesView(props) {
       const useSession = props.useSession;
       const useSessions = props.useSessions;
+      const useWorkspaces = props.useWorkspaces;
       const sessionId = props.sessionId;
       const snapshot = useSession(function (s) { return s; });
-      // The project root is the current session's workspace cwd; a changed file
-      // is labeled relative to it (falling back to the absolute path).
-      const cwd = useSessions(function (s) { return s.byId[sessionId] != null ? s.byId[sessionId].cwd : undefined; });
-      const files = React.useMemo(function () { return collectChangedFiles(snapshot); }, [snapshot]);
-      const [openPaths, setOpenPaths] = React.useState(function () { return new Set(); });
+      // Session row (title/cwd/running) for the current session, when known.
+      const session = useSessions(function (s) { return sessionId != null ? s.byId[sessionId] : undefined; });
+      const cwd = session != null ? session.cwd : undefined;
+      // The workspace this session belongs to (or the most recent workspace).
+      const workspace = useWorkspaces != null
+        ? useWorkspaces(function (s) {
+            if (s == null || !Array.isArray(s.items)) return undefined;
+            if (sessionId != null) {
+              const bound = s.items.find(function (w) { return Array.isArray(w.sessionIds) && w.sessionIds.indexOf(sessionId) !== -1; });
+              if (bound != null) return bound;
+            }
+            return s.items.find(function (w) { return w.workspaceId === s.recentWorkspaceId; });
+          })
+        : undefined;
+      const batches = React.useMemo(function () { return collectChangeBatches(snapshot); }, [snapshot]);
+      const totals = React.useMemo(function () {
+        const fileSet = new Set();
+        let added = 0;
+        let removed = 0;
+        for (const b of batches) {
+          for (const f of b.files) {
+            fileSet.add(f.path);
+            added += f.added;
+            removed += f.removed;
+          }
+        }
+        return { batchCount: batches.length, fileCount: fileSet.size, added: added, removed: removed };
+      }, [batches]);
+      const [openBatches, setOpenBatches] = React.useState(function () { return new Set(); });
+      const [openFiles, setOpenFiles] = React.useState(function () { return new Set(); });
 
-      function toggle(path) {
-        setOpenPaths(function (prev) {
+      function toggleSet(setter, key) {
+        setter(function (prev) {
           const next = new Set(prev);
-          if (next.has(path)) next.delete(path);
-          else next.add(path);
+          if (next.has(key)) next.delete(key);
+          else next.add(key);
           return next;
         });
       }
+
+      const wsTitle = workspace != null ? (workspace.title || 'Workspace') : 'No workspace';
+      const wsPath = workspace != null ? workspace.path : undefined;
+      const sessionTitle = session != null && session.title ? session.title : 'Untitled session';
+      const sessionState = session != null && session.running ? 'running' : 'idle';
 
       return h('section', {
         className: 'dcf-root',
@@ -334,35 +665,74 @@ window.__ModuleLoader__.load({
         'data-testid': 'changes-view',
       },
         h('header', { className: 'dcf-header' },
-          h('span', { className: 'dcf-title' }, 'Changes'),
-          h('span', { className: 'dcf-count' }, String(files.length)),
+          h('div', { className: 'dcf-headerRow' },
+            h('span', { className: 'dcf-title' }, 'Changes'),
+            h('span', { className: 'dcf-count' }, String(totals.batchCount)),
+          ),
+          h('div', { className: 'dcf-status' },
+            h('div', { className: 'dcf-statusLine' },
+              h('span', { className: 'dcf-statusLabel' }, wsTitle),
+              wsPath != null ? h('span', { className: 'dcf-wsPath' }, wsPath) : null,
+            ),
+            h('div', { className: 'dcf-statusLine' },
+              h('span', { className: 'dcf-statusLabel' }, sessionTitle),
+              h('span', { className: 'dcf-statusMeta' }, sessionState),
+              h('span', { className: 'dcf-statusMeta' },
+                String(totals.fileCount) + ' files \u00b7 +' + totals.added + ' \u2212' + totals.removed),
+            ),
+          ),
         ),
-        files.length === 0
+        batches.length === 0
           ? h('div', { className: 'dcf-empty' }, 'No files changed in this session.')
           : h('ul', { className: 'dcf-list' },
-              files.map(function (file) {
-                const open = openPaths.has(file.path);
-                const label = displayPath(file.path, cwd);
-                const abs = resolveAbsolutePath(file.path, cwd);
-                // Hover shows the absolute path when one is known, so a
-                // truncated relative label can still be disambiguated.
-                const title = abs != null ? abs : label;
-                return h('li', { key: file.path, className: 'dcf-item' },
+              batches.map(function (batch, bi) {
+                const bOpen = openBatches.has(batch.batchKey);
+                let ba = 0;
+                let br = 0;
+                for (const f of batch.files) { ba += f.added; br += f.removed; }
+                const fileCount = batch.files.length;
+                return h('li', { key: batch.batchKey, className: 'dcf-batch' },
                   h('button', {
                     type: 'button',
-                    className: 'dcf-row',
-                    'aria-expanded': open,
-                    title: title,
-                    onClick: function () { toggle(file.path); },
+                    className: 'dcf-batchRow',
+                    'aria-expanded': bOpen,
+                    onClick: function () { toggleSet(setOpenBatches, batch.batchKey); },
                   },
                     h('span', { className: 'dcf-chevron' },
-                      open ? h(IconChevronDownOutline14) : h(IconChevronRightOutline14)),
-                    h(IconEditOutline16, { size: 14, className: 'dcf-fileicon' }),
-                    h('span', { className: 'dcf-path' }, label),
-                    h('span', { className: 'dcf-meta' }, '+' + file.added + ' \u2212' + file.removed),
+                      bOpen ? h(IconChevronDownOutline14) : h(IconChevronRightOutline14)),
+                    h('span', { className: 'dcf-batchBadge' }, String(bi + 1)),
+                    h('span', { className: 'dcf-batchSpacer' }),
+                    h('span', { className: 'dcf-meta' },
+                      String(fileCount) + ' file' + (fileCount === 1 ? '' : 's') + ' \u00b7 +' + ba + ' \u2212' + br),
                   ),
-                  open
-                    ? h('div', { className: 'dcf-diff' }, h(DiffBlock, { diffs: file.hunks }))
+                  bOpen
+                    ? h('div', { className: 'dcf-batchBody' },
+                        batch.files.map(function (file) {
+                          const fKey = batch.batchKey + '\u0000' + file.path;
+                          const fOpen = openFiles.has(fKey);
+                          const label = displayPath(file.path, cwd);
+                          const abs = resolveAbsolutePath(file.path, cwd);
+                          const title = abs != null ? abs : label;
+                          return h('div', { key: fKey, className: 'dcf-item' },
+                            h('button', {
+                              type: 'button',
+                              className: 'dcf-row',
+                              'aria-expanded': fOpen,
+                              title: title,
+                              onClick: function () { toggleSet(setOpenFiles, fKey); },
+                            },
+                              h('span', { className: 'dcf-chevron' },
+                                fOpen ? h(IconChevronDownOutline14) : h(IconChevronRightOutline14)),
+                              h(IconEditOutline16, { size: 14, className: 'dcf-fileicon' }),
+                              h('span', { className: 'dcf-path' }, label),
+                              h('span', { className: 'dcf-meta' }, '+' + file.added + ' \u2212' + file.removed),
+                            ),
+                            fOpen
+                              ? h('div', { className: 'dcf-diff' }, h(ChangesDiff, { hunks: file.hunks, lang: langFromPath(file.path) }))
+                              : null,
+                          );
+                        }),
+                      )
                     : null,
                 );
               }),
