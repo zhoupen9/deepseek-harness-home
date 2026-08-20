@@ -14,7 +14,9 @@ It holds the per-profile configuration and a set of **out-of-tree client plugins
     ├── simple-mode/             # out-of-tree plugin (built)
     ├── ui-changed-files/        # out-of-tree plugin (built)
     ├── ui-file-mentions/        # out-of-tree plugin (built)
-    └── ui-files/                # out-of-tree plugin (built)
+    ├── ui-files/                # out-of-tree plugin (built)
+    ├── desktop-notify/          # out-of-tree plugin (built, host-side)
+    └── web-notify/              # out-of-tree plugin (built, client-side)
 
 ## Profiles
 
@@ -39,6 +41,8 @@ Each plugin is a self-contained directory with a `package.json` and a compiled `
 | `ui-changed-files` | `@deepseek-ai/dsh-client-ui-changed-files` | Changes tab with expandable per-file git-style diffs |
 | `simple-mode` | `@deepseek-ai/dsh-simple-mode` | `/simple` mode: session-local switch to a flash model with thinking off + badge |
 | `font-inter-monaspace` | `@deepseek-ai/dsh-font-inter-monaspace` | Inter/Monaspace webfont for the web GUI |
+| `desktop-notify` | `@deepseek-ai/dsh-desktop-notify` | host-side `notify-send` toasts for turn/subagent/goal completion (notification-v2 Part A) |
+| `web-notify` | `@deepseek-ai/dsh-client-web-notify` | browser Web-Notification cues for approvals/plan-reviews/questions when the tab is hidden (notification-v2 Part B.2.1) |
 
 ## What is (and isn't) tracked
 
@@ -79,6 +83,8 @@ git clone https://github.com/zhoupen9/deepseek-harness-home.git "$HOME/.dsh"
    ln -s "$HOME/.dsh/ui-file-mentions"    dsh-client-ui-file-mentions
    ln -s "$HOME/.dsh/simple-mode"         dsh-simple-mode
    ln -s "$HOME/.dsh/font-inter-monaspace" dsh-font-inter-monaspace
+   ln -s "$HOME/.dsh/desktop-notify"       dsh-desktop-notify
+   ln -s "$HOME/.dsh/web-notify"           dsh-client-web-notify
    ```
 
 3. **Recreate credentials** (`~/.dsh/.credentials.yaml`) with your `DEEPSEEK_API_KEY`.

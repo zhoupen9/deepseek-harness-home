@@ -1,0 +1,21 @@
+{
+  "name": "@deepseek-ai/dsh-client-web-notify",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Browser Web-Notification cues for approvals, plan reviews, and questions when the web-GUI tab is hidden (notification-v2 Part B.2.1)",
+  "type": "module",
+  "main": "lib/index.js",
+  "exports": {
+    ".": "./lib/index.js",
+    "./client": "./lib/client.js",
+    "./package.json": "./package.json"
+  },
+  "dsh": {
+    "client": {
+      "inject": [
+        "@deepseek-ai/dsh-client-runtime"
+      ],
+      "platform": "web"
+    }
+  }
+}

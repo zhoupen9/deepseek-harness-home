@@ -188,7 +188,7 @@ window.__ModuleLoader__.load({
 			".dfm-userRow { display: flex; flex-direction: column; align-items: flex-end; gap: 6px; }",
 			".dfm-userStack { display: flex; flex-direction: column; align-items: flex-end; gap: 8px; min-width: 0; max-width: min(525px, 82%); }",
 			".dfm-bubble { max-width: 100%; background: var(--dsw-specific-bubble); border-radius: 22px; padding: 10px 16px; font-size: 16px; line-height: 24px; color: var(--dsw-alias-label-primary); }",
-			".dfm-chip { display: inline-block; margin: 0 2px; padding: 0 8px; border-radius: 6px; background: rgba(97, 135, 216, 0.22); color: var(--dsw-alias-label-primary); font-size: 0.85em; line-height: 1.6; white-space: nowrap; vertical-align: baseline; }",
+			".dfm-chip { display: inline-block; margin: 0 2px; padding: 0 8px; border-radius: 6px; border: 1px solid rgba(97, 135, 216, 0.75); background: rgba(97, 135, 216, 0.22); color: var(--dsw-alias-label-primary); font-size: 0.85em; line-height: 1.6; white-space: nowrap; vertical-align: baseline; }",
 			".dfm-actions { display: flex; align-items: center; gap: 10px; height: 28px; }",
 			".dfm-time { padding-right: 12px; font-size: 14px; line-height: 24px; color: var(--dsw-alias-label-tertiary); white-space: nowrap; }",
 			".dfm-action { display: inline-flex; align-items: center; justify-content: center; width: 28px; height: 28px; padding: 6px; border: none; border-radius: 28px; background: transparent; color: var(--dsw-alias-label-tertiary); cursor: pointer; }",
@@ -200,6 +200,20 @@ window.__ModuleLoader__.load({
 			tag.dataset.plugin = "@deepseek-ai/dsh-client-ui-file-mentions";
 			tag.dataset.pluginCss = MESSAGE_VIEW_STYLE_ID;
 			tag.textContent = MESSAGE_VIEW_CSS;
+			document.head.appendChild(tag);
+		}
+		/** Injected stylesheet: give the composer's reference chip a crisp outline.
+		* The core paints the pill background on the cell and clips the label; we add
+		* only a 1px border. Using `border` + box-sizing:border-box (rather than
+		* `outline`) keeps the border INSIDE the cell so the 4em U+FFFC advance is
+		* unchanged and the textarea/backdrop alignment cannot drift. */
+		const CHIP_OUTLINE_CSS = "[data-decoration='chip'] { border: 1px solid rgba(97, 135, 216, 0.75); border-radius: 6px; box-sizing: border-box; }";
+		const CHIP_OUTLINE_STYLE_ID = "@deepseek-ai/dsh-client-ui-file-mentions/chip-outline.css";
+		if (typeof document !== "undefined" && document.querySelector('style[data-plugin-css="' + CHIP_OUTLINE_STYLE_ID + '"]') === null) {
+			const tag = document.createElement("style");
+			tag.dataset.plugin = "@deepseek-ai/dsh-client-ui-file-mentions";
+			tag.dataset.pluginCss = CHIP_OUTLINE_STYLE_ID;
+			tag.textContent = CHIP_OUTLINE_CSS;
 			document.head.appendChild(tag);
 		}
 		/**
@@ -238,22 +252,57 @@ window.__ModuleLoader__.load({
 			}
 		}
 		/**
-		* Decorate plain-text skill/subagent references (the stock bubble behavior):
-		* /name and @name tokens render as chips, everything else stays MessageText.
+		* Decorate plain-text references in a sent user bubble. Two token shapes:
+		* - /name  -> skill chip; @name -> subagent chip (the stock behavior), and
+		* - @path/to/file.ts / @path/to/dir/ -> file/folder reference chips.
+		*
+		* The file/folder arm matters: the composer persists a picked file as the
+		* clipboard form '@name' (e.g. '@src/auth.ts'), so the sent bubble sees a
+		* path token, not a <file> tag. Rendering the FULL path is the regression
+		* (it used to show just the basename + icon); we restore that by matching
+		* path tokens here, showing icon + basename, and stashing the full path on
+		* the title tooltip.
 		* @param text - plain text segment.
 		* @returns a MessageText element or a fragment of MessageText + chips.
 		*/
 		function decorateRefs(text) {
-			const re = /(^|\s)([/@][\w-]+)(?=\s|$)/g;
+			// File/dir path token: @ then forward-slash-separated path segments
+			// (word chars, dots, dashes), with an optional trailing slash marking a
+			// directory. Tried FIRST so `@src/auth.ts` matches the path arm,
+			// not the bare `@name` subagent arm.
+			const pathRe = /(^|\s)(@[\w.-]+(?:\/[\w.-]+)*\/?)(?=\s|$)/g;
+			const simpleRe = /(^|\s)([/@][\w-]+)(?=\s|$)/g;
+			// Collect matched ranges first (path tokens win where both could match).
+			const ranges = [];
+			let pm;
+			while ((pm = pathRe.exec(text)) !== null) {
+				ranges.push({ start: pm.index + (pm[1] ? pm[1].length : 0), token: pm[2], path: true });
+			}
+			let sm;
+			while ((sm = simpleRe.exec(text)) !== null) {
+				const start = sm.index + (sm[1] ? sm[1].length : 0);
+				// Skip any simple token already covered by a path token (e.g. the @ in @src/auth.ts).
+				if (ranges.some((r) => r.path && start >= r.start && start < r.start + r.token.length)) continue;
+				ranges.push({ start, token: sm[2], path: false });
+			}
+			ranges.sort((a, b) => a.start - b.start);
 			const parts = [];
 			let cursor = 0;
-			let m;
-			while ((m = re.exec(text)) !== null) {
-				const tokenStart = m.index + (m[1] ? m[1].length : 0);
-				const label = m[2] || "";
-				if (tokenStart > cursor) parts.push(h(MessageText, { key: cursor, text: text.slice(cursor, tokenStart) }));
-				parts.push(h("span", { key: tokenStart, className: "dfm-chip", "data-ref-chip": label.startsWith("@") ? "subagent" : "skill" }, label));
-				cursor = tokenStart + label.length;
+			for (const range of ranges) {
+				if (range.start < cursor) continue;
+				if (range.start > cursor) parts.push(h(MessageText, { key: cursor, text: text.slice(cursor, range.start) }));
+				if (range.path) {
+					// File/folder reference: icon + basename, full path on hover.
+					const token = range.token;
+					const kind = token.endsWith("/") ? "dir" : "file";
+					const raw = token.slice(1).replace(/\/$/, "");
+					const icon = kind === "dir" ? DIR_ICON : FILE_ICON;
+					parts.push(h("span", { key: range.start, className: "dfm-chip", "data-ref-chip": kind === "dir" ? "folder" : "file", title: raw }, icon + " " + baseName(raw)));
+				} else {
+					const label = range.token;
+					parts.push(h("span", { key: range.start, className: "dfm-chip", "data-ref-chip": label.startsWith("@") ? "subagent" : "skill" }, label));
+				}
+				cursor = range.start + range.token.length;
 			}
 			if (parts.length === 0) return h(MessageText, { text });
 			if (cursor < text.length) parts.push(h(MessageText, { key: cursor, text: text.slice(cursor) }));
@@ -491,11 +540,15 @@ window.__ModuleLoader__.load({
 				onPick({ candidate }) {
 					const entry = candidate.entry;
 					if (entry === void 0) return void 0;
-					const icon = entry.kind === "dir" ? DIR_ICON : FILE_ICON;
+					// The chip slot is a fixed 4em (64px) U+FFFC cell; the emoji icon
+					// would consume ~1/3 of it, leaving almost no filename. So the chip
+					// label is the bare name (with a trailing slash for directories) and
+					// the icon stays as a menu-only decoration; the full path rides the
+					// chip's title tooltip (set by the core from the label).
 					return { insert: {
 						source: "file",
 						ref: entry.kind === "file" ? encodeFileRef(entry.path) : encodeDirRef(entry.path),
-						label: icon + " " + entry.name,
+						label: entry.kind === "dir" ? entry.name + "/" : entry.name,
 						clipboardText: "@" + entry.name
 					} };
 				},

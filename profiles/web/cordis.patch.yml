@@ -27,3 +27,7 @@
       name: '@deepseek-ai/dsh-client-ui-file-mentions'
     - id: simple-mode
       name: '@deepseek-ai/dsh-simple-mode'
+    - id: desktop-notify
+      name: '@deepseek-ai/dsh-desktop-notify'
+    - id: web-notify
+      name: '@deepseek-ai/dsh-client-web-notify'

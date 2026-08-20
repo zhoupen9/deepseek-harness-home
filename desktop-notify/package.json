@@ -1,0 +1,12 @@
+{
+  "name": "@deepseek-ai/dsh-desktop-notify",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Linux desktop notifications when chat/task/agent work completes",
+  "type": "module",
+  "main": "lib/index.js",
+  "exports": {
+    ".": "./lib/index.js",
+    "./package.json": "./package.json"
+  }
+}
