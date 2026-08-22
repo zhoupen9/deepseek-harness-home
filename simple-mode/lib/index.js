@@ -18,10 +18,13 @@ export function apply(ctx) {
   ctx.inject(['sessionProjections'], (projectionCtx) => {
     projectionCtx.sessionProjections.register({
       key: 'simple',
-      schema: { parse: (value) => value },
+      stateSchema: { parse: (value) => value },
       init: () => ({ active: false }),
       apply: (state, event) => (event.type === 'simple/mode' ? { active: event.data.active } : state),
-      view: (state) => ({ active: state.active }),
+      wire: {
+        viewSchema: { parse: (value) => value },
+        view: (state) => ({ active: state.active }),
+      },
       stateVersion: 1,
     })
   })
@@ -56,7 +59,7 @@ export function apply(ctx) {
     // The RPC also saved the default; undo that so a new chat session keeps
     // the previous default (simple mode is session-local, never persisted).
     await ctx.agentDefaultModel.saveSelection(previousDefault)
-    agent.session.append('simple/mode', { active: true })
+    agent.session.append('simple/mode', { active: true }, { ignorable: true })
     memory.set(agent, { active: true, previousSession, previousDefault })
     return { kind: 'success', text: 'Simple mode on: ' + MODEL + ', thinking off.' }
   }
@@ -71,7 +74,7 @@ export function apply(ctx) {
       : await switchSession(agent, state.previousSession)
     if (failure !== null) return { kind: 'error', text: failure }
     await ctx.agentDefaultModel.saveSelection(state.previousDefault)
-    agent.session.append('simple/mode', { active: false })
+    agent.session.append('simple/mode', { active: false }, { ignorable: true })
     memory.set(agent, { active: false, previousSession: undefined, previousDefault: state.previousDefault })
     return { kind: 'success', text: 'Simple mode off; model restored.' }
   }

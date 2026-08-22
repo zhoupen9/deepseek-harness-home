@@ -11,3 +11,13 @@ node_modules/
 
 # Local settings (contains private API endpoint)
 settings.yaml
+
+# Attachment object store (runtime state, like sessions/ and storages/)
+attachments/
+
+# Self-referencing plugin symlinks (filesystem artifacts, not source)
+**/simple-mode/simple-mode
+**/ui-changed-files/ui-changed-files
+**/ui-file-mentions/ui-file-mentions
+**/ui-files/ui-files
+**/font-inter-monaspace/font-inter-monaspace
