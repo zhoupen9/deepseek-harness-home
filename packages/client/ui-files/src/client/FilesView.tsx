@@ -160,7 +160,9 @@ export function FilesView({
   // Live explorer path: the host remote is present and this session names a root.
   const liveRoot = workspaceFiles === undefined ? undefined : workspaceRoot(sessionId)
   if (workspaceFiles !== undefined && liveRoot !== undefined) {
-    return <FilesExplorer key={liveRoot} remote={workspaceFiles} sessionId={sessionId} rootPath={liveRoot} openRequest={request} t={t} />
+    // The live explorer honors the one-shot view-request focus itself: FilesView's
+    // own viewRequest effect drives only the session-known selection state.
+    return <FilesExplorer key={liveRoot} remote={workspaceFiles} sessionId={sessionId} rootPath={liveRoot} openRequest={request} focusPath={viewRequest?.view === 'files' ? viewRequest.focus : null} t={t} />
   }
 
   if (snapshot.roots.length === 0) {

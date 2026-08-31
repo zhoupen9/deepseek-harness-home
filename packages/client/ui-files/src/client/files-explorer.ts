@@ -40,6 +40,19 @@ export function ancestorPaths(path: string): string[] {
 }
 
 /**
+ * Root a model-facing focus path under the explorer's absolute workspace root:
+ * an already-rooted path passes through unchanged; a relative path (the common
+ * form of a tool-call file_path the mention resolved) is joined to the root so
+ * the host remote — which accepts fully qualified paths only — can read it.
+ * @param root - the explorer's absolute workspace root (session cwd).
+ * @param path - the focus path to reveal.
+ * @returns the absolute path to reveal.
+ */
+export function resolveUnderRoot(root: string, path: string): string {
+  return path.startsWith('/') ? path : root + '/' + path
+}
+
+/**
  * Human-readable byte size (`1023` -> `1023 B`, `1536` -> `1.5 KB`).
  * @param size - byte count.
  * @returns the compact label.

@@ -9,7 +9,7 @@
 import { useCallback, useEffect, useReducer, useRef, useState } from 'react'
 import type { SessionId } from '@deepseek-ai/dsh-session/types'
 import type { WorkspaceFilesContent, WorkspaceFilesEntry, WorkspaceFilesRemote } from './files-remote.ts'
-import { ancestorPaths, formatSize, isIgnoredEntry, sortEntries, VCS_COLORS, vcsMarker, vcsNameColor } from './files-explorer.ts'
+import { ancestorPaths, formatSize, isIgnoredEntry, resolveUnderRoot, sortEntries, VCS_COLORS, vcsMarker, vcsNameColor } from './files-explorer.ts'
 import type { FileOpenRequest } from './files-contract.ts'
 import { FileContentPane } from './FileContentPane.tsx'
 import type { FilesTranslate } from './locales.ts'
@@ -27,6 +27,8 @@ export interface FilesExplorerProps {
   t: FilesTranslate
   /** Chat file-link open request to reveal (resolved by the caller). */
   openRequest: FileOpenRequest | null
+  /** The platform's one-shot view-request focus (openView('files', path)); null when none pending. */
+  focusPath: string | null
 }
 
 /** One directory level's loaded facts. */
@@ -91,7 +93,7 @@ function messageOf(reason: unknown): string {
  * @param props - remote, root, and locale seat.
  * @returns the explorer element.
  */
-export function FilesExplorer({ remote, sessionId, rootPath, openRequest, t }: FilesExplorerProps) {
+export function FilesExplorer({ remote, sessionId, rootPath, openRequest, focusPath, t }: FilesExplorerProps) {
   const [state, dispatch] = useReducer(explorerReducer, { levels: new Map(), loading: new Set() })
   const [expanded, setExpanded] = useState<ReadonlySet<string>>(() => new Set([rootPath]))
   const [showHidden, setShowHidden] = useState(false)
@@ -144,6 +146,19 @@ export function FilesExplorer({ remote, sessionId, rootPath, openRequest, t }: F
     for (const dir of ancestorPaths(openRequest.path)) loadDir(dir)
     selectFile(openRequest.path)
   }, [openRequest, sessionId, loadDir, selectFile])
+
+  // The platform's one-shot view-request focus (openView('files', path)) is
+  // revealed exactly like a chat file-link click: root a relative focus under
+  // the workspace root, expand its ancestors, lazily load each directory along
+  // the path, and read the file. The conversation store clears the request as
+  // soon as the view completes it, so this prop flips back to null right after
+  // the reveal ran — the selection persists.
+  useEffect(() => {
+    if (focusPath === null) return
+    const target = resolveUnderRoot(rootPath, focusPath)
+    for (const dir of ancestorPaths(target)) loadDir(dir)
+    selectFile(target)
+  }, [focusPath, rootPath, loadDir, selectFile])
 
   const toggleDir = useCallback((path: string) => {
     const willExpand = !expanded.has(path)

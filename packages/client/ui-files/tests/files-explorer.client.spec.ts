@@ -4,7 +4,7 @@
  * (all @deepseek-ai imports are type-only and erased at runtime).
  */
 import { describe, expect, it } from 'vitest'
-import { ancestorPaths, formatSize, isIgnoredEntry, sortEntries, VCS_COLORS, VCS_MARKERS, vcsMarker, vcsNameColor } from '../src/client/files-explorer.ts'
+import { ancestorPaths, formatSize, isIgnoredEntry, resolveUnderRoot, sortEntries, VCS_COLORS, VCS_MARKERS, vcsMarker, vcsNameColor } from '../src/client/files-explorer.ts'
 import type { VcsFileStatus, WorkspaceFilesEntry } from '../src/client/files-remote.ts'
 
 function entry(name: string, kind: 'dir' | 'file', hidden = false): WorkspaceFilesEntry {
@@ -36,6 +36,17 @@ describe('ancestorPaths', () => {
 
   it('returns no ancestors for a top-level file', () => {
     expect(ancestorPaths('/a.ts')).toEqual([])
+  })
+})
+
+describe('resolveUnderRoot', () => {
+  it('passes an already-rooted path through unchanged', () => {
+    expect(resolveUnderRoot('/w', '/w/a/b.ts')).toBe('/w/a/b.ts')
+  })
+
+  it('joins a relative model-facing path to the workspace root', () => {
+    expect(resolveUnderRoot('/home/u/project', 'src/client/x.ts')).toBe('/home/u/project/src/client/x.ts')
+    expect(resolveUnderRoot('/home/u/project', 'a.ts')).toBe('/home/u/project/a.ts')
   })
 })
 

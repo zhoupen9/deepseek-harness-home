@@ -41,6 +41,18 @@ window.__ModuleLoader__.load({
 			return out;
 		}
 		/**
+		* Root a model-facing focus path under the explorer's absolute workspace root:
+		* an already-rooted path passes through unchanged; a relative path (the common
+		* form of a tool-call file_path the mention resolved) is joined to the root so
+		* the host remote — which accepts fully qualified paths only — can read it.
+		* @param root - the explorer's absolute workspace root (session cwd).
+		* @param path - the focus path to reveal.
+		* @returns the absolute path to reveal.
+		*/
+		function resolveUnderRoot(root, path) {
+			return path.startsWith("/") ? path : root + "/" + path;
+		}
+		/**
 		* Human-readable byte size (`1023` -> `1023 B`, `1536` -> `1.5 KB`).
 		* @param size - byte count.
 		* @returns the compact label.
@@ -564,12 +576,12 @@ window.__ModuleLoader__.load({
 		* @param props - remote, root, and locale seat.
 		* @returns the explorer element.
 		*/
-		function FilesExplorer({ remote, sessionId, rootPath, openRequest, t }) {
+		function FilesExplorer({ remote, sessionId, rootPath, openRequest, focusPath, t }) {
 			const [state, dispatch] = (0, react.useReducer)(explorerReducer, {
 				levels: /* @__PURE__ */ new Map(),
 				loading: /* @__PURE__ */ new Set()
 			});
-			const [expanded, setExpanded] = (0, react.useState)(() => /* @__PURE__ */ new Set([rootPath]));
+			const [expanded, setExpanded] = (0, react.useState)(() => new Set([rootPath]));
 			const [showHidden, setShowHidden] = (0, react.useState)(false);
 			const [selectedPath, setSelectedPath] = (0, react.useState)(null);
 			const [content, setContent] = (0, react.useState)({ status: "idle" });
@@ -627,7 +639,7 @@ window.__ModuleLoader__.load({
 			]);
 			const selectFile = (0, react.useCallback)((path) => {
 				setSelectedPath(path);
-				setExpanded((prev) => /* @__PURE__ */ new Set([...prev, ...ancestorPaths(path)]));
+				setExpanded((prev) => new Set([...prev, ...ancestorPaths(path)]));
 			}, []);
 			(0, react.useEffect)(() => {
 				if (openRequest === null || openRequest.sessionId !== sessionId || openRequest.nonce <= consumedRequest.current) return;
@@ -637,6 +649,17 @@ window.__ModuleLoader__.load({
 			}, [
 				openRequest,
 				sessionId,
+				loadDir,
+				selectFile
+			]);
+			(0, react.useEffect)(() => {
+				if (focusPath === null) return;
+				const target = resolveUnderRoot(rootPath, focusPath);
+				for (const dir of ancestorPaths(target)) loadDir(dir);
+				selectFile(target);
+			}, [
+				focusPath,
+				rootPath,
 				loadDir,
 				selectFile
 			]);
@@ -945,12 +968,12 @@ window.__ModuleLoader__.load({
 				if (request === null || request.sessionId !== sessionId || request.nonce <= consumedNonce.current) return;
 				consumedNonce.current = request.nonce;
 				setSelectedPath(request.path);
-				setExpanded((prev) => /* @__PURE__ */ new Set([...prev, ...ancestorsOf(request.path)]));
+				setExpanded((prev) => new Set([...prev, ...ancestorsOf(request.path)]));
 			}, [request, sessionId]);
 			(0, react.useEffect)(() => {
 				if (viewRequest === null || viewRequest.view !== "files") return;
 				setSelectedPath(viewRequest.focus);
-				setExpanded((prev) => /* @__PURE__ */ new Set([...prev, ...ancestorsOf(viewRequest.focus)]));
+				setExpanded((prev) => new Set([...prev, ...ancestorsOf(viewRequest.focus)]));
 				completeViewRequest();
 			}, [viewRequest, completeViewRequest]);
 			(0, react.useEffect)(() => {
@@ -958,7 +981,7 @@ window.__ModuleLoader__.load({
 				const first = firstFilePath(snapshot.files);
 				if (first !== void 0) {
 					setSelectedPath(first);
-					setExpanded((prev) => /* @__PURE__ */ new Set([...prev, ...ancestorsOf(first)]));
+					setExpanded((prev) => new Set([...prev, ...ancestorsOf(first)]));
 				}
 			}, [snapshot, selectedPath]);
 			const selected = (0, react.useMemo)(() => selectedPath === null ? void 0 : snapshot.files.get(selectedPath), [snapshot, selectedPath]);
@@ -968,6 +991,7 @@ window.__ModuleLoader__.load({
 				sessionId,
 				rootPath: liveRoot,
 				openRequest: request,
+				focusPath: viewRequest?.view === "files" ? viewRequest.focus : null,
 				t
 			}, liveRoot);
 			if (snapshot.roots.length === 0) return /* @__PURE__ */ (0, react_jsx_runtime.jsxs)("div", {
@@ -1057,7 +1081,7 @@ window.__ModuleLoader__.load({
 		}
 		/**
 		* Create the composed provider.
-		* @param options - queue, snapshot reader, session resolution, nonce source.
+		* @param options - provider composition, session resolution, snapshot reader.
 		* @returns the ChatFileMentions service face.
 		*/
 		function createFilesMentions(options) {
@@ -1068,24 +1092,16 @@ window.__ModuleLoader__.load({
 					const priorResolved = priorMentions?.resolve(value);
 					const known = matchKnownFile(sessionId === void 0 ? void 0 : options.filesOf(sessionId)?.getSnapshot(), value);
 					if (priorResolved === void 0 && known === void 0) return void 0;
-					const open = (path) => {
-						if (sessionId === void 0) return;
-						options.queue.set({
-							nonce: options.nextNonce(),
-							sessionId,
-							path
-						});
-					};
 					if (priorResolved !== void 0) return {
 						open: () => {
-							open(priorResolved.title);
+							owner.openView("files", priorResolved.title);
 						},
 						label: priorResolved.label,
 						title: priorResolved.title
 					};
 					return {
 						open: () => {
-							open(known);
+							owner.openView("files", known);
 						},
 						label: basename(known),
 						title: known
@@ -1097,7 +1113,7 @@ window.__ModuleLoader__.load({
 		//#endregion
 		//#region src/client/files-definition.ts
 		/** Tools whose results carry file facts the Files view knows. */
-		const FILE_TOOLS = /* @__PURE__ */ new Set([
+		const FILE_TOOLS = new Set([
 			"edit",
 			"write",
 			"str_replace_editor",
@@ -1762,17 +1778,11 @@ window.__ModuleLoader__.load({
 			const workspaceFiles = resolveWorkspaceFilesRemote(ctx);
 			const workspaceRoot = (sessionId) => ctx.sessions.list.getSnapshot().byId[sessionId]?.cwd;
 			const openRequests = (0, _deepseek_ai_dsh_client_store.createSnapshotStore)(null);
-			let openNonce = 0;
 			const priorMentions = ctx.get("chatFileMentions");
 			ctx.provide("chatFileMentions", createFilesMentions({
 				prior: priorMentions,
-				queue: openRequests,
 				currentSessionId: () => ctx.sessions.list.getSnapshot().current,
-				filesOf,
-				nextNonce: () => {
-					openNonce += 1;
-					return openNonce;
-				}
+				filesOf
 			}));
 			ctx.effect(() => ctx.locale.register(NS, {
 				zh,

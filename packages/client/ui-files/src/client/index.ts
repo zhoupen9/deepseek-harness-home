@@ -61,17 +61,16 @@ export function apply(ctx: Context): void {
   // The session's workspace root (its cwd), resolved from the Session summary.
   const workspaceRoot = (sessionId: SessionId): string | undefined =>
     ctx.sessions.list.getSnapshot().byId[sessionId]?.cwd
-  // The root-scoped queue: chat file-link clicks land here; the Files tab
-  // (and its live explorer) consumes them to reveal the file.
+  // The root-scoped request store the Files tab (and its live explorer) reads
+  // to reveal a chat file-link click. The mention click no longer writes it —
+  // it routes through owner.openView('files', path), which flips the tab and
+  // delivers the one-shot viewRequest the Files view honors.
   const openRequests = createSnapshotStore<FileOpenRequest | null>(null)
-  let openNonce = 0
   const priorMentions = ctx.get('chatFileMentions')
   ctx.provide('chatFileMentions', createFilesMentions({
     prior: priorMentions,
-    queue: openRequests,
     currentSessionId: () => ctx.sessions.list.getSnapshot().current,
     filesOf,
-    nextNonce: () => { openNonce += 1; return openNonce },
   }))
   ctx.effect(() => ctx.locale.register(NS, { zh, en }), 'ui-files: dictionaries')
   // Registration-time text (the view tab label) reads through the bound

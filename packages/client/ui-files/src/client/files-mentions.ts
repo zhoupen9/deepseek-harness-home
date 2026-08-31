@@ -5,20 +5,17 @@
  * vocabulary when loaded) and adds the session-known vocabulary from this
  * plugin's own Files snapshot, so any file the session wrote, edited, or read
  * can be clicked open. `resolve` stays pure (the markdown renderer calls it
- * during render); the click (`open`) records one FileOpenRequest — the Files
- * tab (and its live explorer) consumes the queue to reveal the file. Per the
- * user decision, the click no longer opens the native host.
+ * during render); the click (`open`) calls the host's `owner.openView('files',
+ * path)` — the conversation view flips to the Files tab and addresses a
+ * one-shot viewRequest to it, which the Files view honors (select the file,
+ * expand its ancestors, complete the request). Per the user decision, the
+ * click no longer opens the native host.
  * @module @deepseek-ai/dsh-client-ui-files/client
  */
 import type { ChatFileMentions, TurnTailOwnerProps } from '@deepseek-ai/dsh-client-ui-chat/client'
 import type { MarkdownFileMentions } from '@deepseek-ai/dsh-client-ui-primitives'
 import type { SessionId } from '@deepseek-ai/dsh-session/types'
-import type { FileOpenRequest, FilesSnapshot } from './files-contract.ts'
-
-/** The minimal request-queue face this module needs. */
-export interface OpenRequestQueue {
-  set(request: FileOpenRequest | null): void
-}
+import type { FilesSnapshot } from './files-contract.ts'
 
 /** Per-session Files snapshot reader used at mention-resolve time. */
 export interface FilesSnapshotReader {
@@ -29,14 +26,10 @@ export interface FilesSnapshotReader {
 export interface FilesMentionsOptions {
   /** The provider that was registered before this plugin (composed, when present). */
   readonly prior: ChatFileMentions | undefined
-  /** Queue written on click. */
-  readonly queue: OpenRequestQueue
   /** Resolve the session the click/mention belongs to (the current session). */
   readonly currentSessionId: () => SessionId | undefined
   /** Resolve one session's Files snapshot source. */
   readonly filesOf: FilesSnapshotReader
-  /** Monotonic nonce source (bumped per click). */
-  readonly nextNonce: () => number
 }
 
 /** The basename of a path (the segment after the last `/`). */
@@ -70,7 +63,7 @@ export function matchKnownFile(
 
 /**
  * Create the composed provider.
- * @param options - queue, snapshot reader, session resolution, nonce source.
+ * @param options - provider composition, session resolution, snapshot reader.
  * @returns the ChatFileMentions service face.
  */
 export function createFilesMentions(options: FilesMentionsOptions): ChatFileMentions {
@@ -83,18 +76,14 @@ export function createFilesMentions(options: FilesMentionsOptions): ChatFileMent
         const snapshot = sessionId === undefined ? undefined : options.filesOf(sessionId)?.getSnapshot()
         const known = matchKnownFile(snapshot, value)
         if (priorResolved === undefined && known === undefined) return undefined
-        const open = (path: string): void => {
-          if (sessionId === undefined) return
-          options.queue.set({ nonce: options.nextNonce(), sessionId, path })
-        }
         if (priorResolved !== undefined) {
           return {
-            open: () => { open(priorResolved.title) },
+            open: () => { owner.openView('files', priorResolved.title) },
             label: priorResolved.label,
             title: priorResolved.title,
           }
         }
-        return { open: () => { open(known!) }, label: basename(known!), title: known! }
+        return { open: () => { owner.openView('files', known!) }, label: basename(known!), title: known! }
       }
       return { resolve }
     },
