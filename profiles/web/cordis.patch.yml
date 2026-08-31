@@ -5,6 +5,7 @@
 # - per-turn "Edits" view (@deepseek-ai/dsh-client-ui-edits)
 # - cumulative per-file "Changes" view (@deepseek-ai/dsh-client-ui-changes)
 # - session-known "Files" explorer + chat file-link viewer (@deepseek-ai/dsh-client-ui-files)
+# - git history tree graph tab (@deepseek-ai/dsh-client-ui-git; host git remote — see its HOST_PRIMITIVES.md)
 # The shipped ui-deliverables row also provides chatFileMentions; ui-files
 # supersedes it (and is the only plugin allowed to provide a single-shot
 # slot service). Disable the bundle row here or the second provide throws.
@@ -17,3 +18,5 @@
       name: '@deepseek-ai/dsh-client-ui-changes'
     - id: ui-files
       name: '@deepseek-ai/dsh-client-ui-files'
+    - id: ui-git
+      name: '@deepseek-ai/dsh-client-ui-git'

@@ -8,6 +8,7 @@ storages/
 
 # Dependencies (regenerable via pnpm install)
 node_modules/
+.pnpm-store/
 
 # Local settings (contains private API endpoint)
 settings.yaml
