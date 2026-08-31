@@ -1,0 +1,11 @@
+{
+  "name": "dsh-session-workspace-toolchain",
+  "private": true,
+  "version": "0.0.0",
+  "devDependencies": {
+    "lightningcss": "^1.33.0",
+    "tsdown": "^0.22.14",
+    "typescript": "^7.0.2",
+    "vitest": "^4.1.11"
+  }
+}

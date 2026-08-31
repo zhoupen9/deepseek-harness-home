@@ -1,0 +1,102 @@
+/* Files view: session-known file explorer. */
+
+.view {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 16px;
+  height: 100%;
+  min-height: 0;
+  box-sizing: border-box;
+}
+
+.empty {
+  padding: 24px 16px;
+  color: var(--dsh-text-secondary, #8b949e);
+  font-size: 14px;
+}
+
+.older {
+  align-self: flex-start;
+  padding: 4px 12px;
+  font-size: 13px;
+  border: 1px solid var(--dsh-border, #30363d);
+  border-radius: 6px;
+  background: transparent;
+  color: inherit;
+  cursor: pointer;
+}
+
+.older:disabled {
+  opacity: 0.6;
+  cursor: default;
+}
+
+.split {
+  display: flex;
+  flex: 1;
+  min-height: 0;
+  gap: 12px;
+}
+
+.tree {
+  flex: 0 0 280px;
+  min-width: 0;
+  overflow: auto;
+  border: 1px solid var(--dsh-border, #30363d);
+  border-radius: 8px;
+  padding: 6px 0;
+}
+
+.row {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  width: 100%;
+  padding-top: 3px;
+  padding-bottom: 3px;
+  padding-right: 8px;
+  border: 0;
+  background: transparent;
+  color: inherit;
+  font-size: 13px;
+  text-align: left;
+  cursor: pointer;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.row:hover {
+  background: var(--dsh-hover-bg, rgba(127, 127, 127, 0.12));
+}
+
+.rowSelected {
+  background: var(--dsh-selection-bg, rgba(56, 139, 253, 0.18));
+}
+
+.caret {
+  flex: none;
+  width: 14px;
+  text-align: center;
+  font-size: 11px;
+  color: var(--dsh-text-secondary, #8b949e);
+}
+
+.dirName {
+  font-weight: 600;
+}
+
+.fileName {
+  font-family: var(--dsh-font-mono, ui-monospace, SFMono-Regular, Menlo, monospace);
+  font-size: 12px;
+}
+
+.content {
+  flex: 1;
+  min-width: 0;
+  min-height: 0;
+  border: 1px solid var(--dsh-border, #30363d);
+  border-radius: 8px;
+  overflow: hidden;
+}

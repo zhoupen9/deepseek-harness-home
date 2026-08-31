@@ -1,0 +1,102 @@
+/* Edits view: per-turn file-change records. */
+
+.view {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 16px;
+}
+
+.empty {
+  padding: 24px 16px;
+  color: var(--dsh-text-secondary, #8b949e);
+  font-size: 14px;
+}
+
+.older {
+  align-self: flex-start;
+  padding: 4px 12px;
+  font-size: 13px;
+  border: 1px solid var(--dsh-border, #30363d);
+  border-radius: 6px;
+  background: transparent;
+  color: inherit;
+  cursor: pointer;
+}
+
+.older:disabled {
+  opacity: 0.6;
+  cursor: default;
+}
+
+.turn {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.turnHeader {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  border-bottom: 1px solid var(--dsh-border, #30363d);
+  padding-bottom: 6px;
+}
+
+.turnTitle {
+  margin: 0;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.turnCount {
+  font-size: 12px;
+  color: var(--dsh-text-secondary, #8b949e);
+}
+
+.entry {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  border: 1px solid var(--dsh-border, #30363d);
+  border-radius: 8px;
+  padding: 10px 12px;
+}
+
+.entryHeader {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+}
+
+.badge {
+  flex: none;
+  padding: 1px 8px;
+  border-radius: 10px;
+  font-size: 11px;
+  line-height: 18px;
+  background: var(--dsh-badge-bg, rgba(127, 127, 127, 0.16));
+  color: var(--dsh-text-secondary, #8b949e);
+}
+
+.path {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-family: var(--dsh-font-mono, ui-monospace, SFMono-Regular, Menlo, monospace);
+  font-size: 12px;
+}
+
+.error {
+  flex: none;
+  font-size: 11px;
+  color: var(--dsh-danger, #f85149);
+}
+
+.diff {
+  overflow: hidden;
+  border-radius: 6px;
+}

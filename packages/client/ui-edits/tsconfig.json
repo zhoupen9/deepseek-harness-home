@@ -1,0 +1,28 @@
+{
+  // Standalone build configuration for the session-workspace copy: jsx is the
+  // only setting tsdown/rolldown needs; no project references (they target the
+  // harness tree). When this package is dropped into the harness checkout
+  // (packages/client/ui-edits), restore the harness tsconfig instead:
+  // {
+  //   "extends": "../../../tsconfig.base.client.json",
+  //   "compilerOptions": { "rootDir": "src", "outDir": "lib/types" },
+  //   "include": ["src"],
+  //   "references": [ /* vendor/cordis, locale, store, ui-conversation, ... */ ]
+  // }
+  "compilerOptions": {
+    "jsx": "react-jsx",
+    "target": "ES2024",
+    "module": "ESNext",
+    "moduleResolution": "bundler",
+    "strict": true,
+    "skipLibCheck": true,
+    "esModuleInterop": true,
+    "isolatedModules": true,
+    "lib": ["ES2024", "DOM", "DOM.Iterable"],
+    "rootDir": "src",
+    "outDir": "lib/types",
+    "noEmit": true,
+    "types": []
+  },
+  "include": ["src"]
+}

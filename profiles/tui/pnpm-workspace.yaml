@@ -1,9 +1,0 @@
-packages:
-  - .
-
-nodeLinker: hoisted
-autoInstallPeers: false
-allowBuilds:
-  koffi: set this to true or false
-minimumReleaseAgeExclude:
-  - '@huiliyi37/dsh-tianshu-tui@0.1.2-rc.7'

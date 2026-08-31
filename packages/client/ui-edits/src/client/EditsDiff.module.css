@@ -1,0 +1,122 @@
+/* Edits diff: an inline file diff with red/green +/- backgrounds and
+   syntax-highlighting token colors. Colors read the app's theme tokens
+   (--dsw-* aliases and the --shiki-* syntax palette), which flip on the
+   body[data-ds-dark-theme] attribute, so the block renders correctly in BOTH
+   light and dark themes; the fallbacks are the light-theme values. */
+
+.block {
+  position: relative;
+  margin: 8px 0;
+  color: var(--dsw-alias-label-primary, #1f2328);
+  background: var(--dsw-alias-markdown-code-block, #f6f8fa);
+  border: 1px solid var(--dsw-alias-border-l2, rgba(0, 0, 0, 0.1));
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+/* Copy control floats in the top-right corner over the body (no banner row). */
+.copyButton {
+  position: absolute;
+  top: 6px;
+  right: 12px;
+  z-index: 1;
+  background: transparent;
+  border: none;
+  padding: 0;
+  margin: 0;
+  color: var(--dsw-alias-label-secondary, #59636e);
+  cursor: pointer;
+  font-size: 12px;
+  line-height: 18px;
+}
+
+.copyButton:hover {
+  color: var(--dsw-alias-label-primary, #1f2328);
+}
+
+.body {
+  padding: 8px 12px;
+  font-family: var(--dsh-font-mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace);
+  font-size: 12px;
+  line-height: 20px;
+  overflow-x: auto;
+  overflow-y: hidden;
+}
+
+/* No wrapping, no word-break: a diff is read by its indentation. */
+.line {
+  min-height: 20px;
+  white-space: pre;
+}
+
+/* File header: path in the primary tone, set apart by weight. */
+.path {
+  color: var(--dsw-alias-label-primary, #1f2328);
+  font-weight: 600;
+  padding-right: 56px;
+}
+
+/* A same-file second hunk's separator (a scattered edit), in the dim tone. */
+.gap {
+  color: var(--dsw-alias-label-tertiary, #59636e);
+}
+
+/* Meaning-carrying colors: removed lines on a red-tinted background, added
+   lines on a green-tinted background. The - / + prefix is drawn via ::before
+   so a copied line and the shown line agree, and the sign reads without
+   color. Backgrounds derive from the theme's error/success state tokens via
+   color-mix, so the tint and the text stay in the same hue family and flip
+   together between light and dark. */
+.del::before {
+  content: '- ';
+  color: var(--dsw-alias-state-error-primary, #d1242f);
+}
+
+.del {
+  background-color: color-mix(in srgb, var(--dsw-alias-state-error-primary, #d1242f) 14%, transparent);
+  color: var(--dsw-alias-state-error-primary, #d1242f);
+}
+
+.add::before {
+  content: '+ ';
+  color: var(--dsw-alias-state-success-primary, #1a7f37);
+}
+
+.add {
+  background-color: color-mix(in srgb, var(--dsw-alias-state-success-primary, #1a7f37) 14%, transparent);
+  color: var(--dsw-alias-state-success-primary, #1a7f37);
+}
+
+.expand {
+  display: block;
+  width: 100%;
+  padding: 0;
+  border: none;
+  background: transparent;
+  color: var(--dsw-alias-label-tertiary, #59636e);
+  cursor: pointer;
+  font: inherit;
+  text-align: left;
+}
+
+.expand:hover {
+  color: var(--dsw-alias-label-secondary, #59636e);
+}
+
+/* Change summary, dim under the body. */
+.footer {
+  padding: 4px 12px 8px;
+  font-family: var(--dsh-font-mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace);
+  font-size: 12px;
+  color: var(--dsw-alias-label-tertiary, #59636e);
+}
+
+/* Syntax token colors: the app's shiki palette (light on :root, dark on
+   body[data-ds-dark-theme]); plain text inherits the line color. */
+.tokComment { color: var(--shiki-token-comment, #868e96); font-style: italic; }
+.tokString { color: var(--shiki-token-string, #2f9e44); }
+.tokKeyword { color: var(--shiki-token-keyword, #d6336c); }
+.tokLiteral { color: var(--shiki-token-constant, #1c7ed6); }
+.tokNumber { color: var(--shiki-token-constant, #1c7ed6); }
+.tokFunction { color: var(--shiki-token-function, #6741d9); }
+.tokVariable { color: var(--shiki-token-parameter, #e8590c); }
