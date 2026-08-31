@@ -1,6 +1,7 @@
 /**
  * Edits view: per-turn file-change records with inline diffs.
  */
+import { useCallback, useState } from 'react'
 import type { DiffBlockLabels } from '@deepseek-ai/dsh-client-ui-primitives'
 import { EditsDiff } from './EditsDiff.tsx'
 import type { ConvViewProps } from '@deepseek-ai/dsh-client-ui-conversation/client'
@@ -46,6 +47,16 @@ export function EditsView({
   const loadingOlder = useSession(value => value.loadingOlder)
   const labels = diffLabels(t)
   const turns = snapshot.turns
+  const [collapsedTurns, setCollapsedTurns] = useState<ReadonlySet<number>>(() => new Set())
+
+  const toggleTurn = useCallback((turn: number) => {
+    setCollapsedTurns(prev => {
+      const next = new Set(prev)
+      if (next.has(turn)) next.delete(turn)
+      else next.add(turn)
+      return next
+    })
+  }, [])
 
   if (turns.length === 0) {
     return <div className={css.empty}>{t('empty.noEdits')}</div>
@@ -63,29 +74,43 @@ export function EditsView({
           {loadingOlder ? t('older.loading') : t('older.load')}
         </button>
       )}
-      {turns.map((turn: EditsTurn) => (
-        <section key={turn.turn} className={css.turn}>
-          <header className={css.turnHeader}>
-            <h3 className={css.turnTitle}>{t('turn.label', { turn: turn.turn })}</h3>
-            <span className={css.turnCount}>{turn.edits.length}</span>
-          </header>
-          {turn.edits.map(entry => (
-            <article key={entry.key} className={css.entry}>
-              <header className={css.entryHeader}>
-                <span className={css.badge}>{toolLabel(t, entry.tool)}</span>
-                <span className={css.path} title={entry.diffs[0]?.path}>{entry.diffs[0]?.path}</span>
-                {entry.error !== undefined && <span className={css.error}>{t('entry.error')}</span>}
-              </header>
-              <EditsDiff
-                diffs={[...entry.diffs]}
-                labels={labels}
-                maxLines={EDITS_DIFF_MAX_LINES}
-                className={css.diff}
-              />
-            </article>
-          ))}
-        </section>
-      ))}
+      {turns.map((turn: EditsTurn) => {
+        const collapsed = collapsedTurns.has(turn.turn)
+        return (
+          <section key={turn.turn} className={css.turn}>
+            <header className={css.turnHeader}>
+              <button
+                type="button"
+                className={css.turnToggle}
+                aria-expanded={!collapsed}
+                aria-label={collapsed
+                  ? t('turn.expandAria', { turn: turn.turn })
+                  : t('turn.collapseAria', { turn: turn.turn })}
+                onClick={() => { toggleTurn(turn.turn) }}
+              >
+                <span className={css.chevron} data-collapsed={collapsed} aria-hidden="true" />
+                <span className={css.turnTitle}>{t('turn.label', { turn: turn.turn })}</span>
+                <span className={css.turnCount}>{turn.edits.length}</span>
+              </button>
+            </header>
+            {!collapsed && turn.edits.map(entry => (
+              <article key={entry.key} className={css.entry}>
+                <header className={css.entryHeader}>
+                  <span className={css.badge}>{toolLabel(t, entry.tool)}</span>
+                  <span className={css.path} title={entry.diffs[0]?.path}>{entry.diffs[0]?.path}</span>
+                  {entry.error !== undefined && <span className={css.error}>{t('entry.error')}</span>}
+                </header>
+                <EditsDiff
+                  diffs={[...entry.diffs]}
+                  labels={labels}
+                  maxLines={EDITS_DIFF_MAX_LINES}
+                  className={css.diff}
+                />
+              </article>
+            ))}
+          </section>
+        )
+      })}
     </div>
   )
 }

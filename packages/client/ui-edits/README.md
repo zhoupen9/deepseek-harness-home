@@ -30,6 +30,8 @@ watcher without restarting the server).
   `meta.diffs`), so the view is replay-safe: the same records appear after a
   reload or session resume, with no extra storage.
 - Groups changes per turn ("Turn 1", "Turn 2", …), ordered by landing seq.
+- Each turn header is a disclosure toggle: collapse a turn to fold away that
+  turn's edit messages, and expand it again to restore them.
 - Renders each change with a plugin-owned inline diff (collapsible): removed
   lines on a dark red background, added lines on a dark green background, and
   the code always syntax-highlighted for well-known code extensions

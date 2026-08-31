@@ -1449,7 +1449,7 @@ window.__ModuleLoader__.load({
 		}
 		//#endregion
 		//#region \0dsh-css:/home/zhoupeng/.dsh/packages/client/ui-edits/src/client/EditsView.module.css.mjs
-		const css = ".sFFisa_view{flex-direction:column;gap:12px;padding:16px;display:flex}.sFFisa_empty{color:var(--dsh-text-secondary,#8b949e);padding:24px 16px;font-size:14px}.sFFisa_older{border:1px solid var(--dsh-border,#30363d);color:inherit;cursor:pointer;background:0 0;border-radius:6px;align-self:flex-start;padding:4px 12px;font-size:13px}.sFFisa_older:disabled{opacity:.6;cursor:default}.sFFisa_turn{flex-direction:column;gap:8px;display:flex}.sFFisa_turnHeader{border-bottom:1px solid var(--dsh-border,#30363d);align-items:baseline;gap:8px;padding-bottom:6px;display:flex}.sFFisa_turnTitle{margin:0;font-size:13px;font-weight:600}.sFFisa_turnCount{color:var(--dsh-text-secondary,#8b949e);font-size:12px}.sFFisa_entry{border:1px solid var(--dsh-border,#30363d);border-radius:8px;flex-direction:column;gap:6px;padding:10px 12px;display:flex}.sFFisa_entryHeader{align-items:center;gap:8px;min-width:0;display:flex}.sFFisa_badge{background:var(--dsh-badge-bg,#7f7f7f29);color:var(--dsh-text-secondary,#8b949e);border-radius:10px;flex:none;padding:1px 8px;font-size:11px;line-height:18px}.sFFisa_path{text-overflow:ellipsis;white-space:nowrap;min-width:0;font-family:var(--dsh-font-mono,ui-monospace, SFMono-Regular, Menlo, monospace);flex:1;font-size:12px;overflow:hidden}.sFFisa_error{color:var(--dsh-danger,#f85149);flex:none;font-size:11px}.sFFisa_diff{border-radius:6px;overflow:hidden}";
+		const css = ".sFFisa_view{flex-direction:column;gap:12px;padding:16px;display:flex}.sFFisa_empty{color:var(--dsh-text-secondary,#8b949e);padding:24px 16px;font-size:14px}.sFFisa_older{border:1px solid var(--dsh-border,#30363d);color:inherit;cursor:pointer;background:0 0;border-radius:6px;align-self:flex-start;padding:4px 12px;font-size:13px}.sFFisa_older:disabled{opacity:.6;cursor:default}.sFFisa_turn{flex-direction:column;gap:8px;display:flex}.sFFisa_turnHeader{border-bottom:1px solid var(--dsh-border,#30363d);padding-bottom:6px}.sFFisa_turnToggle{width:100%;color:inherit;font:inherit;text-align:left;cursor:pointer;background:0 0;border:none;align-items:center;gap:8px;margin:0;padding:0;display:flex}.sFFisa_turnToggle:hover .sFFisa_turnTitle{text-decoration:underline}.sFFisa_chevron{opacity:.7;border-top:5px solid;border-left:4px solid #0000;border-right:4px solid #0000;flex:none;width:0;height:0;transition:transform .12s}.sFFisa_chevron[data-collapsed=true]{transform:rotate(-90deg)}.sFFisa_turnTitle{margin:0;font-size:13px;font-weight:600}.sFFisa_turnCount{color:var(--dsh-text-secondary,#8b949e);font-size:12px}.sFFisa_entry{border:1px solid var(--dsh-border,#30363d);border-radius:8px;flex-direction:column;gap:6px;padding:10px 12px;display:flex}.sFFisa_entryHeader{align-items:center;gap:8px;min-width:0;display:flex}.sFFisa_badge{background:var(--dsh-badge-bg,#7f7f7f29);color:var(--dsh-text-secondary,#8b949e);border-radius:10px;flex:none;padding:1px 8px;font-size:11px;line-height:18px}.sFFisa_path{text-overflow:ellipsis;white-space:nowrap;min-width:0;font-family:var(--dsh-font-mono,ui-monospace, SFMono-Regular, Menlo, monospace);flex:1;font-size:12px;overflow:hidden}.sFFisa_error{color:var(--dsh-danger,#f85149);flex:none;font-size:11px}.sFFisa_diff{border-radius:6px;overflow:hidden}";
 		const tagId = "@deepseek-ai/dsh-client-ui-edits/EditsView.module.css";
 		if (typeof document !== "undefined" && document.querySelector("style[data-plugin-css=" + JSON.stringify(tagId) + "]") === null) {
 			const tag = document.createElement("style");
@@ -1460,6 +1460,7 @@ window.__ModuleLoader__.load({
 		}
 		var EditsView_module_css_default = {
 			"badge": "sFFisa_badge",
+			"chevron": "sFFisa_chevron",
 			"diff": "sFFisa_diff",
 			"empty": "sFFisa_empty",
 			"entry": "sFFisa_entry",
@@ -1471,6 +1472,7 @@ window.__ModuleLoader__.load({
 			"turnCount": "sFFisa_turnCount",
 			"turnHeader": "sFFisa_turnHeader",
 			"turnTitle": "sFFisa_turnTitle",
+			"turnToggle": "sFFisa_turnToggle",
 			"view": "sFFisa_view"
 		};
 		/** Localized diff-card chrome, mirroring the chat row's label split. */
@@ -1496,6 +1498,15 @@ window.__ModuleLoader__.load({
 			const loadingOlder = useSession((value) => value.loadingOlder);
 			const labels = diffLabels(t);
 			const turns = snapshot.turns;
+			const [collapsedTurns, setCollapsedTurns] = (0, react.useState)(() => /* @__PURE__ */ new Set());
+			const toggleTurn = (0, react.useCallback)((turn) => {
+				setCollapsedTurns((prev) => {
+					const next = new Set(prev);
+					if (next.has(turn)) next.delete(turn);
+					else next.add(turn);
+					return next;
+				});
+			}, []);
 			if (turns.length === 0) return /* @__PURE__ */ (0, react_jsx_runtime.jsx)("div", {
 				className: EditsView_module_css_default.empty,
 				children: t("empty.noEdits")
@@ -1510,44 +1521,64 @@ window.__ModuleLoader__.load({
 						loadOlder();
 					},
 					children: loadingOlder ? t("older.loading") : t("older.load")
-				}), turns.map((turn) => /* @__PURE__ */ (0, react_jsx_runtime.jsxs)("section", {
-					className: EditsView_module_css_default.turn,
-					children: [/* @__PURE__ */ (0, react_jsx_runtime.jsxs)("header", {
-						className: EditsView_module_css_default.turnHeader,
-						children: [/* @__PURE__ */ (0, react_jsx_runtime.jsx)("h3", {
-							className: EditsView_module_css_default.turnTitle,
-							children: t("turn.label", { turn: turn.turn })
-						}), /* @__PURE__ */ (0, react_jsx_runtime.jsx)("span", {
-							className: EditsView_module_css_default.turnCount,
-							children: turn.edits.length
-						})]
-					}), turn.edits.map((entry) => /* @__PURE__ */ (0, react_jsx_runtime.jsxs)("article", {
-						className: EditsView_module_css_default.entry,
-						children: [/* @__PURE__ */ (0, react_jsx_runtime.jsxs)("header", {
-							className: EditsView_module_css_default.entryHeader,
-							children: [
-								/* @__PURE__ */ (0, react_jsx_runtime.jsx)("span", {
-									className: EditsView_module_css_default.badge,
-									children: toolLabel(t, entry.tool)
-								}),
-								/* @__PURE__ */ (0, react_jsx_runtime.jsx)("span", {
-									className: EditsView_module_css_default.path,
-									title: entry.diffs[0]?.path,
-									children: entry.diffs[0]?.path
-								}),
-								entry.error !== void 0 && /* @__PURE__ */ (0, react_jsx_runtime.jsx)("span", {
-									className: EditsView_module_css_default.error,
-									children: t("entry.error")
-								})
-							]
-						}), /* @__PURE__ */ (0, react_jsx_runtime.jsx)(EditsDiff, {
-							diffs: [...entry.diffs],
-							labels,
-							maxLines: 8,
-							className: EditsView_module_css_default.diff
-						})]
-					}, entry.key))]
-				}, turn.turn))]
+				}), turns.map((turn) => {
+					const collapsed = collapsedTurns.has(turn.turn);
+					return /* @__PURE__ */ (0, react_jsx_runtime.jsxs)("section", {
+						className: EditsView_module_css_default.turn,
+						children: [/* @__PURE__ */ (0, react_jsx_runtime.jsx)("header", {
+							className: EditsView_module_css_default.turnHeader,
+							children: /* @__PURE__ */ (0, react_jsx_runtime.jsxs)("button", {
+								type: "button",
+								className: EditsView_module_css_default.turnToggle,
+								"aria-expanded": !collapsed,
+								"aria-label": collapsed ? t("turn.expandAria", { turn: turn.turn }) : t("turn.collapseAria", { turn: turn.turn }),
+								onClick: () => {
+									toggleTurn(turn.turn);
+								},
+								children: [
+									/* @__PURE__ */ (0, react_jsx_runtime.jsx)("span", {
+										className: EditsView_module_css_default.chevron,
+										"data-collapsed": collapsed,
+										"aria-hidden": "true"
+									}),
+									/* @__PURE__ */ (0, react_jsx_runtime.jsx)("span", {
+										className: EditsView_module_css_default.turnTitle,
+										children: t("turn.label", { turn: turn.turn })
+									}),
+									/* @__PURE__ */ (0, react_jsx_runtime.jsx)("span", {
+										className: EditsView_module_css_default.turnCount,
+										children: turn.edits.length
+									})
+								]
+							})
+						}), !collapsed && turn.edits.map((entry) => /* @__PURE__ */ (0, react_jsx_runtime.jsxs)("article", {
+							className: EditsView_module_css_default.entry,
+							children: [/* @__PURE__ */ (0, react_jsx_runtime.jsxs)("header", {
+								className: EditsView_module_css_default.entryHeader,
+								children: [
+									/* @__PURE__ */ (0, react_jsx_runtime.jsx)("span", {
+										className: EditsView_module_css_default.badge,
+										children: toolLabel(t, entry.tool)
+									}),
+									/* @__PURE__ */ (0, react_jsx_runtime.jsx)("span", {
+										className: EditsView_module_css_default.path,
+										title: entry.diffs[0]?.path,
+										children: entry.diffs[0]?.path
+									}),
+									entry.error !== void 0 && /* @__PURE__ */ (0, react_jsx_runtime.jsx)("span", {
+										className: EditsView_module_css_default.error,
+										children: t("entry.error")
+									})
+								]
+							}), /* @__PURE__ */ (0, react_jsx_runtime.jsx)(EditsDiff, {
+								diffs: [...entry.diffs],
+								labels,
+								maxLines: 8,
+								className: EditsView_module_css_default.diff
+							})]
+						}, entry.key))]
+					}, turn.turn);
+				})]
 			});
 		}
 		//#endregion
@@ -1825,6 +1856,8 @@ window.__ModuleLoader__.load({
 			"view.edits": "编辑",
 			"empty.noEdits": "本会话尚未产生文件修改。",
 			"turn.label": "第 {turn} 轮",
+			"turn.collapseAria": "收起第 {turn} 轮修改",
+			"turn.expandAria": "展开第 {turn} 轮修改",
 			"older.load": "加载更早的修改",
 			"older.loading": "正在加载…",
 			"kind.edit": "编辑",
@@ -1844,6 +1877,8 @@ window.__ModuleLoader__.load({
 			"view.edits": "Edits",
 			"empty.noEdits": "No file changes in this session yet.",
 			"turn.label": "Turn {turn}",
+			"turn.collapseAria": "Collapse turn {turn}",
+			"turn.expandAria": "Expand turn {turn}",
 			"older.load": "Load earlier edits",
 			"older.loading": "Loading…",
 			"kind.edit": "Edit",

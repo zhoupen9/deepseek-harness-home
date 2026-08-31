@@ -36,11 +36,42 @@
 }
 
 .turnHeader {
-  display: flex;
-  align-items: baseline;
-  gap: 8px;
   border-bottom: 1px solid var(--dsh-border, #30363d);
   padding-bottom: 6px;
+}
+
+.turnToggle {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  border: none;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.turnToggle:hover .turnTitle {
+  text-decoration: underline;
+}
+
+.chevron {
+  flex: none;
+  width: 0;
+  height: 0;
+  border-left: 4px solid transparent;
+  border-right: 4px solid transparent;
+  border-top: 5px solid currentColor;
+  opacity: 0.7;
+  transition: transform 120ms ease;
+}
+
+.chevron[data-collapsed='true'] {
+  transform: rotate(-90deg);
 }
 
 .turnTitle {
