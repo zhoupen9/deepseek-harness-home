@@ -92,3 +92,29 @@ export const VCS_COLORS: Readonly<Record<VcsFileStatus, string>> = {
 export function vcsMarker(status: VcsFileStatus): string {
   return VCS_MARKERS[status] ?? ''
 }
+
+/**
+ * Whether an entry is git-ignored. Files carry `vcs: 'ignored'` when the host
+ * marks them from `git status --ignored`; an entirely-ignored directory is
+ * marked the same way (`!! dir/`), so both render grayed-out.
+ * @param entry - a listed child.
+ * @returns true when the entry should render as ignored.
+ */
+export function isIgnoredEntry(entry: WorkspaceFilesEntry): boolean {
+  return entry.vcs === 'ignored'
+}
+
+/**
+ * The text color for an entry's name by its VCS state: a file's own status
+ * (modified amber, deleted red, untracked gray, ...), a git-ignored directory's
+ * gray, or the amber "modified" color for a dirty directory (its descendants
+ * changed). A clean entry returns undefined so the name keeps the row's
+ * inherited text color.
+ * @param entry - a listed child.
+ * @returns a CSS color, or undefined for a clean entry.
+ */
+export function vcsNameColor(entry: WorkspaceFilesEntry): string | undefined {
+  if (entry.vcs !== undefined) return VCS_COLORS[entry.vcs]
+  if (entry.vcsDirty === true) return VCS_COLORS.modified
+  return undefined
+}

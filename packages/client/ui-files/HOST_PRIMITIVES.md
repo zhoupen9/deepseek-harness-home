@@ -72,9 +72,12 @@ Each verb returns the standard ClientResult<T> envelope
       hidden: boolean       // POSIX dot-prefix; Windows hidden attr if available
       size?: number         // bytes; present iff kind === 'file'
       modifiedAt?: number   // epoch ms; present iff kind === 'file'
-      vcs?: VcsFileStatus   // files only, present iff listing.vcs.kind === 'git'
-                            // AND the file's status is notable (a clean tracked
-                            // file carries no vcs field)
+      vcs?: VcsFileStatus   // present iff listing.vcs.kind === 'git' AND the
+                            // entry's status is notable. Files: modified/added/
+                            // deleted/renamed/untracked/ignored/conflicted (a
+                            // clean tracked file carries no vcs field).
+                            // Directories: 'ignored' when the entire directory
+                            // is git-ignored (!! dir/), otherwise absent.
       vcsDirty?: boolean    // dirs only, present (true) iff listing.vcs.kind === 'git'
                             // AND a descendant differs (modified/added/deleted/
                             // renamed/untracked/conflicted; ignored-only does not count)
@@ -200,6 +203,15 @@ vocabulary: they surface as listing.vcs (see 4.5), never as a thrown error.
   (modified/added/deleted/renamed/untracked/conflicted). Ignored-only
   descendants do NOT mark a dir dirty. Derive from the snapshot (prefix match
   on dirty paths), not a recursive walk.
+- Ignored directory: an entirely-ignored directory (`!! dir/` from
+  `git status --ignored`) carries `vcs: 'ignored'` on the DIRECTORY entry so
+  the client grays it out; it is never vcsDirty.
+- Directory status color (v1 limit): a directory is only marked dirty/not-dirty
+  (`vcsDirty`) or ignored (`vcs: 'ignored'`). To color directories by the KIND
+  of change (modified vs untracked vs deleted vs added), the host would need to
+  aggregate descendant statuses into a directory-level `vcs` status (e.g.
+  `vcs: 'modified' | 'untracked' | 'deleted' | ...` on the directory entry).
+  Until then the client colors every dirty directory with the modified amber.
 - Failure = context, not error: git missing -> `{ kind: 'none' }`; git present
   but a status run fails -> `{ kind: 'error', message }`. In both cases listing
   succeeds and entries simply omit vcs/vcsDirty.
@@ -245,7 +257,8 @@ vocabulary: they surface as listing.vcs (see 4.5), never as a thrown error.
    sets vcsDirty on dirs containing them; outside a repo listing.vcs.kind is
    'none' and no entry carries vcs/vcsDirty.
 7. A git-ignored file present on disk is reported ignored, not untracked; an
-   ignored-only directory is not vcsDirty.
+   entirely-ignored directory is reported with `vcs: 'ignored'` and is not
+   vcsDirty.
 8. A missing/broken git yields vcs 'none'/'error' and a successful listing (no
    throw).
 9. Two sibling list calls served from the same snapshot return identical status

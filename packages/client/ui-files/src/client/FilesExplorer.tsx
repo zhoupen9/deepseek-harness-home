@@ -9,7 +9,7 @@
 import { useCallback, useEffect, useReducer, useRef, useState } from 'react'
 import type { SessionId } from '@deepseek-ai/dsh-session/types'
 import type { WorkspaceFilesContent, WorkspaceFilesEntry, WorkspaceFilesRemote } from './files-remote.ts'
-import { ancestorPaths, formatSize, sortEntries, VCS_COLORS, vcsMarker } from './files-explorer.ts'
+import { ancestorPaths, formatSize, isIgnoredEntry, sortEntries, VCS_COLORS, vcsMarker, vcsNameColor } from './files-explorer.ts'
 import type { FileOpenRequest } from './files-contract.ts'
 import { FileContentPane } from './FileContentPane.tsx'
 import type { FilesTranslate } from './locales.ts'
@@ -219,20 +219,25 @@ function renderLevel(
   t: FilesTranslate,
 ) {
   return entries.map(entry => {
+    const ignored = isIgnoredEntry(entry)
+    const nameColor = vcsNameColor(entry)
     if (entry.kind === 'file') {
       const selected = selectedPath === entry.path
+      const rowClass = css.row
+        + (selected ? ' ' + css.rowSelected : '')
+        + (ignored ? ' ' + css.ignored : '')
       return (
         <button
           key={entry.path}
           type="button"
           role="treeitem"
           aria-label={t('tree.file')}
-          className={selected ? css.row + ' ' + css.rowSelected : css.row}
+          className={rowClass}
           style={{ paddingLeft: 8 + depth * 14 }}
           onClick={() => { selectFile(entry.path) }}
         >
           <span className={css.caret} aria-hidden />
-          <span className={css.fileName}>{entry.name}</span>
+          <span className={css.fileName} style={nameColor !== undefined ? { color: nameColor } : undefined}>{entry.name}</span>
           {entry.vcs !== undefined && (
             <span className={css.vcs} style={{ color: VCS_COLORS[entry.vcs] }} title={entry.vcs}>{vcsMarker(entry.vcs)}</span>
           )}
@@ -243,6 +248,7 @@ function renderLevel(
     const open = expanded.has(entry.path)
     const level = levels.get(entry.path)
     const isLoading = loading.has(entry.path)
+    const rowClass = css.row + (ignored ? ' ' + css.ignored : '')
     return (
       <div key={entry.path}>
         <button
@@ -250,12 +256,13 @@ function renderLevel(
           role="treeitem"
           aria-expanded={open}
           aria-label={t('tree.directory')}
-          className={css.row}
+          className={rowClass}
           style={{ paddingLeft: 8 + depth * 14 }}
           onClick={() => { toggleDir(entry.path) }}
         >
           <span className={css.caret} aria-hidden>{open ? '▾' : '▸'}</span>
-          <span className={css.dirName}>{entry.name}</span>
+          <span className={css.dirName} style={nameColor !== undefined ? { color: nameColor } : undefined}>{entry.name}</span>
+          {ignored && <span className={css.vcs} style={{ color: VCS_COLORS.ignored }} title="ignored">{vcsMarker('ignored')}</span>}
           {entry.vcsDirty === true && <span className={css.vcsDirty} aria-hidden>●</span>}
         </button>
         {open && isLoading && <div className={css.note} style={{ paddingLeft: 8 + (depth + 1) * 14 }}>{t('explorer.loading')}</div>}

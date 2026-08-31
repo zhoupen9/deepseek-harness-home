@@ -95,6 +95,29 @@ window.__ModuleLoader__.load({
 		function vcsMarker(status) {
 			return VCS_MARKERS[status] ?? "";
 		}
+		/**
+		* Whether an entry is git-ignored. Files carry `vcs: 'ignored'` when the host
+		* marks them from `git status --ignored`; an entirely-ignored directory is
+		* marked the same way (`!! dir/`), so both render grayed-out.
+		* @param entry - a listed child.
+		* @returns true when the entry should render as ignored.
+		*/
+		function isIgnoredEntry(entry) {
+			return entry.vcs === "ignored";
+		}
+		/**
+		* The text color for an entry's name by its VCS state: a file's own status
+		* (modified amber, deleted red, untracked gray, ...), a git-ignored directory's
+		* gray, or the amber "modified" color for a dirty directory (its descendants
+		* changed). A clean entry returns undefined so the name keeps the row's
+		* inherited text color.
+		* @param entry - a listed child.
+		* @returns a CSS color, or undefined for a clean entry.
+		*/
+		function vcsNameColor(entry) {
+			if (entry.vcs !== void 0) return VCS_COLORS[entry.vcs];
+			if (entry.vcsDirty === true) return VCS_COLORS.modified;
+		}
 		//#endregion
 		//#region src/client/files-lang.ts
 		/**
@@ -452,7 +475,7 @@ window.__ModuleLoader__.load({
 		}
 		//#endregion
 		//#region \0dsh-css:/home/zhoupeng/.dsh/packages/client/ui-files/src/client/FilesExplorer.module.css.mjs
-		const css$1 = "._34UJ0a_view{box-sizing:border-box;flex-direction:column;gap:12px;height:100%;min-height:0;padding:16px;display:flex}._34UJ0a_bar{align-items:center;gap:12px;min-width:0;display:flex}._34UJ0a_root{text-overflow:ellipsis;white-space:nowrap;min-width:0;font-family:var(--dsh-font-mono,ui-monospace, SFMono-Regular, Menlo, monospace);color:var(--dsh-text-secondary,#8b949e);flex:1;font-size:12px;overflow:hidden}._34UJ0a_toggle{white-space:nowrap;align-items:center;gap:6px;font-size:13px;display:flex}._34UJ0a_refresh{border:1px solid var(--dsh-border,#30363d);color:inherit;cursor:pointer;background:0 0;border-radius:6px;flex:none;padding:4px 12px;font-size:13px}._34UJ0a_refresh:hover{background:var(--dsh-hover-bg,#7f7f7f1f)}._34UJ0a_split{flex:1;gap:12px;min-height:0;display:flex}._34UJ0a_tree{border:1px solid var(--dsh-border,#30363d);border-radius:8px;flex:0 0 280px;min-width:0;padding:6px 0;overflow:auto}._34UJ0a_row{width:100%;color:inherit;text-align:left;cursor:pointer;white-space:nowrap;text-overflow:ellipsis;box-sizing:border-box;background:0 0;border:0;align-items:center;gap:4px;padding-top:3px;padding-bottom:3px;padding-right:8px;font-size:13px;display:flex;overflow:hidden}._34UJ0a_row:hover{background:var(--dsh-hover-bg,#7f7f7f1f)}._34UJ0a_rowSelected{background:var(--dsh-selection-bg,#388bfd2e)}._34UJ0a_caret{text-align:center;width:14px;color:var(--dsh-text-secondary,#8b949e);flex:none;font-size:11px}._34UJ0a_dirName{font-weight:600}._34UJ0a_fileName{font-family:var(--dsh-font-mono,ui-monospace, SFMono-Regular, Menlo, monospace);font-size:12px}._34UJ0a_size{color:var(--dsh-text-secondary,#8b949e);flex:none;margin-left:auto;font-size:11px}._34UJ0a_vcs{text-align:center;width:14px;font-family:var(--dsh-font-mono,ui-monospace, SFMono-Regular, Menlo, monospace);flex:none;font-size:11px;font-weight:600}._34UJ0a_vcsDirty{color:var(--dsh-text-secondary,#8b949e);flex:none;font-size:10px}._34UJ0a_note{color:var(--dsh-text-secondary,#8b949e);white-space:nowrap;text-overflow:ellipsis;padding:2px 8px;font-size:12px;overflow:hidden}._34UJ0a_content{border:1px solid var(--dsh-border,#30363d);border-radius:8px;flex:1;min-width:0;min-height:0;overflow:hidden}";
+		const css$1 = "._34UJ0a_view{box-sizing:border-box;flex-direction:column;gap:12px;height:100%;min-height:0;padding:16px;display:flex}._34UJ0a_bar{align-items:center;gap:12px;min-width:0;display:flex}._34UJ0a_root{text-overflow:ellipsis;white-space:nowrap;min-width:0;font-family:var(--dsw-font-family);color:var(--dsh-text-secondary,#8b949e);flex:1;font-size:12px;overflow:hidden}._34UJ0a_toggle{white-space:nowrap;align-items:center;gap:6px;font-size:13px;display:flex}._34UJ0a_refresh{border:1px solid var(--dsh-border,#30363d);color:inherit;cursor:pointer;background:0 0;border-radius:6px;flex:none;padding:4px 12px;font-size:13px}._34UJ0a_refresh:hover{background:var(--dsh-hover-bg,#7f7f7f1f)}._34UJ0a_split{flex:1;gap:12px;min-height:0;display:flex}._34UJ0a_tree{border:1px solid var(--dsh-border,#30363d);border-radius:8px;flex:0 0 280px;min-width:0;padding:6px 0;overflow:auto}._34UJ0a_row{width:100%;color:inherit;text-align:left;cursor:pointer;white-space:nowrap;text-overflow:ellipsis;box-sizing:border-box;background:0 0;border:0;align-items:center;gap:4px;padding-top:3px;padding-bottom:3px;padding-right:8px;font-size:13px;display:flex;overflow:hidden}._34UJ0a_row:hover{background:var(--dsh-hover-bg,#7f7f7f1f)}._34UJ0a_rowSelected{background:var(--dsh-selection-bg,#388bfd2e)}._34UJ0a_caret{text-align:center;width:14px;color:var(--dsh-text-secondary,#8b949e);flex:none;font-size:11px}._34UJ0a_dirName{font-weight:600}._34UJ0a_fileName{font-family:var(--dsw-font-family);font-size:12px}._34UJ0a_ignored ._34UJ0a_fileName,._34UJ0a_ignored ._34UJ0a_dirName{color:var(--dsh-text-secondary,#8b949e);opacity:.72}._34UJ0a_size{color:var(--dsh-text-secondary,#8b949e);flex:none;margin-left:auto;font-size:11px}._34UJ0a_vcs{text-align:center;width:14px;font-family:var(--dsw-font-family);flex:none;font-size:11px;font-weight:600}._34UJ0a_vcsDirty{color:var(--dsh-text-secondary,#8b949e);flex:none;font-size:10px}._34UJ0a_note{color:var(--dsh-text-secondary,#8b949e);white-space:nowrap;text-overflow:ellipsis;padding:2px 8px;font-size:12px;overflow:hidden}._34UJ0a_content{border:1px solid var(--dsh-border,#30363d);border-radius:8px;flex:1;min-width:0;min-height:0;overflow:hidden}";
 		const tagId$1 = "@deepseek-ai/dsh-client-ui-files/FilesExplorer.module.css";
 		if (typeof document !== "undefined" && document.querySelector("style[data-plugin-css=" + JSON.stringify(tagId$1) + "]") === null) {
 			const tag = document.createElement("style");
@@ -467,6 +490,7 @@ window.__ModuleLoader__.load({
 			"content": "_34UJ0a_content",
 			"dirName": "_34UJ0a_dirName",
 			"fileName": "_34UJ0a_fileName",
+			"ignored": "_34UJ0a_ignored",
 			"note": "_34UJ0a_note",
 			"refresh": "_34UJ0a_refresh",
 			"root": "_34UJ0a_root",
@@ -714,13 +738,16 @@ window.__ModuleLoader__.load({
 		*/
 		function renderLevel(entries, depth, levels, loading, expanded, selectedPath, showHidden, loadDir, toggleDir, selectFile, t) {
 			return entries.map((entry) => {
+				const ignored = isIgnoredEntry(entry);
+				const nameColor = vcsNameColor(entry);
 				if (entry.kind === "file") {
 					const selected = selectedPath === entry.path;
+					const rowClass = FilesExplorer_module_css_default.row + (selected ? " " + FilesExplorer_module_css_default.rowSelected : "") + (ignored ? " " + FilesExplorer_module_css_default.ignored : "");
 					return /* @__PURE__ */ (0, react_jsx_runtime.jsxs)("button", {
 						type: "button",
 						role: "treeitem",
 						"aria-label": t("tree.file"),
-						className: selected ? FilesExplorer_module_css_default.row + " " + FilesExplorer_module_css_default.rowSelected : FilesExplorer_module_css_default.row,
+						className: rowClass,
 						style: { paddingLeft: 8 + depth * 14 },
 						onClick: () => {
 							selectFile(entry.path);
@@ -732,6 +759,7 @@ window.__ModuleLoader__.load({
 							}),
 							/* @__PURE__ */ (0, react_jsx_runtime.jsx)("span", {
 								className: FilesExplorer_module_css_default.fileName,
+								style: nameColor !== void 0 ? { color: nameColor } : void 0,
 								children: entry.name
 							}),
 							entry.vcs !== void 0 && /* @__PURE__ */ (0, react_jsx_runtime.jsx)("span", {
@@ -750,13 +778,14 @@ window.__ModuleLoader__.load({
 				const open = expanded.has(entry.path);
 				const level = levels.get(entry.path);
 				const isLoading = loading.has(entry.path);
+				const rowClass = FilesExplorer_module_css_default.row + (ignored ? " " + FilesExplorer_module_css_default.ignored : "");
 				return /* @__PURE__ */ (0, react_jsx_runtime.jsxs)("div", { children: [
 					/* @__PURE__ */ (0, react_jsx_runtime.jsxs)("button", {
 						type: "button",
 						role: "treeitem",
 						"aria-expanded": open,
 						"aria-label": t("tree.directory"),
-						className: FilesExplorer_module_css_default.row,
+						className: rowClass,
 						style: { paddingLeft: 8 + depth * 14 },
 						onClick: () => {
 							toggleDir(entry.path);
@@ -769,7 +798,14 @@ window.__ModuleLoader__.load({
 							}),
 							/* @__PURE__ */ (0, react_jsx_runtime.jsx)("span", {
 								className: FilesExplorer_module_css_default.dirName,
+								style: nameColor !== void 0 ? { color: nameColor } : void 0,
 								children: entry.name
+							}),
+							ignored && /* @__PURE__ */ (0, react_jsx_runtime.jsx)("span", {
+								className: FilesExplorer_module_css_default.vcs,
+								style: { color: VCS_COLORS.ignored },
+								title: "ignored",
+								children: vcsMarker("ignored")
 							}),
 							entry.vcsDirty === true && /* @__PURE__ */ (0, react_jsx_runtime.jsx)("span", {
 								className: FilesExplorer_module_css_default.vcsDirty,
@@ -803,7 +839,7 @@ window.__ModuleLoader__.load({
 		}
 		//#endregion
 		//#region \0dsh-css:/home/zhoupeng/.dsh/packages/client/ui-files/src/client/FilesView.module.css.mjs
-		const css = "._6MXSJW_view{box-sizing:border-box;flex-direction:column;gap:12px;height:100%;min-height:0;padding:16px;display:flex}._6MXSJW_empty{color:var(--dsh-text-secondary,#8b949e);padding:24px 16px;font-size:14px}._6MXSJW_older{border:1px solid var(--dsh-border,#30363d);color:inherit;cursor:pointer;background:0 0;border-radius:6px;align-self:flex-start;padding:4px 12px;font-size:13px}._6MXSJW_older:disabled{opacity:.6;cursor:default}._6MXSJW_split{flex:1;gap:12px;min-height:0;display:flex}._6MXSJW_tree{border:1px solid var(--dsh-border,#30363d);border-radius:8px;flex:0 0 280px;min-width:0;padding:6px 0;overflow:auto}._6MXSJW_row{width:100%;color:inherit;text-align:left;cursor:pointer;white-space:nowrap;text-overflow:ellipsis;background:0 0;border:0;align-items:center;gap:4px;padding-top:3px;padding-bottom:3px;padding-right:8px;font-size:13px;display:flex;overflow:hidden}._6MXSJW_row:hover{background:var(--dsh-hover-bg,#7f7f7f1f)}._6MXSJW_rowSelected{background:var(--dsh-selection-bg,#388bfd2e)}._6MXSJW_caret{text-align:center;width:14px;color:var(--dsh-text-secondary,#8b949e);flex:none;font-size:11px}._6MXSJW_dirName{font-weight:600}._6MXSJW_fileName{font-family:var(--dsh-font-mono,ui-monospace, SFMono-Regular, Menlo, monospace);font-size:12px}._6MXSJW_content{border:1px solid var(--dsh-border,#30363d);border-radius:8px;flex:1;min-width:0;min-height:0;overflow:hidden}";
+		const css = "._6MXSJW_view{box-sizing:border-box;flex-direction:column;gap:12px;height:100%;min-height:0;padding:16px;display:flex}._6MXSJW_empty{color:var(--dsh-text-secondary,#8b949e);padding:24px 16px;font-size:14px}._6MXSJW_older{border:1px solid var(--dsh-border,#30363d);color:inherit;cursor:pointer;background:0 0;border-radius:6px;align-self:flex-start;padding:4px 12px;font-size:13px}._6MXSJW_older:disabled{opacity:.6;cursor:default}._6MXSJW_split{flex:1;gap:12px;min-height:0;display:flex}._6MXSJW_tree{border:1px solid var(--dsh-border,#30363d);border-radius:8px;flex:0 0 280px;min-width:0;padding:6px 0;overflow:auto}._6MXSJW_row{width:100%;color:inherit;text-align:left;cursor:pointer;white-space:nowrap;text-overflow:ellipsis;background:0 0;border:0;align-items:center;gap:4px;padding-top:3px;padding-bottom:3px;padding-right:8px;font-size:13px;display:flex;overflow:hidden}._6MXSJW_row:hover{background:var(--dsh-hover-bg,#7f7f7f1f)}._6MXSJW_rowSelected{background:var(--dsh-selection-bg,#388bfd2e)}._6MXSJW_caret{text-align:center;width:14px;color:var(--dsh-text-secondary,#8b949e);flex:none;font-size:11px}._6MXSJW_dirName{font-weight:600}._6MXSJW_fileName{font-family:var(--dsw-font-family);font-size:12px}._6MXSJW_content{border:1px solid var(--dsh-border,#30363d);border-radius:8px;flex:1;min-width:0;min-height:0;overflow:hidden}";
 		const tagId = "@deepseek-ai/dsh-client-ui-files/FilesView.module.css";
 		if (typeof document !== "undefined" && document.querySelector("style[data-plugin-css=" + JSON.stringify(tagId) + "]") === null) {
 			const tag = document.createElement("style");

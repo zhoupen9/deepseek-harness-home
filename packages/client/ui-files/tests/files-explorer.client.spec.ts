@@ -4,7 +4,7 @@
  * (all @deepseek-ai imports are type-only and erased at runtime).
  */
 import { describe, expect, it } from 'vitest'
-import { ancestorPaths, formatSize, sortEntries, VCS_COLORS, VCS_MARKERS, vcsMarker } from '../src/client/files-explorer.ts'
+import { ancestorPaths, formatSize, isIgnoredEntry, sortEntries, VCS_COLORS, VCS_MARKERS, vcsMarker, vcsNameColor } from '../src/client/files-explorer.ts'
 import type { VcsFileStatus, WorkspaceFilesEntry } from '../src/client/files-remote.ts'
 
 function entry(name: string, kind: 'dir' | 'file', hidden = false): WorkspaceFilesEntry {
@@ -74,5 +74,41 @@ describe('VCS markers', () => {
 
   it('colors conflicts and deletions red', () => {
     expect(VCS_COLORS.conflicted).toBe(VCS_COLORS.deleted)
+  })
+})
+
+describe('isIgnoredEntry', () => {
+  it('is true for files and directories the host marked ignored', () => {
+    expect(isIgnoredEntry({ name: 'n', path: '/n', kind: 'file', hidden: false, vcs: 'ignored' })).toBe(true)
+    expect(isIgnoredEntry({ name: 'n', path: '/n', kind: 'dir', hidden: false, vcs: 'ignored' })).toBe(true)
+  })
+
+  it('is false for other statuses and for entries without a vcs field', () => {
+    expect(isIgnoredEntry({ name: 'n', path: '/n', kind: 'file', hidden: false, vcs: 'untracked' })).toBe(false)
+    expect(isIgnoredEntry({ name: 'n', path: '/n', kind: 'file', hidden: false, vcs: 'modified' })).toBe(false)
+    expect(isIgnoredEntry({ name: 'n', path: '/n', kind: 'dir', hidden: false, vcsDirty: true })).toBe(false)
+    expect(isIgnoredEntry({ name: 'n', path: '/n', kind: 'file', hidden: false })).toBe(false)
+  })
+})
+
+describe('vcsNameColor', () => {
+  it('colors a file name by its own vcs status', () => {
+    expect(vcsNameColor({ name: 'n', path: '/n', kind: 'file', hidden: false, vcs: 'modified' })).toBe(VCS_COLORS.modified)
+    expect(vcsNameColor({ name: 'n', path: '/n', kind: 'file', hidden: false, vcs: 'deleted' })).toBe(VCS_COLORS.deleted)
+    expect(vcsNameColor({ name: 'n', path: '/n', kind: 'file', hidden: false, vcs: 'untracked' })).toBe(VCS_COLORS.untracked)
+    expect(vcsNameColor({ name: 'n', path: '/n', kind: 'file', hidden: false, vcs: 'added' })).toBe(VCS_COLORS.added)
+  })
+
+  it('colors a dirty directory amber (the modified color)', () => {
+    expect(vcsNameColor({ name: 'n', path: '/n', kind: 'dir', hidden: false, vcsDirty: true })).toBe(VCS_COLORS.modified)
+  })
+
+  it('colors a git-ignored directory gray', () => {
+    expect(vcsNameColor({ name: 'n', path: '/n', kind: 'dir', hidden: false, vcs: 'ignored' })).toBe(VCS_COLORS.ignored)
+  })
+
+  it('returns undefined for clean entries', () => {
+    expect(vcsNameColor({ name: 'n', path: '/n', kind: 'file', hidden: false })).toBeUndefined()
+    expect(vcsNameColor({ name: 'n', path: '/n', kind: 'dir', hidden: false })).toBeUndefined()
   })
 })
