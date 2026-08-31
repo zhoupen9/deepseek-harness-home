@@ -5,6 +5,13 @@
   flex-direction: column;
   gap: 12px;
   padding: 16px;
+  /* Keep tab content inside the chat transcript's content column so the
+     transcript width handles (the side-margin resize handles) stay clear,
+     visible, and hoverable while this tab is active. */
+  width: 100%;
+  max-width: var(--dsh-chat-content-width);
+  margin: 0 auto;
+  box-sizing: border-box;
 }
 
 .empty {

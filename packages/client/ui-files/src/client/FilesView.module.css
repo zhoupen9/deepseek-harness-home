@@ -7,6 +7,12 @@
   padding: 16px;
   height: 100%;
   min-height: 0;
+  /* Keep tab content inside the chat transcript's content column so the
+     transcript width handles (the side-margin resize handles) stay clear,
+     visible, and hoverable while this tab is active. */
+  width: 100%;
+  max-width: var(--dsh-chat-content-width);
+  margin: 0 auto;
   box-sizing: border-box;
 }
 
