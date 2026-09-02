@@ -89,6 +89,19 @@
   color: var(--dsh-text-secondary, #8b949e);
 }
 
+/* Folder/file kind glyph between the caret and the entry name. */
+.kind {
+  flex: none;
+  width: 12px;
+  height: 12px;
+  color: var(--dsh-text-secondary, #8b949e);
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
 .dirName {
   font-weight: 600;
 }

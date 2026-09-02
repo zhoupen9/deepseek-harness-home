@@ -486,8 +486,28 @@ window.__ModuleLoader__.load({
 			});
 		}
 		//#endregion
+		//#region src/client/files-tree-glyphs.tsx
+		/** Folder glyph shown on directory rows. */
+		function FolderGlyph({ className }) {
+			return /* @__PURE__ */ (0, react_jsx_runtime.jsx)("svg", {
+				className,
+				viewBox: "0 0 24 24",
+				"aria-hidden": "true",
+				children: /* @__PURE__ */ (0, react_jsx_runtime.jsx)("path", { d: "M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z" })
+			});
+		}
+		/** File glyph shown on file rows. */
+		function FileGlyph({ className }) {
+			return /* @__PURE__ */ (0, react_jsx_runtime.jsxs)("svg", {
+				className,
+				viewBox: "0 0 24 24",
+				"aria-hidden": "true",
+				children: [/* @__PURE__ */ (0, react_jsx_runtime.jsx)("path", { d: "M13 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z" }), /* @__PURE__ */ (0, react_jsx_runtime.jsx)("polyline", { points: "13 2 13 9 20 9" })]
+			});
+		}
+		//#endregion
 		//#region \0dsh-css:/home/zhoupeng/.dsh/packages/client/ui-files/src/client/FilesExplorer.module.css.mjs
-		const css$1 = "._34UJ0a_view{width:100%;height:100%;min-height:0;max-width:var(--dsh-chat-content-width);box-sizing:border-box;flex-direction:column;gap:12px;margin:0 auto;padding:16px;display:flex}._34UJ0a_bar{align-items:center;gap:12px;min-width:0;display:flex}._34UJ0a_root{text-overflow:ellipsis;white-space:nowrap;min-width:0;font-family:var(--dsw-font-family);color:var(--dsh-text-secondary,#8b949e);flex:1;font-size:12px;overflow:hidden}._34UJ0a_toggle{white-space:nowrap;align-items:center;gap:6px;font-size:13px;display:flex}._34UJ0a_refresh{border:1px solid var(--dsh-border,#30363d);color:inherit;cursor:pointer;background:0 0;border-radius:6px;flex:none;padding:4px 12px;font-size:13px}._34UJ0a_refresh:hover{background:var(--dsh-hover-bg,#7f7f7f1f)}._34UJ0a_split{flex:1;gap:12px;min-height:0;display:flex}._34UJ0a_tree{border:1px solid var(--dsh-border,#30363d);border-radius:8px;flex:0 0 280px;min-width:0;padding:6px 0;overflow:auto}._34UJ0a_row{width:100%;color:inherit;text-align:left;cursor:pointer;white-space:nowrap;text-overflow:ellipsis;box-sizing:border-box;background:0 0;border:0;align-items:center;gap:4px;padding-top:3px;padding-bottom:3px;padding-right:8px;font-size:13px;display:flex;overflow:hidden}._34UJ0a_row:hover{background:var(--dsh-hover-bg,#7f7f7f1f)}._34UJ0a_rowSelected{background:var(--dsh-selection-bg,#388bfd2e)}._34UJ0a_caret{text-align:center;width:14px;color:var(--dsh-text-secondary,#8b949e);flex:none;font-size:11px}._34UJ0a_dirName{font-weight:600}._34UJ0a_fileName{font-family:var(--dsw-font-family);font-size:12px}._34UJ0a_ignored ._34UJ0a_fileName,._34UJ0a_ignored ._34UJ0a_dirName{color:var(--dsh-text-secondary,#8b949e);opacity:.72}._34UJ0a_size{color:var(--dsh-text-secondary,#8b949e);flex:none;margin-left:auto;font-size:11px}._34UJ0a_vcs{text-align:center;width:14px;font-family:var(--dsw-font-family);flex:none;font-size:11px;font-weight:600}._34UJ0a_vcsDirty{color:var(--dsh-text-secondary,#8b949e);flex:none;font-size:10px}._34UJ0a_note{color:var(--dsh-text-secondary,#8b949e);white-space:nowrap;text-overflow:ellipsis;padding:2px 8px;font-size:12px;overflow:hidden}._34UJ0a_content{border:1px solid var(--dsh-border,#30363d);border-radius:8px;flex:1;min-width:0;min-height:0;overflow:hidden}";
+		const css$1 = "._34UJ0a_view{width:100%;height:100%;min-height:0;max-width:var(--dsh-chat-content-width);box-sizing:border-box;flex-direction:column;gap:12px;margin:0 auto;padding:16px;display:flex}._34UJ0a_bar{align-items:center;gap:12px;min-width:0;display:flex}._34UJ0a_root{text-overflow:ellipsis;white-space:nowrap;min-width:0;font-family:var(--dsw-font-family);color:var(--dsh-text-secondary,#8b949e);flex:1;font-size:12px;overflow:hidden}._34UJ0a_toggle{white-space:nowrap;align-items:center;gap:6px;font-size:13px;display:flex}._34UJ0a_refresh{border:1px solid var(--dsh-border,#30363d);color:inherit;cursor:pointer;background:0 0;border-radius:6px;flex:none;padding:4px 12px;font-size:13px}._34UJ0a_refresh:hover{background:var(--dsh-hover-bg,#7f7f7f1f)}._34UJ0a_split{flex:1;gap:12px;min-height:0;display:flex}._34UJ0a_tree{border:1px solid var(--dsh-border,#30363d);border-radius:8px;flex:0 0 280px;min-width:0;padding:6px 0;overflow:auto}._34UJ0a_row{width:100%;color:inherit;text-align:left;cursor:pointer;white-space:nowrap;text-overflow:ellipsis;box-sizing:border-box;background:0 0;border:0;align-items:center;gap:4px;padding-top:3px;padding-bottom:3px;padding-right:8px;font-size:13px;display:flex;overflow:hidden}._34UJ0a_row:hover{background:var(--dsh-hover-bg,#7f7f7f1f)}._34UJ0a_rowSelected{background:var(--dsh-selection-bg,#388bfd2e)}._34UJ0a_caret{text-align:center;width:14px;color:var(--dsh-text-secondary,#8b949e);flex:none;font-size:11px}._34UJ0a_dirName{font-weight:600}._34UJ0a_fileName{font-family:var(--dsw-font-family);font-size:12px}._34UJ0a_kind{width:12px;height:12px;color:var(--dsh-text-secondary,#8b949e);fill:none;stroke:currentColor;stroke-width:2px;stroke-linecap:round;stroke-linejoin:round;flex:none}._34UJ0a_ignored ._34UJ0a_fileName,._34UJ0a_ignored ._34UJ0a_dirName,._34UJ0a_ignored ._34UJ0a_kind{color:var(--dsh-text-secondary,#8b949e);opacity:.72}._34UJ0a_size{color:var(--dsh-text-secondary,#8b949e);flex:none;margin-left:auto;font-size:11px}._34UJ0a_vcs{text-align:center;width:14px;font-family:var(--dsw-font-family);flex:none;font-size:11px;font-weight:600}._34UJ0a_vcsDirty{color:var(--dsh-text-secondary,#8b949e);flex:none;font-size:10px}._34UJ0a_note{color:var(--dsh-text-secondary,#8b949e);white-space:nowrap;text-overflow:ellipsis;padding:2px 8px;font-size:12px;overflow:hidden}._34UJ0a_content{border:1px solid var(--dsh-border,#30363d);border-radius:8px;flex:1;min-width:0;min-height:0;overflow:hidden}";
 		const tagId$1 = "@deepseek-ai/dsh-client-ui-files/FilesExplorer.module.css";
 		if (typeof document !== "undefined" && document.querySelector("style[data-plugin-css=" + JSON.stringify(tagId$1) + "]") === null) {
 			const tag = document.createElement("style");
@@ -503,6 +523,7 @@ window.__ModuleLoader__.load({
 			"dirName": "_34UJ0a_dirName",
 			"fileName": "_34UJ0a_fileName",
 			"ignored": "_34UJ0a_ignored",
+			"kind": "_34UJ0a_kind",
 			"note": "_34UJ0a_note",
 			"refresh": "_34UJ0a_refresh",
 			"root": "_34UJ0a_root",
@@ -581,7 +602,7 @@ window.__ModuleLoader__.load({
 				levels: /* @__PURE__ */ new Map(),
 				loading: /* @__PURE__ */ new Set()
 			});
-			const [expanded, setExpanded] = (0, react.useState)(() => new Set([rootPath]));
+			const [expanded, setExpanded] = (0, react.useState)(() => /* @__PURE__ */ new Set([rootPath]));
 			const [showHidden, setShowHidden] = (0, react.useState)(false);
 			const [selectedPath, setSelectedPath] = (0, react.useState)(null);
 			const [content, setContent] = (0, react.useState)({ status: "idle" });
@@ -639,7 +660,7 @@ window.__ModuleLoader__.load({
 			]);
 			const selectFile = (0, react.useCallback)((path) => {
 				setSelectedPath(path);
-				setExpanded((prev) => new Set([...prev, ...ancestorPaths(path)]));
+				setExpanded((prev) => /* @__PURE__ */ new Set([...prev, ...ancestorPaths(path)]));
 			}, []);
 			(0, react.useEffect)(() => {
 				if (openRequest === null || openRequest.sessionId !== sessionId || openRequest.nonce <= consumedRequest.current) return;
@@ -780,6 +801,7 @@ window.__ModuleLoader__.load({
 								className: FilesExplorer_module_css_default.caret,
 								"aria-hidden": true
 							}),
+							/* @__PURE__ */ (0, react_jsx_runtime.jsx)(FileGlyph, { className: FilesExplorer_module_css_default.kind }),
 							/* @__PURE__ */ (0, react_jsx_runtime.jsx)("span", {
 								className: FilesExplorer_module_css_default.fileName,
 								style: nameColor !== void 0 ? { color: nameColor } : void 0,
@@ -819,6 +841,7 @@ window.__ModuleLoader__.load({
 								"aria-hidden": true,
 								children: open ? "▾" : "▸"
 							}),
+							/* @__PURE__ */ (0, react_jsx_runtime.jsx)(FolderGlyph, { className: FilesExplorer_module_css_default.kind }),
 							/* @__PURE__ */ (0, react_jsx_runtime.jsx)("span", {
 								className: FilesExplorer_module_css_default.dirName,
 								style: nameColor !== void 0 ? { color: nameColor } : void 0,
@@ -862,7 +885,7 @@ window.__ModuleLoader__.load({
 		}
 		//#endregion
 		//#region \0dsh-css:/home/zhoupeng/.dsh/packages/client/ui-files/src/client/FilesView.module.css.mjs
-		const css = "._6MXSJW_view{width:100%;height:100%;min-height:0;max-width:var(--dsh-chat-content-width);box-sizing:border-box;flex-direction:column;gap:12px;margin:0 auto;padding:16px;display:flex}._6MXSJW_empty{color:var(--dsh-text-secondary,#8b949e);padding:24px 16px;font-size:14px}._6MXSJW_older{border:1px solid var(--dsh-border,#30363d);color:inherit;cursor:pointer;background:0 0;border-radius:6px;align-self:flex-start;padding:4px 12px;font-size:13px}._6MXSJW_older:disabled{opacity:.6;cursor:default}._6MXSJW_split{flex:1;gap:12px;min-height:0;display:flex}._6MXSJW_tree{border:1px solid var(--dsh-border,#30363d);border-radius:8px;flex:0 0 280px;min-width:0;padding:6px 0;overflow:auto}._6MXSJW_row{width:100%;color:inherit;text-align:left;cursor:pointer;white-space:nowrap;text-overflow:ellipsis;background:0 0;border:0;align-items:center;gap:4px;padding-top:3px;padding-bottom:3px;padding-right:8px;font-size:13px;display:flex;overflow:hidden}._6MXSJW_row:hover{background:var(--dsh-hover-bg,#7f7f7f1f)}._6MXSJW_rowSelected{background:var(--dsh-selection-bg,#388bfd2e)}._6MXSJW_caret{text-align:center;width:14px;color:var(--dsh-text-secondary,#8b949e);flex:none;font-size:11px}._6MXSJW_dirName{font-weight:600}._6MXSJW_fileName{font-family:var(--dsw-font-family);font-size:12px}._6MXSJW_content{border:1px solid var(--dsh-border,#30363d);border-radius:8px;flex:1;min-width:0;min-height:0;overflow:hidden}";
+		const css = "._6MXSJW_view{width:100%;height:100%;min-height:0;max-width:var(--dsh-chat-content-width);box-sizing:border-box;flex-direction:column;gap:12px;margin:0 auto;padding:16px;display:flex}._6MXSJW_empty{color:var(--dsh-text-secondary,#8b949e);padding:24px 16px;font-size:14px}._6MXSJW_older{border:1px solid var(--dsh-border,#30363d);color:inherit;cursor:pointer;background:0 0;border-radius:6px;align-self:flex-start;padding:4px 12px;font-size:13px}._6MXSJW_older:disabled{opacity:.6;cursor:default}._6MXSJW_split{flex:1;gap:12px;min-height:0;display:flex}._6MXSJW_tree{border:1px solid var(--dsh-border,#30363d);border-radius:8px;flex:0 0 280px;min-width:0;padding:6px 0;overflow:auto}._6MXSJW_row{width:100%;color:inherit;text-align:left;cursor:pointer;white-space:nowrap;text-overflow:ellipsis;background:0 0;border:0;align-items:center;gap:4px;padding-top:3px;padding-bottom:3px;padding-right:8px;font-size:13px;display:flex;overflow:hidden}._6MXSJW_row:hover{background:var(--dsh-hover-bg,#7f7f7f1f)}._6MXSJW_rowSelected{background:var(--dsh-selection-bg,#388bfd2e)}._6MXSJW_caret{text-align:center;width:14px;color:var(--dsh-text-secondary,#8b949e);flex:none;font-size:11px}._6MXSJW_kind{width:12px;height:12px;color:var(--dsh-text-secondary,#8b949e);fill:none;stroke:currentColor;stroke-width:2px;stroke-linecap:round;stroke-linejoin:round;flex:none}._6MXSJW_dirName{font-weight:600}._6MXSJW_fileName{font-family:var(--dsw-font-family);font-size:12px}._6MXSJW_content{border:1px solid var(--dsh-border,#30363d);border-radius:8px;flex:1;min-width:0;min-height:0;overflow:hidden}";
 		const tagId = "@deepseek-ai/dsh-client-ui-files/FilesView.module.css";
 		if (typeof document !== "undefined" && document.querySelector("style[data-plugin-css=" + JSON.stringify(tagId) + "]") === null) {
 			const tag = document.createElement("style");
@@ -877,6 +900,7 @@ window.__ModuleLoader__.load({
 			"dirName": "_6MXSJW_dirName",
 			"empty": "_6MXSJW_empty",
 			"fileName": "_6MXSJW_fileName",
+			"kind": "_6MXSJW_kind",
 			"older": "_6MXSJW_older",
 			"row": "_6MXSJW_row",
 			"rowSelected": "_6MXSJW_rowSelected",
@@ -933,14 +957,18 @@ window.__ModuleLoader__.load({
 					if (isDir) onToggle(node.path);
 					else onSelect(node.path);
 				},
-				children: [/* @__PURE__ */ (0, react_jsx_runtime.jsx)("span", {
-					className: FilesView_module_css_default.caret,
-					"aria-hidden": true,
-					children: isDir ? open ? "▾" : "▸" : ""
-				}), /* @__PURE__ */ (0, react_jsx_runtime.jsx)("span", {
-					className: isDir ? FilesView_module_css_default.dirName : FilesView_module_css_default.fileName,
-					children: node.name
-				})]
+				children: [
+					/* @__PURE__ */ (0, react_jsx_runtime.jsx)("span", {
+						className: FilesView_module_css_default.caret,
+						"aria-hidden": true,
+						children: isDir ? open ? "▾" : "▸" : ""
+					}),
+					isDir ? /* @__PURE__ */ (0, react_jsx_runtime.jsx)(FolderGlyph, { className: FilesView_module_css_default.kind }) : /* @__PURE__ */ (0, react_jsx_runtime.jsx)(FileGlyph, { className: FilesView_module_css_default.kind }),
+					/* @__PURE__ */ (0, react_jsx_runtime.jsx)("span", {
+						className: isDir ? FilesView_module_css_default.dirName : FilesView_module_css_default.fileName,
+						children: node.name
+					})
+				]
 			}), isDir && open && (node.children ?? []).map((child) => /* @__PURE__ */ (0, react_jsx_runtime.jsx)(TreeRow, {
 				node: child,
 				depth: depth + 1,
@@ -968,12 +996,12 @@ window.__ModuleLoader__.load({
 				if (request === null || request.sessionId !== sessionId || request.nonce <= consumedNonce.current) return;
 				consumedNonce.current = request.nonce;
 				setSelectedPath(request.path);
-				setExpanded((prev) => new Set([...prev, ...ancestorsOf(request.path)]));
+				setExpanded((prev) => /* @__PURE__ */ new Set([...prev, ...ancestorsOf(request.path)]));
 			}, [request, sessionId]);
 			(0, react.useEffect)(() => {
 				if (viewRequest === null || viewRequest.view !== "files") return;
 				setSelectedPath(viewRequest.focus);
-				setExpanded((prev) => new Set([...prev, ...ancestorsOf(viewRequest.focus)]));
+				setExpanded((prev) => /* @__PURE__ */ new Set([...prev, ...ancestorsOf(viewRequest.focus)]));
 				completeViewRequest();
 			}, [viewRequest, completeViewRequest]);
 			(0, react.useEffect)(() => {
@@ -981,7 +1009,7 @@ window.__ModuleLoader__.load({
 				const first = firstFilePath(snapshot.files);
 				if (first !== void 0) {
 					setSelectedPath(first);
-					setExpanded((prev) => new Set([...prev, ...ancestorsOf(first)]));
+					setExpanded((prev) => /* @__PURE__ */ new Set([...prev, ...ancestorsOf(first)]));
 				}
 			}, [snapshot, selectedPath]);
 			const selected = (0, react.useMemo)(() => selectedPath === null ? void 0 : snapshot.files.get(selectedPath), [snapshot, selectedPath]);
@@ -1113,7 +1141,7 @@ window.__ModuleLoader__.load({
 		//#endregion
 		//#region src/client/files-definition.ts
 		/** Tools whose results carry file facts the Files view knows. */
-		const FILE_TOOLS = new Set([
+		const FILE_TOOLS = /* @__PURE__ */ new Set([
 			"edit",
 			"write",
 			"str_replace_editor",

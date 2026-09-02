@@ -12,6 +12,7 @@ import type { WorkspaceFilesContent, WorkspaceFilesEntry, WorkspaceFilesRemote }
 import { ancestorPaths, formatSize, isIgnoredEntry, resolveUnderRoot, sortEntries, VCS_COLORS, vcsMarker, vcsNameColor } from './files-explorer.ts'
 import type { FileOpenRequest } from './files-contract.ts'
 import { FileContentPane } from './FileContentPane.tsx'
+import { FileGlyph, FolderGlyph } from './files-tree-glyphs.tsx'
 import type { FilesTranslate } from './locales.ts'
 import css from './FilesExplorer.module.css'
 
@@ -252,6 +253,7 @@ function renderLevel(
           onClick={() => { selectFile(entry.path) }}
         >
           <span className={css.caret} aria-hidden />
+          <FileGlyph className={css.kind} />
           <span className={css.fileName} style={nameColor !== undefined ? { color: nameColor } : undefined}>{entry.name}</span>
           {entry.vcs !== undefined && (
             <span className={css.vcs} style={{ color: VCS_COLORS[entry.vcs] }} title={entry.vcs}>{vcsMarker(entry.vcs)}</span>
@@ -276,6 +278,7 @@ function renderLevel(
           onClick={() => { toggleDir(entry.path) }}
         >
           <span className={css.caret} aria-hidden>{open ? '▾' : '▸'}</span>
+          <FolderGlyph className={css.kind} />
           <span className={css.dirName} style={nameColor !== undefined ? { color: nameColor } : undefined}>{entry.name}</span>
           {ignored && <span className={css.vcs} style={{ color: VCS_COLORS.ignored }} title="ignored">{vcsMarker('ignored')}</span>}
           {entry.vcsDirty === true && <span className={css.vcsDirty} aria-hidden>●</span>}

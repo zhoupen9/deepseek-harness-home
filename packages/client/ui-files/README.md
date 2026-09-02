@@ -38,6 +38,7 @@ packages/client/ui-files/
   src/client/files-explorer.ts   # pure helpers (sort, ancestors, size)
   src/client/FilesExplorer.tsx   # live lazy tree + content pane
   src/client/FilesView.tsx       # tab: live vs session-known switcher
+  src/client/files-tree-glyphs.tsx  # folder/file kind glyphs for tree rows
   src/client/FileContentPane.tsx # shared highlighted content pane
   src/client/files-contract.ts   # session-known snapshot types
   src/client/files-definition.ts # session-known event state machine

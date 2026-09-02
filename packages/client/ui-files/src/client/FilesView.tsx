@@ -15,6 +15,7 @@ import type { FilesFile, FileOpenRequest, FileTreeNode } from './files-contract.
 import type { WorkspaceFilesRemote } from './files-remote.ts'
 import { FilesExplorer } from './FilesExplorer.tsx'
 import { FileContentPane } from './FileContentPane.tsx'
+import { FileGlyph, FolderGlyph } from './files-tree-glyphs.tsx'
 import type { FilesTranslate } from './locales.ts'
 import { NS } from './locales.ts'
 import css from './FilesView.module.css'
@@ -84,6 +85,7 @@ function TreeRow({
         onClick={() => { if (isDir) { onToggle(node.path) } else { onSelect(node.path) } }}
       >
         <span className={css.caret} aria-hidden>{isDir ? (open ? '▾' : '▸') : ''}</span>
+        {isDir ? <FolderGlyph className={css.kind} /> : <FileGlyph className={css.kind} />}
         <span className={isDir ? css.dirName : css.fileName}>{node.name}</span>
       </button>
       {isDir && open && (node.children ?? []).map(child => (

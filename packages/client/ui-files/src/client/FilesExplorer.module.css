@@ -118,10 +118,24 @@
   font-size: 12px;
 }
 
+/* Folder/file kind glyph between the caret and the entry name. */
+.kind {
+  flex: none;
+  width: 12px;
+  height: 12px;
+  color: var(--dsh-text-secondary, #8b949e);
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
 /* Git-ignored entries: the name dims to the muted secondary tone so an
    ignored directory or file reads as grayed-out while staying selectable. */
 .ignored .fileName,
-.ignored .dirName {
+.ignored .dirName,
+.ignored .kind {
   color: var(--dsh-text-secondary, #8b949e);
   opacity: 0.72;
 }
