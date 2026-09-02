@@ -34,6 +34,47 @@
   color: var(--dsh-text-secondary, #8b949e);
 }
 
+.traversalGroup {
+  display: inline-flex;
+  border: 1px solid var(--dsh-border, #30363d);
+  border-radius: 6px;
+  overflow: hidden;
+  color: var(--dsh-text-secondary, #8b949e);
+  font-size: 11px;
+}
+
+.traversalButton {
+  border: 0;
+  border-left: 1px solid var(--dsh-border, #30363d);
+  background: transparent;
+  color: inherit;
+  font-size: 11px;
+  line-height: 18px;
+  padding: 0 8px;
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+.traversalButton:first-child {
+  border-left: 0;
+}
+
+.traversalButton:hover {
+  background: var(--dsh-hover-bg, rgba(127, 127, 127, 0.12));
+  color: var(--dsh-text-primary, #e6edf3);
+}
+
+.traversalButton:focus-visible {
+  outline: 1px solid var(--dsh-accent, #58a6ff);
+  outline-offset: -1px;
+}
+
+.traversalActive,
+.traversalActive:hover {
+  background: var(--dsh-selection-bg, rgba(56, 139, 253, 0.18));
+  color: var(--dsh-text-primary, #e6edf3);
+}
+
 .body {
   display: flex;
   flex: 1;
@@ -65,11 +106,17 @@
   fill: var(--dsh-accent, #58a6ff);
 }
 
+.logColumn {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-width: 0;
+}
+
 .commits {
   list-style: none;
   margin: 0;
   padding: 0;
-  flex: 1;
   min-width: 0;
 }
 
@@ -125,21 +172,90 @@
   gap: 8px;
   flex: none;
   color: var(--dsh-text-secondary, #8b949e);
-  font-size: 12px;
+  font-family: var(--dsh-font-mono, ui-monospace, SFMono-Regular, Menlo, monospace);
+  font-size: 11px;
 }
 
-.hash {
-  font-family: var(--dsw-font-family);
+/* Fixed-width cells make sha / author / time true table columns: every commit
+   row lines the three up at the same x offset. The sha column leads the row,
+   directly after the graph lanes. */
+.commit .hash {
+  flex: none;
+  width: 7ch;
+  color: var(--dsh-text-secondary, #8b949e);
+  font-family: var(--dsh-font-mono, ui-monospace, SFMono-Regular, Menlo, monospace);
+  font-size: 11px;
+  /* Scoped to commit rows: the details pane's full hash keeps the default
+     variant UI font. */
 }
 
 .author {
+  flex: none;
+  width: 120px;
   overflow: hidden;
+  text-align: right;
   text-overflow: ellipsis;
-  max-width: 180px;
+}
+
+/* User glyph preceding the author name. */
+.userGlyph {
+  width: 12px;
+  height: 12px;
+  margin-right: 4px;
+  vertical-align: -2px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
 }
 
 .time {
+  flex: none;
+  width: 180px;
+  overflow: hidden;
+  text-overflow: ellipsis;
   font-variant-numeric: tabular-nums;
+}
+
+.loadMore {
+  flex: none;
+  align-self: flex-start;
+  margin: 10px 0 4px;
+  border: 1px solid var(--dsh-border, #30363d);
+  border-radius: 6px;
+  background: transparent;
+  color: inherit;
+  padding: 4px 12px;
+  font-size: 13px;
+  cursor: pointer;
+}
+
+.loadMore:hover:not(:disabled) {
+  background: var(--dsh-hover-bg, rgba(127, 127, 127, 0.12));
+}
+
+.loadMore:disabled {
+  opacity: 0.6;
+  cursor: default;
+}
+
+.loadMore:focus-visible {
+  outline: 1px solid var(--dsh-accent, #58a6ff);
+  outline-offset: 1px;
+}
+
+/* Calendar glyph preceding the timestamp. */
+.calendarGlyph {
+  width: 12px;
+  height: 12px;
+  margin-right: 4px;
+  vertical-align: -2px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
 }
 
 .details {

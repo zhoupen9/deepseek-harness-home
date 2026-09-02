@@ -28,10 +28,14 @@ any `GitCommit[]`.
   commit's parent reuses that lane (merge-back), and a parent outside the
   window keeps its lane so its edge dangles off the bottom. `routeEdge`
   draws each edge as a straight or L-shaped polyline.
-- **View** (`GitView.tsx`): fetches one bounded log (`maxCount: 200`) with
-  an `AbortController`, renders the SVG graph and commit list, and shows
+- **View** (`GitView.tsx`): fetches the latest 32 commits (`LOG_PAGE_SIZE`)
+  with an `AbortController`, renders the SVG graph and commit list, and shows
   targeted notices for each empty/error state (host missing, no workspace, no
-  repo, no commits, host error, truncated history).
+  repo, no commits, host error). When more history exists the list ends in a
+  "Load more" button that grows the window by 32 per click. A header select
+  switches history traversal between `--first-parent`, `--max-parents=1`, and
+  `--max-parents=2` (the latter two need the host change in
+  [HOST_TRAVERSAL_MODES.md](HOST_TRAVERSAL_MODES.md)).
 - Registers exactly like `ui-trajectory`/ui-edits/ui-files: one
   `conversation.view` slot (id `git`, order 23) — no service, no
   model-visible changes, no session events.
@@ -57,6 +61,7 @@ any `GitCommit[]`.
       src/client/locales.ts             # zh/en namespace 'git'
       tests/git-graph.client.spec.ts    # pure layout spec
       HOST_PRIMITIVES.md                # host-side requirements (separate deliverable)
+      HOST_TRAVERSAL_MODES.md           # --max-parents host change requirements
       INTEGRATION.md                    # wiring/removal notes
 
 ## Build and test

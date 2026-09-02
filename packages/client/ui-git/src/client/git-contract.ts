@@ -44,6 +44,12 @@ export interface GitLogOptions {
   readonly all?: boolean
   /** `true` follows only the first-parent chain (a flat mainline). */
   readonly firstParent?: boolean
+  /**
+   * Include only commits with at most this many parents: `1` hides merge
+   * commits, `2` hides octopus merges. Translates to git's
+   * `--max-parents=<n>`; the host requires support for this option.
+   */
+  readonly maxParents?: 1 | 2
 }
 
 /** The host `git` namespace's `log` verb result. */

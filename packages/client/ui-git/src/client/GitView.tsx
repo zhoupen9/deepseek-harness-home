@@ -8,10 +8,10 @@
  * Otherwise it renders a targeted notice — host primitive missing, no
  * workspace, not a repo, no commits, or a host error.
  */
-import { useEffect, useMemo, useState, type KeyboardEvent } from 'react'
+import { useEffect, useMemo, useRef, useState, type KeyboardEvent } from 'react'
 import type { ConvViewProps } from '@deepseek-ai/dsh-client-ui-conversation/client'
 import type { InjectFace, PropsLocale } from '@deepseek-ai/dsh-client-ui-slots'
-import type { GitLogResult, GitRef, GitShowFileStatus, GitShowResult } from './git-contract.ts'
+import type { GitLogOptions, GitLogResult, GitRef, GitShowFileStatus, GitShowResult } from './git-contract.ts'
 import { classifyDiffLine, type DiffLineKind } from './git-diff.ts'
 import { layoutGitGraph } from './git-graph.ts'
 import type { GitRemote } from './git-remote.ts'
@@ -31,8 +31,8 @@ export interface GitViewInjected {
 export const GIT_LANE_WIDTH = 16
 export const GIT_ROW_HEIGHT = 28
 
-/** Max commits requested per log page. */
-const LOG_MAX_COUNT = 200
+/** Commits loaded per history page; more are fetched on demand. */
+const LOG_PAGE_SIZE = 32
 
 /** Ref badge color per kind (branch/tag use the fixed GitHub palette). */
 const REF_COLORS: Readonly<Record<GitRef['kind'], string>> = {
@@ -40,6 +40,31 @@ const REF_COLORS: Readonly<Record<GitRef['kind'], string>> = {
   branch: '#3fb950',
   tag: '#d29922',
   remote: 'var(--dsh-text-secondary, #8b949e)',
+}
+
+/**
+ * Commit-history traversal modes the view can request from the host git log.
+ * Each entry names the git flag it maps to; `--max-parents=<n>` limits the
+ * listing to commits with at most n parents (see HOST_TRAVERSAL_MODES.md).
+ */
+type Traversal = 'first-parent' | 'max-parents-1' | 'max-parents-2'
+
+const TRAVERSALS: ReadonlyArray<{ readonly mode: Traversal; readonly label: string }> = [
+  { mode: 'first-parent', label: '--first-parent' },
+  { mode: 'max-parents-1', label: '--max-parents=1' },
+  { mode: 'max-parents-2', label: '--max-parents=2' },
+]
+
+/** Map a traversal mode to the host log options that reproduce its flag. */
+function traversalOptions(mode: Traversal): Pick<GitLogOptions, 'firstParent' | 'maxParents'> {
+  switch (mode) {
+    case 'first-parent':
+      return { firstParent: true, maxParents: undefined }
+    case 'max-parents-1':
+      return { firstParent: false, maxParents: 1 }
+    case 'max-parents-2':
+      return { firstParent: false, maxParents: 2 }
+  }
 }
 
 /** Badge color per changed-file status (the fixed GitHub/VSCode palette). */
@@ -88,9 +113,21 @@ function shortHash(hash: string): string {
   return hash.slice(0, 7)
 }
 
-/** Human-readable timestamp (user data, not product copy). */
+/** Zero-pad a numeric date/time part to two digits. */
+function pad2(value: number): string {
+  return String(value).padStart(2, '0')
+}
+
+/** Human-readable timestamp (user data, not product copy): local date and time
+ * with zero-padded month/day and hour/minute/second, e.g. "01/03/2026, 03:05:08". */
 function formatTime(time: number): string {
-  return new Date(time).toLocaleString()
+  const date = new Date(time)
+  const month = pad2(date.getMonth() + 1)
+  const day = pad2(date.getDate())
+  const hours = pad2(date.getHours())
+  const minutes = pad2(date.getMinutes())
+  const seconds = pad2(date.getSeconds())
+  return `${month}/${day}/${date.getFullYear()}, ${hours}:${minutes}:${seconds}`
 }
 
 type LoadState =
@@ -211,15 +248,25 @@ export function GitView({
   const [state, setState] = useState<LoadState>({ kind: 'idle' })
   const [selectedHash, setSelectedHash] = useState<string | null>(null)
   const [details, setDetails] = useState<DetailsState>({ kind: 'idle' })
+  const [traversal, setTraversal] = useState<Traversal>('first-parent')
+  /** Commit window currently loaded (grows by LOG_PAGE_SIZE per load-more). */
+  const [windowCount, setWindowCount] = useState<number>(LOG_PAGE_SIZE)
+  const [loadingMore, setLoadingMore] = useState(false)
+  const loadMoreRef = useRef<AbortController | null>(null)
 
   useEffect(() => {
     if (git === undefined || root === undefined) {
+      loadMoreRef.current?.abort()
       setState({ kind: 'idle' })
       return
     }
+    loadMoreRef.current?.abort()
+    setWindowCount(LOG_PAGE_SIZE)
+    setLoadingMore(false)
     const controller = new AbortController()
     setState({ kind: 'loading' })
-    void git.log(sessionId, { maxCount: LOG_MAX_COUNT }, controller.signal)
+    const options: GitLogOptions = { maxCount: LOG_PAGE_SIZE, ...traversalOptions(traversal) }
+    void git.log(sessionId, options, controller.signal)
       .then((log) => {
         if (controller.signal.aborted) return
         setState({ kind: 'ready', log })
@@ -229,7 +276,7 @@ export function GitView({
         setState({ kind: 'error', message: error instanceof Error ? error.message : String(error) })
       })
     return () => { controller.abort() }
-  }, [git, root, sessionId])
+  }, [git, root, sessionId, traversal])
 
   useEffect(() => {
     if (git === undefined || selectedHash === null) {
@@ -266,6 +313,39 @@ export function GitView({
     }
   }
 
+  const changeMode = (mode: Traversal): void => {
+    if (mode === traversal) return
+    loadMoreRef.current?.abort()
+    setTraversal(mode)
+    setWindowCount(LOG_PAGE_SIZE)
+    setLoadingMore(false)
+    setSelectedHash(null)
+    setDetails({ kind: 'idle' })
+  }
+
+  const loadMore = (): void => {
+    if (git === undefined || state.kind !== 'ready') return
+    const next = windowCount + LOG_PAGE_SIZE
+    loadMoreRef.current?.abort()
+    const controller = new AbortController()
+    loadMoreRef.current = controller
+    setWindowCount(next)
+    setLoadingMore(true)
+    const options: GitLogOptions = { maxCount: next, ...traversalOptions(traversal) }
+    void git.log(sessionId, options, controller.signal)
+      .then((log) => {
+        if (controller.signal.aborted) return
+        setState({ kind: 'ready', log })
+      })
+      .catch((error: unknown) => {
+        if (controller.signal.aborted) return
+        setState({ kind: 'error', message: error instanceof Error ? error.message : String(error) })
+      })
+      .finally(() => {
+        if (!controller.signal.aborted) setLoadingMore(false)
+      })
+  }
+
   if (git === undefined) {
     return <div className={css.view}><div className={css.empty}>{t('empty.requiresHost')}</div></div>
   }
@@ -295,7 +375,25 @@ export function GitView({
     <div className={css.view}>
       <header className={css.header}>
         <span className={css.branch} title={log.headHash}>{log.currentBranch ?? 'HEAD'}</span>
-        {log.truncated && <span className={css.truncated}>{t('log.truncated', { count: log.commits.length })}</span>}
+        <div
+          className={css.traversalGroup}
+          role="group"
+          aria-label={t('log.traversalLabel')}
+          title={t('log.traversalLabel')}
+        >
+          {TRAVERSALS.map(entry => (
+            <button
+              key={entry.mode}
+              type="button"
+              className={entry.mode === traversal ? css.traversalButton + ' ' + css.traversalActive : css.traversalButton}
+              aria-pressed={entry.mode === traversal}
+              onClick={() => { changeMode(entry.mode) }}
+            >
+              {entry.label}
+            </button>
+          ))}
+        </div>
+
       </header>
       <div className={css.body}>
         <div className={css.history}>
@@ -311,6 +409,7 @@ export function GitView({
               <circle key={node.hash} className={css.node} cx={xOf(node.column)} cy={yOf(node.row)} r={3} />
             ))}
           </svg>
+          <div className={css.logColumn}>
           <ol className={css.commits}>
             {log.commits.map(commit => (
               <li
@@ -323,6 +422,7 @@ export function GitView({
                 onClick={() => { toggleSelection(commit.hash) }}
                 onKeyDown={rowKeyDown(commit.hash)}
               >
+                <span className={css.hash} title={commit.hash}>{shortHash(commit.hash)}</span>
                 <span className={css.refs}>
                   {commit.refs.map(ref => (
                     <span key={ref.name} className={css.ref} style={{ color: REF_COLORS[ref.kind] }}>{ref.name}</span>
@@ -330,13 +430,37 @@ export function GitView({
                 </span>
                 <span className={css.subject}>{commit.subject}</span>
                 <span className={css.byline}>
-                  <span className={css.hash} title={commit.hash}>{shortHash(commit.hash)}</span>
-                  <span className={css.author}>{commit.authorName}</span>
-                  <span className={css.time}>{formatTime(commit.authorTime)}</span>
+                  <span className={css.author}>
+                    <svg className={css.userGlyph} viewBox="0 0 24 24" aria-hidden="true">
+                      <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+                      <circle cx="12" cy="7" r="4" />
+                    </svg>
+                    {commit.authorName}
+                  </span>
+                  <span className={css.time}>
+                    <svg className={css.calendarGlyph} viewBox="0 0 24 24" aria-hidden="true">
+                      <rect x="3" y="4" width="18" height="18" rx="2" ry="2" />
+                      <line x1="16" y1="2" x2="16" y2="6" />
+                      <line x1="8" y1="2" x2="8" y2="6" />
+                      <line x1="3" y1="10" x2="21" y2="10" />
+                    </svg>
+                    {formatTime(commit.authorTime)}
+                  </span>
                 </span>
               </li>
             ))}
           </ol>
+          {log.truncated && (
+            <button
+              type="button"
+              className={css.loadMore}
+              onClick={loadMore}
+              disabled={loadingMore}
+            >
+              {loadingMore ? t('log.loadingMore') : t('log.loadMore')}
+            </button>
+          )}
+          </div>
         </div>
         {selectedHash !== null && (
           <CommitDetails details={details} t={t} onClose={() => { setSelectedHash(null) }} />
