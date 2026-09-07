@@ -14,6 +14,8 @@ It holds the per-profile configuration and a set of **client plugins** for the w
     │       ├── ui-files/        # @deepseek-ai/dsh-client-ui-files
     │       ├── ui-edits/        # @deepseek-ai/dsh-client-ui-edits
     │       ├── ui-changes/      # @deepseek-ai/dsh-client-ui-changes
+    │       ├── ui-git/          # @deepseek-ai/dsh-client-ui-git
+    │       ├── ui-session-metrics/ # @deepseek-ai/dsh-client-ui-session-metrics
     │       ├── tsdown.client.ts # shared clientBundle tsdown preset
     │       ├── modules/         # preset support modules (manifest/system)
     │       └── web/             # shared browser platform module list
@@ -27,13 +29,13 @@ It holds the per-profile configuration and a set of **client plugins** for the w
 
 | Profile | Bundles | Notes |
 | --- | --- | --- |
-| `web` | `@deepseek-ai/dsh-base`, `@deepseek-ai/dsh-web-app` | web GUI; `cordis.patch.yml` disables the shipped `ui-deliverables` row and inserts the three client plugins below |
+| `web` | `@deepseek-ai/dsh-base`, `@deepseek-ai/dsh-web-app` | web GUI; `cordis.patch.yml` disables the shipped `ui-deliverables` row and inserts the five client plugins below |
 
 `cordis.yml` is the profile root (an empty entry list). `cordis.patch.yml` is the patch layer applied on top of every bundle layer — edit `cordis.patch.yml`, never `cordis.yml`. `package.json` sets `dsh.profile.patchReload: "live"`, so patch changes are picked up without restarting the server.
 
 ## Client plugins
 
-The three plugins are pure-frontend (pure-consumer) client plugins: each is a self-contained npm package with source in `src/`, compiled output in `lib/`, and tests in `tests/`. Each is wired into the web profile by two things:
+The plugins are pure-frontend (pure-consumer) client plugins: each is a self-contained npm package with source in `src/`, compiled output in `lib/`, and tests in `tests/`. Each is wired into the web profile by two things:
 
 1. a symlink `profiles/node_modules/@deepseek-ai/<pkg-name>` → `packages/client/<dir>` (the mode-installation / fallback resolution — the profile points at the local source tree), and
 2. an `insert:` entry in `profiles/web/cordis.patch.yml` that loads the package by `id` + `name`.
@@ -43,6 +45,8 @@ The three plugins are pure-frontend (pure-consumer) client plugins: each is a se
 | `packages/client/ui-files` | `@deepseek-ai/dsh-client-ui-files` | **Files** tab: workspace directory/file tree + syntax-highlighted content pane, and reveals chat file-link clicks (the only plugin allowed to provide a single-shot slot service) |
 | `packages/client/ui-edits` | `@deepseek-ai/dsh-client-ui-edits` | **Edits** tab: per-turn record of every `edit`/`write` tool result carrying `FsDiffMeta`, with plugin-owned inline diffs |
 | `packages/client/ui-changes` | `@deepseek-ai/dsh-client-ui-changes` | **Changes** tab: cumulative per-file view folding the loaded window into one net original → current diff |
+| `packages/client/ui-git` | `@deepseek-ai/dsh-client-ui-git` | **Git** tab: workspace repository commit-history tree graph (host git remote) |
+| `packages/client/ui-session-metrics` | `@deepseek-ai/dsh-client-ui-session-metrics` | **Session metrics**: chat-header capsule (cache rate · input/output tokens) left of the Session log button, hover details; replaces the bottom-of-chat StatsLine strip |
 
 Each package has a `README.md` (behaviour and live status) and an `INTEGRATION.md` (wiring/removal notes); `ui-files` additionally documents its host primitives in `HOST_PRIMITIVES.md`.
 
@@ -53,7 +57,7 @@ The root `package.json` installs the build toolchain the harness `clientBundle` 
 Rebuild a plugin after editing its source:
 
 ```sh
-cd "$HOME/.dsh/packages/client/ui-files"   # or ui-edits / ui-changes
+cd "$HOME/.dsh/packages/client/ui-files"   # or ui-edits / ui-changes / ui-git / ui-session-metrics
 "$HOME/.dsh/node_modules/.bin/tsdown"
 ```
 
@@ -104,6 +108,8 @@ git clone https://github.com/zhoupen9/deepseek-harness-home.git "$HOME/.dsh"
    ln -s "$HOME/.dsh/packages/client/ui-files"   dsh-client-ui-files
    ln -s "$HOME/.dsh/packages/client/ui-edits"   dsh-client-ui-edits
    ln -s "$HOME/.dsh/packages/client/ui-changes" dsh-client-ui-changes
+   ln -s "$HOME/.dsh/packages/client/ui-git" dsh-client-ui-git
+   ln -s "$HOME/.dsh/packages/client/ui-session-metrics" dsh-client-ui-session-metrics
    ```
 
 3. **Recreate credentials** (`~/.dsh/.credentials.yaml`) with your `DEEPSEEK_API_KEY`.

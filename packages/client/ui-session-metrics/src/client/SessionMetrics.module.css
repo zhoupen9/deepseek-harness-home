@@ -1,0 +1,115 @@
+.root {
+  display: inline-flex;
+  align-items: center;
+}
+
+.trigger {
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 6px;
+  color: var(--dsw-alias-label-secondary);
+  cursor: default;
+  background: none;
+  border: none;
+  border-radius: 18px;
+  padding: 6px 10px;
+  font-family: var(--dsw-font-family);
+  font-size: 13px;
+  font-weight: 400;
+  line-height: 20px;
+  display: inline-flex;
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+}
+
+.trigger:hover {
+  background: var(--dsw-alias-interactive-bg-hover);
+  color: var(--dsw-alias-label-primary);
+}
+
+.trigger:active {
+  background: var(--dsw-alias-interactive-bg-hover-solid);
+}
+
+.sep {
+  color: var(--dsw-alias-label-caption);
+  flex: none;
+}
+
+.panel {
+  z-index: 1100;
+  position: fixed;
+  box-sizing: border-box;
+  min-width: 224px;
+  width: max-content;
+  max-width: min(380px, calc(100vw - 24px));
+  color: var(--dsw-alias-label-secondary);
+  cursor: default;
+  background: var(--dsw-specific-menu);
+  --dsw-elevation-stroke-color: var(--dsw-alias-border-l1);
+  box-shadow: var(--dsw-elevation-prominent);
+  border: 0;
+  border-radius: 12px;
+  padding: 12px 14px;
+  font-size: 12px;
+  line-height: 18px;
+}
+
+.title {
+  color: var(--dsw-alias-label-primary);
+  font-size: 12px;
+  font-weight: 500;
+  line-height: 18px;
+  margin: 0 0 4px;
+  white-space: nowrap;
+}
+
+.caption {
+  color: var(--dsw-alias-label-tertiary);
+  margin: 0 0 6px;
+  white-space: nowrap;
+}
+
+.row {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 24px;
+  padding: 1px 0;
+}
+
+.label {
+  color: var(--dsw-alias-label-tertiary);
+  white-space: nowrap;
+}
+
+.labelSub {
+  padding-left: 14px;
+}
+
+.value {
+  color: var(--dsw-alias-label-primary);
+  font-variant-numeric: tabular-nums;
+  font-weight: 500;
+  text-align: right;
+  white-space: nowrap;
+}
+
+.valueSub {
+  color: var(--dsw-alias-label-secondary);
+  font-weight: 400;
+}
+
+.valueRate {
+  color: var(--dsw-alias-state-business-primary);
+  font-weight: 500;
+}
+
+.divider {
+  border-top: 0.5px solid var(--dsw-alias-border-l2);
+  margin: 6px 0;
+}
+
+.hidden {
+  display: none;
+}
