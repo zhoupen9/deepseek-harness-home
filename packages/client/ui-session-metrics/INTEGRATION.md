@@ -10,11 +10,11 @@ everything lives in /home/zhoupeng/.dsh).
   "Session log" download button (slot `conversation.session.header.tabs.utilities`,
   entry id `session-metrics`, order -1). Hover/focus opens the details panel.
 - **Replaced**: the bottom-of-chat metrics strip — ui-chat's StatsLine row
-  (slot `conversation.composer.dock`, entry id `stats`, order 0). This
-  plugin registers the same cell id at order -1 and renders nothing, so the
+  (slot `conversation.composer.dock`, entry id `stats`, priority 0). This
+  plugin registers the same cell id at priority -1 (same-id cells clash only
+  at equal priority; lowest priority renders) with an empty occupant, so the
   strip disappears while the plugin is mounted and its content is served by
-  the header capsule instead. Slot-cell semantics keep the lower-order entry
-  as the effective occupant; the shipped entry is shadowed, not unloaded.
+  the header capsule instead. The shipped entry is shadowed, not unloaded.
 
 ## Steps taken
 

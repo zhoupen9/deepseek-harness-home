@@ -150,9 +150,10 @@ describe('locales', () => {
     expect(Object.keys(en)).toHaveLength(Object.keys(zh).length)
   })
 
-  it('formats the compact capsule line for both languages', () => {
-    expect(zhT('compact.cache', { percent: '62' })).toBe('缓存命中 62%')
-    expect(enT('compact.input', { input: '12.2K' })).toBe('Input 12.2K')
-    expect(enT('compact.output', { output: '517' })).toBe('Output 517')
+  it('formats the spoken aria pieces for both languages', () => {
+    expect(zhT('aria.cache', { percent: '62' })).toBe('缓存命中率 62%')
+    expect(enT('aria.speed', { speed: '52 tok/s' })).toBe('Decode speed 52 tok/s')
+    expect(enT('aria.input', { input: '12.2K' })).toBe('Input 12.2K tokens')
+    expect(zhT('aria.output', { output: '517' })).toBe('输出 517 tokens')
   })
 })

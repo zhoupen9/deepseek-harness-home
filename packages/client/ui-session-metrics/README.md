@@ -4,9 +4,9 @@ A pure-frontend client plugin for DeepSeek Harness's web GUI. It **replaces
 the bottom-of-chat statistics strip** (ui-chat's StatsLine, the "turns/steps |
 LLM … | cache … | tokens" line under the composer) with a compact metrics
 capsule in the **Session Header**: the capsule sits immediately left of the
-"Session log" download button and shows three numbers — cache-hit rate, input
-tokens and output tokens — and a hover (or keyboard focus) opens a details
-panel with the full session metrics.
+"Session log" download button and shows four glyph-prefixed numbers — token
+speed, cache-hit rate, input tokens and output tokens — and a hover (or
+keyboard focus) opens a details panel with the full session metrics.
 
 Everything is presentation: the plugin reads only the session-standard
 projection seats (`useProjection('tokenUsage')` / `useProjection('sessionStats')`)
@@ -15,28 +15,31 @@ events, and keeps no cross-session state.
 
 ## What it looks like / how it behaves
 
-- **Capsule** (right side of the Session Header tab row): e.g.
-  `缓存命中 62% · 输入 12.2K · 输出 517` (zh) / `Cache hit 62% · Input 12.2K ·
-  Output 517` (en). It renders nothing until the session has billable usage,
-  and the figures ride the durable whole-log projections, so paging and
-  compaction never skew them.
+- **Capsule** (right side of the Session Header tab row): four text-glyph
+  markers followed by their values — `⚡ 52 tok/s · ↻ 62% · ↓ 12.2K · ↑ 517`
+  for decode speed, cache-hit rate, input and output tokens (glyphs chosen
+  over SVG so the row stays font-independent; the spoken aria summary and the
+  hover panel always spell the metric names out). It renders nothing until
+  the session has billable usage, and the figures ride the durable whole-log
+  projections, so paging and compaction never skew them.
 - **Hover / focus panel**: turn & step counts, model and tool wall times,
   average first-token latency, decode throughput (`tok/s`), the exact token
   buckets (input total with cache-read / cache-write / uncached sub-rows,
   output), and the cache-hit share. Timing rows come from the
   `sessionStats` projection and are omitted when that projection is absent.
 - The bottom-of-chat strip is **shadowed, not patched**: this plugin reuses
-  the shipped `stats` cell of `conversation.composer.dock` with order -1
-  (the shipped StatsLine registers that cell at order 0) and renders an empty
-  occupant. Removing or disabling this plugin lets the shipped strip come
-  back unchanged.
+  the shipped `stats` cell of `conversation.composer.dock` at priority -1
+  (the shipped StatsLine registers that cell at priority 0; same-id cells
+  only clash at equal priority, and the lowest priority renders) and renders
+  an empty occupant. Removing or disabling this plugin lets the shipped
+  strip come back unchanged.
 
 ## How it is wired
 
-| Slot | Entry id | Order | Purpose |
-| --- | --- | --- | --- |
-| `conversation.session.header.tabs.utilities` | `session-metrics` | -1 | the capsule (left of `session-log-download`, order 0) |
-| `conversation.composer.dock` | `stats` | -1 | shadows ui-chat StatsLine (order 0) → strip removed |
+| Slot | Entry id | Order | Priority | Purpose |
+| --- | --- | --- | --- | --- |
+| `conversation.session.header.tabs.utilities` | `session-metrics` | -1 | 0 | the capsule (left of `session-log-download`, order 0) |
+| `conversation.composer.dock` | `stats` | — | -1 | shadows ui-chat StatsLine (priority 0) → strip removed |
 
 Both registrations use `ctx.slots.inject`, so they wait for the declaring
 conversation entries and are removed with the plugin fiber.

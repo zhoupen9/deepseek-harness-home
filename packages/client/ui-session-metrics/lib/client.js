@@ -150,7 +150,7 @@ window.__ModuleLoader__.load({
 		}
 		//#endregion
 		//#region \0dsh-css:/home/zhoupeng/.dsh/packages/client/ui-session-metrics/src/client/SessionMetrics.module.css.mjs
-		const css = "._33_2oW_root{align-items:center;display:inline-flex}._33_2oW_trigger{color:var(--dsw-alias-label-secondary);cursor:default;font-family:var(--dsw-font-family);white-space:nowrap;font-variant-numeric:tabular-nums;background:0 0;border:none;border-radius:18px;align-items:center;gap:6px;margin-bottom:6px;padding:6px 10px;font-size:13px;font-weight:400;line-height:20px;display:inline-flex}._33_2oW_trigger:hover{background:var(--dsw-alias-interactive-bg-hover);color:var(--dsw-alias-label-primary)}._33_2oW_trigger:active{background:var(--dsw-alias-interactive-bg-hover-solid)}._33_2oW_sep{color:var(--dsw-alias-label-caption);flex:none}._33_2oW_panel{z-index:1100;box-sizing:border-box;width:max-content;min-width:224px;max-width:min(380px,100vw - 24px);color:var(--dsw-alias-label-secondary);cursor:default;background:var(--dsw-specific-menu);--dsw-elevation-stroke-color:var(--dsw-alias-border-l1);box-shadow:var(--dsw-elevation-prominent);border:0;border-radius:12px;padding:12px 14px;font-size:12px;line-height:18px;position:fixed}._33_2oW_title{color:var(--dsw-alias-label-primary);white-space:nowrap;margin:0 0 4px;font-size:12px;font-weight:500;line-height:18px}._33_2oW_caption{color:var(--dsw-alias-label-tertiary);white-space:nowrap;margin:0 0 6px}._33_2oW_row{justify-content:space-between;align-items:baseline;gap:24px;padding:1px 0;display:flex}._33_2oW_label{color:var(--dsw-alias-label-tertiary);white-space:nowrap}._33_2oW_labelSub{padding-left:14px}._33_2oW_value{color:var(--dsw-alias-label-primary);font-variant-numeric:tabular-nums;text-align:right;white-space:nowrap;font-weight:500}._33_2oW_valueSub{color:var(--dsw-alias-label-secondary);font-weight:400}._33_2oW_valueRate{color:var(--dsw-alias-state-business-primary);font-weight:500}._33_2oW_divider{border-top:.5px solid var(--dsw-alias-border-l2);margin:6px 0}._33_2oW_hidden{display:none}";
+		const css = "._33_2oW_root{align-items:center;display:inline-flex}._33_2oW_trigger{color:var(--dsw-alias-label-secondary);cursor:default;font-family:var(--dsw-font-family);white-space:nowrap;font-variant-numeric:tabular-nums;background:0 0;border:none;border-radius:18px;align-items:center;gap:6px;margin-bottom:6px;padding:6px 10px;font-size:13px;font-weight:400;line-height:20px;display:inline-flex}._33_2oW_trigger:hover{background:var(--dsw-alias-interactive-bg-hover);color:var(--dsw-alias-label-primary)}._33_2oW_trigger:active{background:var(--dsw-alias-interactive-bg-hover-solid)}._33_2oW_sep{color:var(--dsw-alias-label-caption);flex:none}._33_2oW_segment{align-items:baseline;gap:4px;display:inline-flex}._33_2oW_glyph{color:var(--dsw-alias-label-caption);font-variant-emoji:text;font-size:12px;line-height:20px}._33_2oW_glyphValue{font-variant-numeric:tabular-nums}._33_2oW_panel{z-index:1100;box-sizing:border-box;width:max-content;min-width:224px;max-width:min(380px,100vw - 24px);color:var(--dsw-alias-label-secondary);cursor:default;background:var(--dsw-specific-menu);--dsw-elevation-stroke-color:var(--dsw-alias-border-l1);box-shadow:var(--dsw-elevation-prominent);border:0;border-radius:12px;padding:12px 14px;font-size:12px;line-height:18px;position:fixed}._33_2oW_title{color:var(--dsw-alias-label-primary);white-space:nowrap;margin:0 0 4px;font-size:12px;font-weight:500;line-height:18px}._33_2oW_caption{color:var(--dsw-alias-label-tertiary);white-space:nowrap;margin:0 0 6px}._33_2oW_row{justify-content:space-between;align-items:baseline;gap:24px;padding:1px 0;display:flex}._33_2oW_label{color:var(--dsw-alias-label-tertiary);white-space:nowrap}._33_2oW_labelSub{padding-left:14px}._33_2oW_value{color:var(--dsw-alias-label-primary);font-variant-numeric:tabular-nums;text-align:right;white-space:nowrap;font-weight:500}._33_2oW_valueSub{color:var(--dsw-alias-label-secondary);font-weight:400}._33_2oW_valueRate{color:var(--dsw-alias-state-business-primary);font-weight:500}._33_2oW_divider{border-top:.5px solid var(--dsw-alias-border-l2);margin:6px 0}._33_2oW_hidden{display:none}";
 		const tagId = "@deepseek-ai/dsh-client-ui-session-metrics/SessionMetrics.module.css";
 		if (typeof document !== "undefined" && document.querySelector("style[data-plugin-css=" + JSON.stringify(tagId) + "]") === null) {
 			const tag = document.createElement("style");
@@ -162,12 +162,15 @@ window.__ModuleLoader__.load({
 		var SessionMetrics_module_css_default = {
 			"caption": "_33_2oW_caption",
 			"divider": "_33_2oW_divider",
+			"glyph": "_33_2oW_glyph",
+			"glyphValue": "_33_2oW_glyphValue",
 			"hidden": "_33_2oW_hidden",
 			"label": "_33_2oW_label",
 			"labelSub": "_33_2oW_labelSub",
 			"panel": "_33_2oW_panel",
 			"root": "_33_2oW_root",
 			"row": "_33_2oW_row",
+			"segment": "_33_2oW_segment",
 			"sep": "_33_2oW_sep",
 			"title": "_33_2oW_title",
 			"trigger": "_33_2oW_trigger",
@@ -180,8 +183,9 @@ window.__ModuleLoader__.load({
 		/**
 		* Session-metrics header capsule and its hover details panel.
 		*
-		* The compact capsule (cache-hit rate · input tokens · output tokens) renders
-		* as the leftmost entry of the Session Header's right-aligned utilities row,
+		* The compact capsule (glyph-prefixed token speed · cache-hit rate · input
+		* tokens · output tokens) renders as the leftmost entry of the Session
+		* Header's right-aligned utilities row,
 		* immediately left of the shipped "Session log" download capsule. Hovering
 		* (or keyboard-focusing) the capsule opens a portaled details panel with the
 		* full session metrics — turn/step counts, model/tool wall times, TTFT and
@@ -190,11 +194,25 @@ window.__ModuleLoader__.load({
 		*
 		* The sibling `SessionMetricsSuppressed` occupant replaces the shipped
 		* bottom-of-chat stats strip (ui-chat's StatsLine entry, id `stats`) by
-		* outranking it in the same `conversation.composer.dock` cell and rendering
+		* registering the same cell id at a lower priority (the slot ledger keeps
+		* same-id entries at distinct priorities, lowest renders) and rendering
 		* nothing: the strip's content now lives in this header capsule.
 		*/
 		/** Milliseconds of grace before the panel closes after leaving the trigger. */
 		const CLOSE_GRACE_MS = 180;
+		/**
+		* Text glyphs of the compact metrics (glyphs on purpose — no SVG dependency).
+		* Swap characters here to restyle the capsule without touching logic.
+		*
+		* U+26A1 (lightning) defaults to emoji presentation in browsers, which picks
+		* a colored glyph; the U+FE0E variation selector after it forces the text
+		* (monochrome) presentation. `.glyph` additionally sets
+		* `font-variant-emoji: text` as a modern-browser guard.
+		*/
+		const GLYPH_SPEED = "⚡︎";
+		const GLYPH_CACHE = "↻";
+		const GLYPH_INPUT = "↓";
+		const GLYPH_OUTPUT = "↑";
 		/** One label/value row of the details panel. */
 		function MetricRow({ label, value, sub = false, rate = false }) {
 			return /* @__PURE__ */ (0, react_jsx_runtime.jsxs)("div", {
@@ -264,11 +282,70 @@ window.__ModuleLoader__.load({
 			}, [open]);
 			(0, react.useEffect)(() => clearCloseTimer, [clearCloseTimer]);
 			if (facts === null) return null;
-			const compactParts = [];
-			if (facts.cacheHitPercent !== null) compactParts.push(t("compact.cache", { percent: facts.cacheHitPercent }));
-			compactParts.push(t("compact.input", { input: formatCompactTokens(facts.billedInputTokens, t) }));
-			compactParts.push(t("compact.output", { output: formatCompactTokens(facts.outputTokens, t) }));
-			const ariaLabel = t("aria.metrics", { line: compactParts.join(" · ") });
+			const decodeSpeed = stats !== void 0 && stats.decodeMs > 0 && stats.decodeTokens > 0 ? stats.decodeTokens / (stats.decodeMs / 1e3) : void 0;
+			const speedText = decodeSpeed === void 0 ? void 0 : t("value.tokensPerSecond", { throughput: formatThroughput(decodeSpeed) });
+			const inputText = formatCompactTokens(facts.billedInputTokens, t);
+			const outputText = formatCompactTokens(facts.outputTokens, t);
+			const cacheText = facts.cacheHitPercent === null ? void 0 : facts.cacheHitPercent + "%";
+			const segments = [];
+			const pushSegment = (node) => {
+				if (segments.length > 0) segments.push(/* @__PURE__ */ (0, react_jsx_runtime.jsx)("span", {
+					className: SessionMetrics_module_css_default.sep,
+					"aria-hidden": "true",
+					children: "·"
+				}, "sep" + segments.length));
+				segments.push(node);
+			};
+			if (speedText !== void 0) pushSegment(/* @__PURE__ */ (0, react_jsx_runtime.jsxs)("span", {
+				className: SessionMetrics_module_css_default.segment,
+				children: [/* @__PURE__ */ (0, react_jsx_runtime.jsx)("span", {
+					className: SessionMetrics_module_css_default.glyph,
+					"aria-hidden": "true",
+					children: GLYPH_SPEED
+				}), /* @__PURE__ */ (0, react_jsx_runtime.jsx)("span", {
+					className: SessionMetrics_module_css_default.glyphValue,
+					children: speedText
+				})]
+			}, "speed"));
+			if (cacheText !== void 0) pushSegment(/* @__PURE__ */ (0, react_jsx_runtime.jsxs)("span", {
+				className: SessionMetrics_module_css_default.segment,
+				children: [/* @__PURE__ */ (0, react_jsx_runtime.jsx)("span", {
+					className: SessionMetrics_module_css_default.glyph,
+					"aria-hidden": "true",
+					children: GLYPH_CACHE
+				}), /* @__PURE__ */ (0, react_jsx_runtime.jsx)("span", {
+					className: SessionMetrics_module_css_default.glyphValue,
+					children: cacheText
+				})]
+			}, "cache"));
+			pushSegment(/* @__PURE__ */ (0, react_jsx_runtime.jsxs)("span", {
+				className: SessionMetrics_module_css_default.segment,
+				children: [/* @__PURE__ */ (0, react_jsx_runtime.jsx)("span", {
+					className: SessionMetrics_module_css_default.glyph,
+					"aria-hidden": "true",
+					children: GLYPH_INPUT
+				}), /* @__PURE__ */ (0, react_jsx_runtime.jsx)("span", {
+					className: SessionMetrics_module_css_default.glyphValue,
+					children: inputText
+				})]
+			}, "input"));
+			pushSegment(/* @__PURE__ */ (0, react_jsx_runtime.jsxs)("span", {
+				className: SessionMetrics_module_css_default.segment,
+				children: [/* @__PURE__ */ (0, react_jsx_runtime.jsx)("span", {
+					className: SessionMetrics_module_css_default.glyph,
+					"aria-hidden": "true",
+					children: GLYPH_OUTPUT
+				}), /* @__PURE__ */ (0, react_jsx_runtime.jsx)("span", {
+					className: SessionMetrics_module_css_default.glyphValue,
+					children: outputText
+				})]
+			}, "output"));
+			const ariaParts = [];
+			if (speedText !== void 0) ariaParts.push(t("aria.speed", { speed: speedText }));
+			if (facts.cacheHitPercent !== null) ariaParts.push(t("aria.cache", { percent: facts.cacheHitPercent }));
+			ariaParts.push(t("aria.input", { input: inputText }));
+			ariaParts.push(t("aria.output", { output: outputText }));
+			const ariaLabel = t("aria.metrics", { items: ariaParts.join(" · ") });
 			const panel = open && anchor !== null ? (0, react_dom.createPortal)(/* @__PURE__ */ (0, react_jsx_runtime.jsx)("div", {
 				className: SessionMetrics_module_css_default.panel,
 				role: "tooltip",
@@ -299,11 +376,7 @@ window.__ModuleLoader__.load({
 					onKeyDown: (event) => {
 						if (event.key === "Escape") setOpen(false);
 					},
-					children: compactParts.map((part, index) => /* @__PURE__ */ (0, react_jsx_runtime.jsxs)("span", { children: [index > 0 && /* @__PURE__ */ (0, react_jsx_runtime.jsx)("span", {
-						className: SessionMetrics_module_css_default.sep,
-						"aria-hidden": "true",
-						children: "·"
-					}), part] }, index))
+					children: segments
 				}), panel]
 			});
 		});
@@ -389,9 +462,9 @@ window.__ModuleLoader__.load({
 		}
 		/**
 		* Replacement occupant of the shipped bottom-of-chat stats strip: this entry
-		* reuses the `stats` cell of `conversation.composer.dock` with a lower
-		* order, so the ui-chat StatsLine row is shadowed and the strip disappears —
-		* its metrics moved into the Session Header capsule above.
+		* reuses the `stats` cell of `conversation.composer.dock` at a lower
+		* priority, so the ui-chat StatsLine (priority 0) is shadowed and the strip
+		* disappears — its metrics moved into the Session Header capsule above.
 		*/
 		const SessionMetricsSuppressed = (0, react.memo)(function SessionMetricsSuppressed() {
 			return null;
@@ -416,10 +489,11 @@ window.__ModuleLoader__.load({
 			"panel.output": "输出 tokens",
 			"panel.cacheRate": "缓存命中率",
 			"value.tokensPerSecond": "{throughput} tok/s",
-			"compact.cache": "缓存命中 {percent}%",
-			"compact.input": "输入 {input}",
-			"compact.output": "输出 {output}",
-			"aria.metrics": "会话指标：{line}",
+			"aria.speed": "解码速度 {speed}",
+			"aria.cache": "缓存命中率 {percent}%",
+			"aria.input": "输入 {input} tokens",
+			"aria.output": "输出 {output} tokens",
+			"aria.metrics": "会话指标：{items}",
 			"number.groupSeparator": ",",
 			"number.thousand": "{value}K",
 			"number.million": "{value}M",
@@ -441,10 +515,11 @@ window.__ModuleLoader__.load({
 			"panel.output": "Output tokens",
 			"panel.cacheRate": "Cache hit rate",
 			"value.tokensPerSecond": "{throughput} tok/s",
-			"compact.cache": "Cache hit {percent}%",
-			"compact.input": "Input {input}",
-			"compact.output": "Output {output}",
-			"aria.metrics": "Session metrics: {line}",
+			"aria.speed": "Decode speed {speed}",
+			"aria.cache": "Cache hit rate {percent}%",
+			"aria.input": "Input {input} tokens",
+			"aria.output": "Output {output} tokens",
+			"aria.metrics": "Session metrics: {items}",
 			"number.groupSeparator": ",",
 			"number.thousand": "{value}K",
 			"number.million": "{value}M",
@@ -475,7 +550,7 @@ window.__ModuleLoader__.load({
 			ctx.slots.inject("conversation.composer.dock", () => ctx.slots.register({
 				name: "conversation.composer.dock",
 				id: "stats",
-				order: -1,
+				priority: -1,
 				locale: NS
 			}, SessionMetricsSuppressed));
 		}

@@ -1,8 +1,9 @@
 /**
  * Session-metrics header capsule and its hover details panel.
  *
- * The compact capsule (cache-hit rate · input tokens · output tokens) renders
- * as the leftmost entry of the Session Header's right-aligned utilities row,
+ * The compact capsule (glyph-prefixed token speed · cache-hit rate · input
+ * tokens · output tokens) renders as the leftmost entry of the Session
+ * Header's right-aligned utilities row,
  * immediately left of the shipped "Session log" download capsule. Hovering
  * (or keyboard-focusing) the capsule opens a portaled details panel with the
  * full session metrics — turn/step counts, model/tool wall times, TTFT and
@@ -11,7 +12,8 @@
  *
  * The sibling `SessionMetricsSuppressed` occupant replaces the shipped
  * bottom-of-chat stats strip (ui-chat's StatsLine entry, id `stats`) by
- * outranking it in the same `conversation.composer.dock` cell and rendering
+ * registering the same cell id at a lower priority (the slot ledger keeps
+ * same-id entries at distinct priorities, lowest renders) and rendering
  * nothing: the strip's content now lives in this header capsule.
  */
 import { memo, useCallback, useEffect, useMemo, useRef, useState, type ReactNode } from 'react'
@@ -50,6 +52,20 @@ interface AnchorRect {
 
 /** Milliseconds of grace before the panel closes after leaving the trigger. */
 const CLOSE_GRACE_MS = 180
+
+/**
+ * Text glyphs of the compact metrics (glyphs on purpose — no SVG dependency).
+ * Swap characters here to restyle the capsule without touching logic.
+ *
+ * U+26A1 (lightning) defaults to emoji presentation in browsers, which picks
+ * a colored glyph; the U+FE0E variation selector after it forces the text
+ * (monochrome) presentation. `.glyph` additionally sets
+ * `font-variant-emoji: text` as a modern-browser guard.
+ */
+const GLYPH_SPEED = '⚡︎'
+const GLYPH_CACHE = '↻'
+const GLYPH_INPUT = '↓'
+const GLYPH_OUTPUT = '↑'
 
 /** One label/value row of the details panel. */
 function MetricRow({
@@ -137,14 +153,65 @@ export const SessionMetricsTrigger = memo(function SessionMetricsTrigger({
 
   if (facts === null) return null
 
-  const compactParts: string[] = []
-  if (facts.cacheHitPercent !== null) {
-    compactParts.push(t('compact.cache', { percent: facts.cacheHitPercent }))
+  const decodeSpeed =
+    stats !== undefined && stats.decodeMs > 0 && stats.decodeTokens > 0
+      ? stats.decodeTokens / (stats.decodeMs / 1000)
+      : undefined
+  const speedText = decodeSpeed === undefined
+    ? undefined
+    : t('value.tokensPerSecond', { throughput: formatThroughput(decodeSpeed) })
+  const inputText = formatCompactTokens(facts.billedInputTokens, t)
+  const outputText = formatCompactTokens(facts.outputTokens, t)
+  const cacheText = facts.cacheHitPercent === null ? undefined : facts.cacheHitPercent + '%'
+
+  // Visible segments: [glyph value] pairs separated by middots.
+  const segments: ReactNode[] = []
+  const pushSegment = (node: ReactNode): void => {
+    if (segments.length > 0) {
+      segments.push(<span className={css.sep} aria-hidden="true" key={'sep' + segments.length}>·</span>)
+    }
+    segments.push(node)
   }
-  compactParts.push(t('compact.input', { input: formatCompactTokens(facts.billedInputTokens, t) }))
-  compactParts.push(t('compact.output', { output: formatCompactTokens(facts.outputTokens, t) }))
-  const compactLine = compactParts.join(' · ')
-  const ariaLabel = t('aria.metrics', { line: compactLine })
+  if (speedText !== undefined) {
+    pushSegment(
+      <span className={css.segment} key="speed">
+        <span className={css.glyph} aria-hidden="true">{GLYPH_SPEED}</span>
+        <span className={css.glyphValue}>{speedText}</span>
+      </span>,
+    )
+  }
+  if (cacheText !== undefined) {
+    pushSegment(
+      <span className={css.segment} key="cache">
+        <span className={css.glyph} aria-hidden="true">{GLYPH_CACHE}</span>
+        <span className={css.glyphValue}>{cacheText}</span>
+      </span>,
+    )
+  }
+  pushSegment(
+    <span className={css.segment} key="input">
+      <span className={css.glyph} aria-hidden="true">{GLYPH_INPUT}</span>
+      <span className={css.glyphValue}>{inputText}</span>
+    </span>,
+  )
+  pushSegment(
+    <span className={css.segment} key="output">
+      <span className={css.glyph} aria-hidden="true">{GLYPH_OUTPUT}</span>
+      <span className={css.glyphValue}>{outputText}</span>
+    </span>,
+  )
+
+  // Spoken summary keeps the metric words (the glyphs alone cannot).
+  const ariaParts: string[] = []
+  if (speedText !== undefined) {
+    ariaParts.push(t('aria.speed', { speed: speedText }))
+  }
+  if (facts.cacheHitPercent !== null) {
+    ariaParts.push(t('aria.cache', { percent: facts.cacheHitPercent }))
+  }
+  ariaParts.push(t('aria.input', { input: inputText }))
+  ariaParts.push(t('aria.output', { output: outputText }))
+  const ariaLabel = t('aria.metrics', { items: ariaParts.join(' · ') })
 
   const panel = open && anchor !== null ? (
     createPortal(
@@ -177,12 +244,7 @@ export const SessionMetricsTrigger = memo(function SessionMetricsTrigger({
           if (event.key === 'Escape') setOpen(false)
         }}
       >
-        {compactParts.map((part, index) => (
-          <span key={index}>
-            {index > 0 && <span className={css.sep} aria-hidden="true">·</span>}
-            {part}
-          </span>
-        ))}
+        {segments}
       </button>
       {panel}
     </div>
@@ -291,9 +353,9 @@ function SessionMetricsDetails({
 
 /**
  * Replacement occupant of the shipped bottom-of-chat stats strip: this entry
- * reuses the `stats` cell of `conversation.composer.dock` with a lower
- * order, so the ui-chat StatsLine row is shadowed and the strip disappears —
- * its metrics moved into the Session Header capsule above.
+ * reuses the `stats` cell of `conversation.composer.dock` at a lower
+ * priority, so the ui-chat StatsLine (priority 0) is shadowed and the strip
+ * disappears — its metrics moved into the Session Header capsule above.
  */
 export const SessionMetricsSuppressed = memo(function SessionMetricsSuppressed(): null {
   return null

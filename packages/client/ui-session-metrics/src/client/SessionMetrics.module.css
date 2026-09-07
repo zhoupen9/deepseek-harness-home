@@ -36,6 +36,24 @@
   flex: none;
 }
 
+.segment {
+  align-items: baseline;
+  gap: 4px;
+  display: inline-flex;
+}
+
+.glyph {
+  font-size: 12px;
+  line-height: 20px;
+  color: var(--dsw-alias-label-caption);
+  /* U+26A1 defaults to emoji presentation; keep glyphs monochrome. */
+  font-variant-emoji: text;
+}
+
+.glyphValue {
+  font-variant-numeric: tabular-nums;
+}
+
 .panel {
   z-index: 1100;
   position: fixed;

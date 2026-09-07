@@ -1,6 +1,6 @@
 {
   "name": "@deepseek-ai/dsh-client-ui-session-metrics",
-  "description": "Session metrics for the chat header: a pure-consumer plugin replacing the bottom-of-chat stats strip with a compact cache-rate / input-token / output-token pill (hover for the detailed session metrics) placed left of the Session log button (no service)",
+  "description": "Session metrics for the chat header: a pure-consumer plugin replacing the bottom-of-chat stats strip with a compact glyph-prefixed pill (token speed · cache rate · input/output tokens; hover for the detailed session metrics) placed left of the Session log button (no service)",
   "version": "0.1.0-alpha.1",
   "publishConfig": {
     "access": "public"
