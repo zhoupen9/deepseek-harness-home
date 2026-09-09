@@ -1,13 +1,14 @@
 /**
  * Browser Session-metrics plugin: a pure consumer with no service. It moves
- * the chat statistics out of the bottom-of-chat strip into the Session
- * Header's right-aligned utilities row, left of the "Session log" download
- * capsule.
+ * the chat statistics out of the bottom-of-chat strip into the left edge of
+ * the Session Header's right-aligned utilities row.
  *
  * Two registrations, both plain effects removed on plugin unload:
  * - `conversation.session.header.tabs.utilities` (id `session-metrics`,
- *   order -1): the compact capsule. -1 places it before the order-0
- *   `session-log-download` capsule, i.e. immediately to its left.
+ *   order -11): the compact capsule. -11 puts it left of the shipped
+ *   `open-in-app` split button (order -10) and of the order-0
+ *   `session-log-download` capsule, i.e. it swaps with the open-in-app
+ *   button to become the row's leftmost entry.
  * - `conversation.composer.dock` (id `stats`, priority -1): shadows the
  *   cell of ui-chat's shipped StatsLine (same id at priority 0 — the slot
  *   ledger only clashes same-id entries at equal priority, and the lowest
@@ -39,9 +40,10 @@ export function apply(ctx: Context): void {
   ctx.slots.inject('conversation.session.header.tabs.utilities', () => ctx.slots.register({
     name: 'conversation.session.header.tabs.utilities',
     id: 'session-metrics',
-    // Left of the Session-log capsule (order 0); any order-0 entry that
-    // registered earlier cannot outrank this negative order.
-    order: -1,
+    // Leftmost of the row: below the shipped open-in-app split button
+    // (order -10), so the capsule takes the left-edge slot that button
+    // previously held; session-log-download stays rightmost at order 0.
+    order: -11,
     locale: NS,
   }, SessionMetricsTrigger))
   ctx.slots.inject('conversation.composer.dock', () => ctx.slots.register({

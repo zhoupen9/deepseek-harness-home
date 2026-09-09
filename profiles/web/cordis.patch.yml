@@ -4,23 +4,31 @@
 # Registered client plugins:
 # - per-turn "Edits" view (@deepseek-ai/dsh-client-ui-edits)
 # - cumulative per-file "Changes" view (@deepseek-ai/dsh-client-ui-changes)
-# - session-known "Files" explorer + chat file-link viewer (@deepseek-ai/dsh-client-ui-files)
 # - git history tree graph tab (@deepseek-ai/dsh-client-ui-git; host git remote — see its HOST_PRIMITIVES.md)
 # - chat-header session metrics (@deepseek-ai/dsh-client-ui-session-metrics; replaces the
 #   bottom-of-chat StatsLine strip — see its INTEGRATION.md)
-# The shipped ui-deliverables row also provides chatFileMentions; ui-files
-# supersedes it (and is the only plugin allowed to provide a single-shot
-# slot service). Disable the bundle row here or the second provide throws.
+# - podman container MCP server (@deepseek-ai/dsh-mcp-client; tools under mcp__podman__*)
+# The shipped ui-deliverables row provides the produced-files chips and the
+# chatFileMentions provider; it stays enabled now that the local ui-files
+# plugin that used to supersede it is removed.
 - id: ui-deliverables
-  disabled: true
 - insert:
     - id: ui-edits
       name: '@deepseek-ai/dsh-client-ui-edits'
     - id: ui-changes
       name: '@deepseek-ai/dsh-client-ui-changes'
-    - id: ui-files
-      name: '@deepseek-ai/dsh-client-ui-files'
     - id: ui-git
       name: '@deepseek-ai/dsh-client-ui-git'
     - id: ui-session-metrics
       name: '@deepseek-ai/dsh-client-ui-session-metrics'
+    - id: mcp-podman
+      name: '@deepseek-ai/dsh-mcp-client'
+      config:
+        serverName: podman
+        transport: stdio
+        command: npx
+        args:
+          - '-y'
+          - 'podman-mcp-server@latest'
+        toolCallTimeoutMs: 120000
+        failOnStartupError: true

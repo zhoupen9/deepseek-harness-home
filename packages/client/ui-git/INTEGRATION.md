@@ -1,8 +1,8 @@
 # ui-git — profile integration record
 
 Adds the **Git** history-graph tab as a pure-frontend client plugin, entirely in
-user space (no `/usr/lib/deepseek-harness` changes), following the ui-files /
-ui-edits / ui-changes precedent.
+user space (no `/usr/lib/deepseek-harness` changes), following the ui-edits /
+ui-changes precedent.
 
 ## Steps taken
 

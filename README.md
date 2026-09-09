@@ -11,7 +11,6 @@ It holds the per-profile configuration and a set of **client plugins** for the w
     │   └── web/                 # web GUI profile (the only profile)
     ├── packages/
     │   └── client/              # client plugins + build preset (monorepo-mirrored)
-    │       ├── ui-files/        # @deepseek-ai/dsh-client-ui-files
     │       ├── ui-edits/        # @deepseek-ai/dsh-client-ui-edits
     │       ├── ui-changes/      # @deepseek-ai/dsh-client-ui-changes
     │       ├── ui-git/          # @deepseek-ai/dsh-client-ui-git
@@ -42,13 +41,12 @@ The plugins are pure-frontend (pure-consumer) client plugins: each is a self-con
 
 | Directory | Package | Description |
 | --- | --- | --- |
-| `packages/client/ui-files` | `@deepseek-ai/dsh-client-ui-files` | **Files** tab: workspace directory/file tree + syntax-highlighted content pane, and reveals chat file-link clicks (the only plugin allowed to provide a single-shot slot service) |
 | `packages/client/ui-edits` | `@deepseek-ai/dsh-client-ui-edits` | **Edits** tab: per-turn record of every `edit`/`write` tool result carrying `FsDiffMeta`, with plugin-owned inline diffs |
 | `packages/client/ui-changes` | `@deepseek-ai/dsh-client-ui-changes` | **Changes** tab: cumulative per-file view folding the loaded window into one net original → current diff |
 | `packages/client/ui-git` | `@deepseek-ai/dsh-client-ui-git` | **Git** tab: workspace repository commit-history tree graph (host git remote) |
-| `packages/client/ui-session-metrics` | `@deepseek-ai/dsh-client-ui-session-metrics` | **Session metrics**: chat-header capsule (cache rate · input/output tokens) left of the Session log button, hover details; replaces the bottom-of-chat StatsLine strip |
+| `packages/client/ui-session-metrics` | `@deepseek-ai/dsh-client-ui-session-metrics` | **Session metrics**: chat-header capsule (cache rate · input/output tokens) anchoring the left edge of the header utilities row — left of the "Open In…" button and the Session log button — hover details; replaces the bottom-of-chat StatsLine strip |
 
-Each package has a `README.md` (behaviour and live status) and an `INTEGRATION.md` (wiring/removal notes); `ui-files` additionally documents its host primitives in `HOST_PRIMITIVES.md`.
+Each package has a `README.md` (behaviour and live status) and an `INTEGRATION.md` (wiring/removal notes).
 
 ### Building
 
@@ -57,14 +55,14 @@ The root `package.json` installs the build toolchain the harness `clientBundle` 
 Rebuild a plugin after editing its source:
 
 ```sh
-cd "$HOME/.dsh/packages/client/ui-files"   # or ui-edits / ui-changes / ui-git / ui-session-metrics
+cd "$HOME/.dsh/packages/client/ui-edits"   # or ui-changes / ui-git / ui-session-metrics
 "$HOME/.dsh/node_modules/.bin/tsdown"
 ```
 
 Run its tests:
 
 ```sh
-cd "$HOME/.dsh/packages/client/ui-files"
+cd "$HOME/.dsh/packages/client/ui-edits"
 "$HOME/.dsh/node_modules/.bin/vitest" run
 ```
 
@@ -105,7 +103,6 @@ git clone https://github.com/zhoupen9/deepseek-harness-home.git "$HOME/.dsh"
 
    ```sh
    mkdir -p "$HOME/.dsh/profiles/node_modules/@deepseek-ai" && cd "$_"
-   ln -s "$HOME/.dsh/packages/client/ui-files"   dsh-client-ui-files
    ln -s "$HOME/.dsh/packages/client/ui-edits"   dsh-client-ui-edits
    ln -s "$HOME/.dsh/packages/client/ui-changes" dsh-client-ui-changes
    ln -s "$HOME/.dsh/packages/client/ui-git" dsh-client-ui-git

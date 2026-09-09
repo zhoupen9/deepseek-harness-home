@@ -3,8 +3,8 @@
  *
  * The compact capsule (glyph-prefixed token speed · cache-hit rate · input
  * tokens · output tokens) renders as the leftmost entry of the Session
- * Header's right-aligned utilities row,
- * immediately left of the shipped "Session log" download capsule. Hovering
+ * Header's right-aligned utilities row (order -11, left of the shipped
+ * "Open In…" split button and the "Session log" download capsule). Hovering
  * (or keyboard-focusing) the capsule opens a portaled details panel with the
  * full session metrics — turn/step counts, model/tool wall times, TTFT and
  * decode throughput from the `sessionStats` projection, and the exact token

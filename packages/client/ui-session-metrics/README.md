@@ -3,10 +3,12 @@
 A pure-frontend client plugin for DeepSeek Harness's web GUI. It **replaces
 the bottom-of-chat statistics strip** (ui-chat's StatsLine, the "turns/steps |
 LLM … | cache … | tokens" line under the composer) with a compact metrics
-capsule in the **Session Header**: the capsule sits immediately left of the
-"Session log" download button and shows four glyph-prefixed numbers — token
-speed, cache-hit rate, input tokens and output tokens — and a hover (or
-keyboard focus) opens a details panel with the full session metrics.
+capsule in the **Session Header**: the capsule anchors the left edge of the
+right-aligned utility cluster (order -11 — it takes the slot the shipped
+"Open In…" split button used to occupy, so the row reads metrics · Open
+In… · Session log) and shows four glyph-prefixed numbers — token speed,
+cache-hit rate, input tokens and output tokens — and a hover (or keyboard
+focus) opens a details panel with the full session metrics.
 
 Everything is presentation: the plugin reads only the session-standard
 projection seats (`useProjection('tokenUsage')` / `useProjection('sessionStats')`)
@@ -38,7 +40,7 @@ events, and keeps no cross-session state.
 
 | Slot | Entry id | Order | Priority | Purpose |
 | --- | --- | --- | --- | --- |
-| `conversation.session.header.tabs.utilities` | `session-metrics` | -1 | 0 | the capsule (left of `session-log-download`, order 0) |
+| `conversation.session.header.tabs.utilities` | `session-metrics` | -11 | 0 | the capsule, leftmost of the row (left of `open-in-app`, order -10, and `session-log-download`, order 0) |
 | `conversation.composer.dock` | `stats` | — | -1 | shadows ui-chat StatsLine (priority 0) → strip removed |
 
 Both registrations use `ctx.slots.inject`, so they wait for the declaring

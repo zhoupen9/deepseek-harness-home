@@ -36,7 +36,7 @@ any `GitCommit[]`.
   switches history traversal between `--first-parent`, `--max-parents=1`, and
   `--max-parents=2` (the latter two need the host change in
   [HOST_TRAVERSAL_MODES.md](HOST_TRAVERSAL_MODES.md)).
-- Registers exactly like `ui-trajectory`/ui-edits/ui-files: one
+- Registers exactly like `ui-trajectory`/ui-edits/ui-changes: one
   `conversation.view` slot (id `git`, order 23) — no service, no
   model-visible changes, no session events.
 

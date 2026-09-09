@@ -150,7 +150,7 @@ window.__ModuleLoader__.load({
 		}
 		//#endregion
 		//#region \0dsh-css:/home/zhoupeng/.dsh/packages/client/ui-session-metrics/src/client/SessionMetrics.module.css.mjs
-		const css = "._33_2oW_root{align-items:center;display:inline-flex}._33_2oW_trigger{color:var(--dsw-alias-label-secondary);cursor:default;font-family:var(--dsw-font-family);white-space:nowrap;font-variant-numeric:tabular-nums;background:0 0;border:none;border-radius:18px;align-items:center;gap:6px;margin-bottom:6px;padding:6px 10px;font-size:13px;font-weight:400;line-height:20px;display:inline-flex}._33_2oW_trigger:hover{background:var(--dsw-alias-interactive-bg-hover);color:var(--dsw-alias-label-primary)}._33_2oW_trigger:active{background:var(--dsw-alias-interactive-bg-hover-solid)}._33_2oW_sep{color:var(--dsw-alias-label-caption);flex:none}._33_2oW_segment{align-items:baseline;gap:4px;display:inline-flex}._33_2oW_glyph{color:var(--dsw-alias-label-caption);font-variant-emoji:text;font-size:12px;line-height:20px}._33_2oW_glyphValue{font-variant-numeric:tabular-nums}._33_2oW_panel{z-index:1100;box-sizing:border-box;width:max-content;min-width:224px;max-width:min(380px,100vw - 24px);color:var(--dsw-alias-label-secondary);cursor:default;background:var(--dsw-specific-menu);--dsw-elevation-stroke-color:var(--dsw-alias-border-l1);box-shadow:var(--dsw-elevation-prominent);border:0;border-radius:12px;padding:12px 14px;font-size:12px;line-height:18px;position:fixed}._33_2oW_title{color:var(--dsw-alias-label-primary);white-space:nowrap;margin:0 0 4px;font-size:12px;font-weight:500;line-height:18px}._33_2oW_caption{color:var(--dsw-alias-label-tertiary);white-space:nowrap;margin:0 0 6px}._33_2oW_row{justify-content:space-between;align-items:baseline;gap:24px;padding:1px 0;display:flex}._33_2oW_label{color:var(--dsw-alias-label-tertiary);white-space:nowrap}._33_2oW_labelSub{padding-left:14px}._33_2oW_value{color:var(--dsw-alias-label-primary);font-variant-numeric:tabular-nums;text-align:right;white-space:nowrap;font-weight:500}._33_2oW_valueSub{color:var(--dsw-alias-label-secondary);font-weight:400}._33_2oW_valueRate{color:var(--dsw-alias-state-business-primary);font-weight:500}._33_2oW_divider{border-top:.5px solid var(--dsw-alias-border-l2);margin:6px 0}._33_2oW_hidden{display:none}";
+		const css = "._33_2oW_root{align-items:center;display:inline-flex}._33_2oW_trigger{color:var(--dsw-alias-label-secondary);cursor:default;font-family:var(--dsw-font-family);white-space:nowrap;font-variant-numeric:tabular-nums;background:0 0;border:none;border-radius:13px;align-items:center;gap:6px;margin-bottom:0;padding:5px 10px;font-size:11px;font-weight:400;line-height:16px;display:inline-flex}._33_2oW_trigger:hover{background:var(--dsw-alias-interactive-bg-hover);color:var(--dsw-alias-label-primary)}._33_2oW_trigger:active{background:var(--dsw-alias-interactive-bg-hover-solid)}._33_2oW_sep{color:var(--dsw-alias-label-caption);flex:none}._33_2oW_segment{align-items:baseline;gap:4px;display:inline-flex}._33_2oW_glyph{color:var(--dsw-alias-label-caption);font-variant-emoji:text;font-size:10px;line-height:16px}._33_2oW_glyphValue{font-variant-numeric:tabular-nums}._33_2oW_panel{z-index:1100;box-sizing:border-box;width:max-content;min-width:224px;max-width:min(380px,100vw - 24px);color:var(--dsw-alias-label-secondary);cursor:default;background:var(--dsw-specific-menu);--dsw-elevation-stroke-color:var(--dsw-alias-border-l1);box-shadow:var(--dsw-elevation-prominent);border:0;border-radius:12px;padding:12px 14px;font-size:12px;line-height:18px;position:fixed}._33_2oW_title{color:var(--dsw-alias-label-primary);white-space:nowrap;margin:0 0 4px;font-size:12px;font-weight:500;line-height:18px}._33_2oW_caption{color:var(--dsw-alias-label-tertiary);white-space:nowrap;margin:0 0 6px}._33_2oW_row{justify-content:space-between;align-items:baseline;gap:24px;padding:1px 0;display:flex}._33_2oW_label{color:var(--dsw-alias-label-tertiary);white-space:nowrap}._33_2oW_labelSub{padding-left:14px}._33_2oW_value{color:var(--dsw-alias-label-primary);font-variant-numeric:tabular-nums;text-align:right;white-space:nowrap;font-weight:500}._33_2oW_valueSub{color:var(--dsw-alias-label-secondary);font-weight:400}._33_2oW_valueRate{color:var(--dsw-alias-state-business-primary);font-weight:500}._33_2oW_divider{border-top:.5px solid var(--dsw-alias-border-l2);margin:6px 0}._33_2oW_hidden{display:none}";
 		const tagId = "@deepseek-ai/dsh-client-ui-session-metrics/SessionMetrics.module.css";
 		if (typeof document !== "undefined" && document.querySelector("style[data-plugin-css=" + JSON.stringify(tagId) + "]") === null) {
 			const tag = document.createElement("style");
@@ -185,8 +185,8 @@ window.__ModuleLoader__.load({
 		*
 		* The compact capsule (glyph-prefixed token speed · cache-hit rate · input
 		* tokens · output tokens) renders as the leftmost entry of the Session
-		* Header's right-aligned utilities row,
-		* immediately left of the shipped "Session log" download capsule. Hovering
+		* Header's right-aligned utilities row (order -11, left of the shipped
+		* "Open In…" split button and the "Session log" download capsule). Hovering
 		* (or keyboard-focusing) the capsule opens a portaled details panel with the
 		* full session metrics — turn/step counts, model/tool wall times, TTFT and
 		* decode throughput from the `sessionStats` projection, and the exact token
@@ -544,7 +544,7 @@ window.__ModuleLoader__.load({
 			ctx.slots.inject("conversation.session.header.tabs.utilities", () => ctx.slots.register({
 				name: "conversation.session.header.tabs.utilities",
 				id: "session-metrics",
-				order: -1,
+				order: -11,
 				locale: NS
 			}, SessionMetricsTrigger));
 			ctx.slots.inject("conversation.composer.dock", () => ctx.slots.register({

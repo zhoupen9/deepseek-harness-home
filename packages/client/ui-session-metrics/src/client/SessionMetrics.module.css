@@ -6,17 +6,19 @@
 .trigger {
   align-items: center;
   gap: 6px;
-  margin-bottom: 6px;
+  margin-bottom: 0;
   color: var(--dsw-alias-label-secondary);
   cursor: default;
   background: none;
   border: none;
-  border-radius: 18px;
-  padding: 6px 10px;
+  border-radius: 13px;
+  padding: 5px 10px;
   font-family: var(--dsw-font-family);
-  font-size: 13px;
+  /* Compact capsule type scale — matches the row's 11px utility buttons
+     (Session log / Open In…); the hover details panel keeps its 12px text. */
+  font-size: 11px;
   font-weight: 400;
-  line-height: 20px;
+  line-height: 16px;
   display: inline-flex;
   white-space: nowrap;
   font-variant-numeric: tabular-nums;
@@ -43,8 +45,8 @@
 }
 
 .glyph {
-  font-size: 12px;
-  line-height: 20px;
+  font-size: 10px;
+  line-height: 16px;
   color: var(--dsw-alias-label-caption);
   /* U+26A1 defaults to emoji presentation; keep glyphs monochrome. */
   font-variant-emoji: text;

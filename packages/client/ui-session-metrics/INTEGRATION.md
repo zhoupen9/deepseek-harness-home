@@ -6,9 +6,11 @@ everything lives in /home/zhoupeng/.dsh).
 
 ## What replaces what
 
-- **Added**: a compact metrics capsule in the Session Header, left of the
-  "Session log" download button (slot `conversation.session.header.tabs.utilities`,
-  entry id `session-metrics`, order -1). Hover/focus opens the details panel.
+- **Added**: a compact metrics capsule at the left edge of the Session
+  Header utility cluster (slot `conversation.session.header.tabs.utilities`,
+  entry id `session-metrics`, order -11): it swaps with the shipped
+  "Open In…" split button (order -10) so the row reads metrics · Open In… ·
+  Session log (order 0). Hover/focus opens the details panel.
 - **Replaced**: the bottom-of-chat metrics strip — ui-chat's StatsLine row
   (slot `conversation.composer.dock`, entry id `stats`, priority 0). This
   plugin registers the same cell id at priority -1 (same-id cells clash only
