@@ -541,8 +541,8 @@ window.__ModuleLoader__.load({
 				zh,
 				en
 			}), "ui-session-metrics: dictionaries");
-			ctx.slots.inject("conversation.session.header.tabs.utilities", () => ctx.slots.register({
-				name: "conversation.session.header.tabs.utilities",
+			ctx.slots.inject("conversation.session.header.utilities", () => ctx.slots.register({
+				name: "conversation.session.header.utilities",
 				id: "session-metrics",
 				order: -11,
 				locale: NS

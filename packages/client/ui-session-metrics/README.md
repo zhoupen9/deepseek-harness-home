@@ -17,7 +17,7 @@ events, and keeps no cross-session state.
 
 ## What it looks like / how it behaves
 
-- **Capsule** (right side of the Session Header tab row): four text-glyph
+- **Capsule** (Session Header title row, left edge of the right-aligned utility cluster): four text-glyph
   markers followed by their values — `⚡ 52 tok/s · ↻ 62% · ↓ 12.2K · ↑ 517`
   for decode speed, cache-hit rate, input and output tokens (glyphs chosen
   over SVG so the row stays font-independent; the spoken aria summary and the
@@ -40,7 +40,7 @@ events, and keeps no cross-session state.
 
 | Slot | Entry id | Order | Priority | Purpose |
 | --- | --- | --- | --- | --- |
-| `conversation.session.header.tabs.utilities` | `session-metrics` | -11 | 0 | the capsule, leftmost of the row (left of `open-in-app`, order -10, and `session-log-download`, order 0) |
+| `conversation.session.header.utilities` | `session-metrics` | -11 | 0 | the capsule, leftmost of the row (left of `open-in-app`, order -10, and `session-log-download`, order 0) |
 | `conversation.composer.dock` | `stats` | — | -1 | shadows ui-chat StatsLine (priority 0) → strip removed |
 
 Both registrations use `ctx.slots.inject`, so they wait for the declaring

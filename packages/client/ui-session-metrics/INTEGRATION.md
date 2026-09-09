@@ -7,7 +7,7 @@ everything lives in /home/zhoupeng/.dsh).
 ## What replaces what
 
 - **Added**: a compact metrics capsule at the left edge of the Session
-  Header utility cluster (slot `conversation.session.header.tabs.utilities`,
+  Header utility cluster (slot `conversation.session.header.utilities`,
   entry id `session-metrics`, order -11): it swaps with the shipped
   "Open In…" split button (order -10) so the row reads metrics · Open In… ·
   Session log (order 0). Hover/focus opens the details panel.

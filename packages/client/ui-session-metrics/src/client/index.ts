@@ -4,7 +4,7 @@
  * the Session Header's right-aligned utilities row.
  *
  * Two registrations, both plain effects removed on plugin unload:
- * - `conversation.session.header.tabs.utilities` (id `session-metrics`,
+ * - `conversation.session.header.utilities` (id `session-metrics`,
  *   order -11): the compact capsule. -11 puts it left of the shipped
  *   `open-in-app` split button (order -10) and of the order-0
  *   `session-log-download` capsule, i.e. it swaps with the open-in-app
@@ -37,8 +37,8 @@ export const inject = ['slots', 'locale']
  */
 export function apply(ctx: Context): void {
   ctx.effect(() => ctx.locale.register(NS, { zh, en }), 'ui-session-metrics: dictionaries')
-  ctx.slots.inject('conversation.session.header.tabs.utilities', () => ctx.slots.register({
-    name: 'conversation.session.header.tabs.utilities',
+  ctx.slots.inject('conversation.session.header.utilities', () => ctx.slots.register({
+    name: 'conversation.session.header.utilities',
     id: 'session-metrics',
     // Leftmost of the row: below the shipped open-in-app split button
     // (order -10), so the capsule takes the left-edge slot that button
