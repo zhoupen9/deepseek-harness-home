@@ -10,8 +10,12 @@
   color: var(--dsw-alias-label-secondary);
   cursor: default;
   background: none;
-  border: none;
+  /* Rounded outline matching the row's other utility capsules
+     (Open In… / Session log): .5px l4 border on the 13px-radius pill. */
+  border: 0.5px solid var(--dsw-alias-border-l4);
   border-radius: 13px;
+  box-sizing: border-box;
+  height: 26px;
   padding: 5px 10px;
   font-family: var(--dsw-font-family);
   /* Compact capsule type scale — matches the row's 11px utility buttons
