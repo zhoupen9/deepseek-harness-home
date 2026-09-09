@@ -1664,9 +1664,9 @@ window.__ModuleLoader__.load({
 				newText
 			}];
 		}
-		/** Extract a settled result from a nested `tool/code-dispatch` match, or null when it has no usable mutation. */
+		/** Extract a settled result from a nested `tool/ptc-dispatch` match, or null when it has no usable mutation. */
 		function dispatchResult(match) {
-			if (match.event.type !== "tool/code-dispatch") return null;
+			if (match.event.type !== "tool/ptc-dispatch") return null;
 			if (match.event.data.isError === true) return null;
 			const diffs = dispatchDiffs(match.event.data.name, match.event.data.arguments);
 			if (diffs === null) return null;
@@ -1690,7 +1690,7 @@ window.__ModuleLoader__.load({
 						result
 					};
 				}
-				if (match.event.type === "tool/code-dispatch") {
+				if (match.event.type === "tool/ptc-dispatch") {
 					const result = dispatchResult(match);
 					if (result === void 0) continue;
 					return {
@@ -1745,9 +1745,9 @@ window.__ModuleLoader__.load({
 					id: String(event.data.message.source.callId),
 					role: "update"
 				};
-				if (event.type === "tool/code-dispatch-start" || event.type === "tool/code-dispatch") {
+				if (event.type === "tool/ptc-dispatch-start" || event.type === "tool/ptc-dispatch") {
 					if (!EDIT_TOOLS.has(event.data.name)) return null;
-					const role = event.type === "tool/code-dispatch-start" ? "start" : "update";
+					const role = event.type === "tool/ptc-dispatch-start" ? "start" : "update";
 					return {
 						id: String(event.data.subCallId),
 						role
@@ -1761,12 +1761,12 @@ window.__ModuleLoader__.load({
 					tool: match.event.data.name,
 					result: null
 				};
-				if (match.event.type === "tool/code-dispatch-start") return {
+				if (match.event.type === "tool/ptc-dispatch-start") return {
 					callId: String(match.event.data.subCallId),
 					tool: match.event.data.name,
 					result: null
 				};
-				throw new Error("edits-result start requires tool/call or tool/code-dispatch-start");
+				throw new Error("edits-result start requires tool/call or tool/ptc-dispatch-start");
 			},
 			update: (context, match) => {
 				if (match.event.type === "tool/result") {
@@ -1777,7 +1777,7 @@ window.__ModuleLoader__.load({
 						result
 					};
 				}
-				if (match.event.type === "tool/code-dispatch") {
+				if (match.event.type === "tool/ptc-dispatch") {
 					const result = dispatchResult(match);
 					if (result === null) return context.state;
 					return {

@@ -100,7 +100,7 @@ function locationStep(match: ConversationMatch): number {
 }
 
 /**
- * Extract path/content from a code-dispatch's already-parsed arguments object
+ * Extract path/content from a ptc-dispatch's already-parsed arguments object
  * (PTC mode logs `arguments` as JSON, not the raw string `tool/call` carries).
  */
 function parseDispatchArgs(name: string, args: unknown): { filePath?: string; content?: string } | null {
@@ -117,7 +117,7 @@ function parseDispatchArgs(name: string, args: unknown): { filePath?: string; co
  * call arguments (PTC mode logs no result `meta`).
  */
 function dispatchResult(match: ConversationMatch): ChangesResult | null {
-  if (match.event.type !== 'tool/code-dispatch') return null
+  if (match.event.type !== 'tool/ptc-dispatch') return null
   if (match.event.data.isError === true) return null
   const name = match.event.data.name
   const args = match.event.data.arguments
@@ -154,7 +154,7 @@ function fallbackState(context: ConversationNodeContext<ChangesState>): ChangesS
       if (result === null || result.hunks === null) continue
       return { callId: String(match.event.data.message.source.callId), tool: null, args: null, result }
     }
-    if (match.event.type === 'tool/code-dispatch') {
+    if (match.event.type === 'tool/ptc-dispatch') {
       const result = dispatchResult(match)
       if (result === null || result.hunks === null) continue
       return { callId: String(match.event.data.subCallId), tool: match.event.data.name as 'edit' | 'write', args: null, result }
@@ -231,9 +231,9 @@ export const changesDefinition: ConversationNodeDefinition<ChangesState> = {
       // can settle its start; contexts with no usable evidence project null.
       return { id: String(event.data.message.source.callId), role: 'update' as const }
     }
-    if (event.type === 'tool/code-dispatch-start' || event.type === 'tool/code-dispatch') {
+    if (event.type === 'tool/ptc-dispatch-start' || event.type === 'tool/ptc-dispatch') {
       if (!FILE_TOOLS.has(event.data.name)) return null
-      const role = event.type === 'tool/code-dispatch-start' ? 'start' as const : 'update' as const
+      const role = event.type === 'tool/ptc-dispatch-start' ? 'start' as const : 'update' as const
       return { id: String(event.data.subCallId), role }
     }
     return null
@@ -247,7 +247,7 @@ export const changesDefinition: ConversationNodeDefinition<ChangesState> = {
         result: null,
       }
     }
-    if (match.event.type === 'tool/code-dispatch-start') {
+    if (match.event.type === 'tool/ptc-dispatch-start') {
       return {
         callId: String(match.event.data.subCallId),
         tool: match.event.data.name as 'edit' | 'write',
@@ -255,7 +255,7 @@ export const changesDefinition: ConversationNodeDefinition<ChangesState> = {
         result: null,
       }
     }
-    throw new Error('changes-result start requires tool/call or tool/code-dispatch-start')
+    throw new Error('changes-result start requires tool/call or tool/ptc-dispatch-start')
   },
   update: (context, match) => {
     if (match.event.type === 'tool/result') {
@@ -264,7 +264,7 @@ export const changesDefinition: ConversationNodeDefinition<ChangesState> = {
       if (context.state.tool !== 'write' && result.hunks === null) return context.state
       return { ...context.state, result }
     }
-    if (match.event.type === 'tool/code-dispatch') {
+    if (match.event.type === 'tool/ptc-dispatch') {
       const result = dispatchResult(match)
       if (result === null) return context.state
       if (context.state.tool !== 'write' && result.hunks === null) return context.state

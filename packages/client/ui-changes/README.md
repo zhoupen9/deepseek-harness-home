@@ -41,7 +41,7 @@ watcher without restarting the server).
 - **Definition** (`changes-definition.ts`): starts a Context on every
   `edit`/`write` call — both ordinary `tool/call`/`tool/result` pairs (settling
   on any result; a write-create carries no hunks meta, so its content comes from
-  the call args) and nested PTC-mode `tool/code-dispatch-start`/`tool/code-dispatch`
+  the call args) and nested PTC-mode `tool/ptc-dispatch-start`/`tool/ptc-dispatch`
   pairs (whose mutations are reconstructed from the dispatch arguments, since PTC
   mode logs no result `meta`). It projects one `ChangeMutation` per applied change:
   `hunks` (edit results / write updates) or `create` (write-create, content from
@@ -93,7 +93,7 @@ packages/client/ui-changes/
   src/client/locales.ts                   # zh/en namespace 'changes'
   tests/changes-logic.client.spec.ts      # reconstruction + net-diff spec (18 tests)
   tests/changes-builder.client.spec.ts    # definition + builder spec (15 tests)
-  tests/changes-dispatch.client.spec.ts   # PTC-mode code-dispatch spec (6 tests)
+  tests/changes-dispatch.client.spec.ts   # PTC-mode ptc-dispatch spec (6 tests)
   tests/changes-highlight.client.spec.ts  # highlighter + extension mapping spec (9 tests)
   tests/client-bundle.client.spec.ts      # built-bundle spec (harness vitest)
 ```

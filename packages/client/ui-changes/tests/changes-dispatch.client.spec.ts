@@ -1,6 +1,6 @@
 /**
  * Behavior spec for the Changes Definition's PTC-mode (`run_code`) path:
- * nested `tool/code-dispatch-start` / `tool/code-dispatch` events carry
+ * nested `tool/ptc-dispatch-start` / `tool/ptc-dispatch` events carry
  * already-parsed argument objects (no result `meta`), so the mutation is
  * reconstructed from the dispatch arguments exactly like the chat diff card.
  */
@@ -10,21 +10,21 @@ import type { SessionEvent } from '@deepseek-ai/dsh-session/types'
 import { changesDefinition } from '../src/client/changes-definition.ts'
 import type { ChangesConversationViewNode } from '../src/client/changes-contract.ts'
 
-type CodeDispatchStartEvent = SessionEvent<'tool/code-dispatch-start'>
-type CodeDispatchEvent = SessionEvent<'tool/code-dispatch'>
+type PtcDispatchStartEvent = SessionEvent<'tool/ptc-dispatch-start'>
+type PtcDispatchEvent = SessionEvent<'tool/ptc-dispatch'>
 
-function dispatchStartEvent(seq: number, subCallId: string, name: string, args: Record<string, unknown>): CodeDispatchStartEvent {
+function dispatchStartEvent(seq: number, subCallId: string, name: string, args: Record<string, unknown>): PtcDispatchStartEvent {
   return {
-    type: 'tool/code-dispatch-start', seq, time: seq * 1000,
+    type: 'tool/ptc-dispatch-start', seq, time: seq * 1000,
     data: { rootCallId: 'root' as never, parentCallId: 'parent' as never, subCallId: subCallId as never, name, arguments: args },
-  } as CodeDispatchStartEvent
+  } as PtcDispatchStartEvent
 }
 
-function dispatchEvent(seq: number, subCallId: string, name: string, args: Record<string, unknown>, isError = false): CodeDispatchEvent {
+function dispatchEvent(seq: number, subCallId: string, name: string, args: Record<string, unknown>, isError = false): PtcDispatchEvent {
   return {
-    type: 'tool/code-dispatch', seq, time: seq * 1000,
+    type: 'tool/ptc-dispatch', seq, time: seq * 1000,
     data: { rootCallId: 'root' as never, parentCallId: 'parent' as never, subCallId: subCallId as never, name, arguments: args, isError, content: [] },
-  } as CodeDispatchEvent
+  } as PtcDispatchEvent
 }
 
 function match(event: SessionEvent<any>, role: 'start' | 'update' = 'start'): ConversationMatch {
@@ -48,7 +48,7 @@ function buildNode(event: SessionEvent<any>, state: unknown): ChangesConversatio
   return changesDefinition.buildViewNode!(contextFor(event, state))
 }
 
-describe('changesDefinition code-dispatch (PTC mode)', () => {
+describe('changesDefinition ptc-dispatch (PTC mode)', () => {
   it('starts and updates on nested edit/write dispatches', () => {
     expect(changesDefinition.match(dispatchStartEvent(1, 's1', 'edit', { file_path: 'a.ts' }))).toEqual({ id: 's1', role: 'start' })
     expect(changesDefinition.match(dispatchEvent(2, 's1', 'edit', { file_path: 'a.ts' }))).toEqual({ id: 's1', role: 'update' })

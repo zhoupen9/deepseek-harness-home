@@ -18,8 +18,8 @@ import { EMPTY_EDITS_SNAPSHOT } from '../src/client/edits-contract.ts'
 
 type ToolResultEvent = SessionEvent<'tool/result'>
 type ToolCallEvent = SessionEvent<'tool/call'>
-type DispatchStartEvent = SessionEvent<'tool/code-dispatch-start'>
-type DispatchEvent = SessionEvent<'tool/code-dispatch'>
+type DispatchStartEvent = SessionEvent<'tool/ptc-dispatch-start'>
+type DispatchEvent = SessionEvent<'tool/ptc-dispatch'>
 
 const EMPTY_TIMELINE = { turnOrder: [], turns: new Map() } as const
 
@@ -49,14 +49,14 @@ function resultEvent(
 
 function dispatchStartEvent(seq: number, subCallId: string, name: string, args: unknown): DispatchStartEvent {
   return {
-    type: 'tool/code-dispatch-start', seq, time: seq * 1000,
+    type: 'tool/ptc-dispatch-start', seq, time: seq * 1000,
     data: { rootCallId: 'root' as never, parentCallId: 'root' as never, subCallId: subCallId as never, name, arguments: args },
   } as DispatchStartEvent
 }
 
 function dispatchEvent(seq: number, subCallId: string, name: string, args: unknown, isError = false): DispatchEvent {
   return {
-    type: 'tool/code-dispatch', seq, time: seq * 1000,
+    type: 'tool/ptc-dispatch', seq, time: seq * 1000,
     data: { rootCallId: 'root' as never, parentCallId: 'root' as never, subCallId: subCallId as never, name, arguments: args, isError, content: [] },
   } as DispatchEvent
 }

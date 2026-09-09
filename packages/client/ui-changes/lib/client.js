@@ -1745,7 +1745,7 @@ window.__ModuleLoader__.load({
 			return match.location.kind === "step" ? match.location.step.step : 0;
 		}
 		/**
-		* Extract path/content from a code-dispatch's already-parsed arguments object
+		* Extract path/content from a ptc-dispatch's already-parsed arguments object
 		* (PTC mode logs `arguments` as JSON, not the raw string `tool/call` carries).
 		*/
 		function parseDispatchArgs(name, args) {
@@ -1763,7 +1763,7 @@ window.__ModuleLoader__.load({
 		* call arguments (PTC mode logs no result `meta`).
 		*/
 		function dispatchResult(match) {
-			if (match.event.type !== "tool/code-dispatch") return null;
+			if (match.event.type !== "tool/ptc-dispatch") return null;
 			if (match.event.data.isError === true) return null;
 			const name = match.event.data.name;
 			const args = match.event.data.arguments;
@@ -1809,7 +1809,7 @@ window.__ModuleLoader__.load({
 						result
 					};
 				}
-				if (match.event.type === "tool/code-dispatch") {
+				if (match.event.type === "tool/ptc-dispatch") {
 					const result = dispatchResult(match);
 					if (result === null || result.hunks === null) continue;
 					return {
@@ -1883,9 +1883,9 @@ window.__ModuleLoader__.load({
 					id: String(event.data.message.source.callId),
 					role: "update"
 				};
-				if (event.type === "tool/code-dispatch-start" || event.type === "tool/code-dispatch") {
+				if (event.type === "tool/ptc-dispatch-start" || event.type === "tool/ptc-dispatch") {
 					if (!FILE_TOOLS.has(event.data.name)) return null;
-					const role = event.type === "tool/code-dispatch-start" ? "start" : "update";
+					const role = event.type === "tool/ptc-dispatch-start" ? "start" : "update";
 					return {
 						id: String(event.data.subCallId),
 						role
@@ -1900,13 +1900,13 @@ window.__ModuleLoader__.load({
 					args: parseArgs(match.event.data.name, match.event.data.arguments),
 					result: null
 				};
-				if (match.event.type === "tool/code-dispatch-start") return {
+				if (match.event.type === "tool/ptc-dispatch-start") return {
 					callId: String(match.event.data.subCallId),
 					tool: match.event.data.name,
 					args: parseDispatchArgs(match.event.data.name, match.event.data.arguments),
 					result: null
 				};
-				throw new Error("changes-result start requires tool/call or tool/code-dispatch-start");
+				throw new Error("changes-result start requires tool/call or tool/ptc-dispatch-start");
 			},
 			update: (context, match) => {
 				if (match.event.type === "tool/result") {
@@ -1918,7 +1918,7 @@ window.__ModuleLoader__.load({
 						result
 					};
 				}
-				if (match.event.type === "tool/code-dispatch") {
+				if (match.event.type === "tool/ptc-dispatch") {
 					const result = dispatchResult(match);
 					if (result === null) return context.state;
 					if (context.state.tool !== "write" && result.hunks === null) return context.state;
