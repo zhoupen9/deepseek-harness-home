@@ -2,24 +2,29 @@
  * Behavior spec for the Session-metrics pure logic: billing-bucket sums,
  * cache-hit share rounding (never a partial hit shown as 100%), compact K/M
  * and grouped-exact token formatting, compact durations, decode throughput
- * digits, the pill visibility rule, and zh/en dictionary completeness.
+ * digits, the pill visibility rule, the merged panel total, context
+ * occupancy, and zh/en dictionary completeness.
  *
  * Runs standalone with vitest (all @deepseek-ai imports are type-only and
  * erased at runtime); typechecks fully under the harness tsconfig once the
  * package is dropped into packages/client/ui-session-metrics.
  */
 import { describe, expect, it } from 'vitest'
-import type { TokenUsageProjection } from '@deepseek-ai/dsh-token-meter/client'
+import type { ContextPressureProjection, TokenUsageProjection } from '@deepseek-ai/dsh-token-meter/client'
 import { en, zh, type SessionMetricsKey } from '../src/client/locales.ts'
 import {
   billedInputTokens,
   cacheHitPercentText,
+  CONTEXT_RING_CIRCUMFERENCE,
+  contextOccupancy,
+  contextRingDash,
   formatCacheHitPercent,
   formatCompactTokens,
   formatDuration,
   formatExactTokens,
   formatThroughput,
   hasUsage,
+  sessionTotalTokens,
   tokenFacts,
 } from '../src/client/session-metrics.ts'
 
@@ -43,6 +48,10 @@ function usage(overrides: Partial<TokenUsageProjection> = {}): TokenUsageProject
   return { uncachedInputTokens: 0, outputTokens: 0, cacheReadTokens: 0, cacheWriteTokens: 0, ...overrides }
 }
 
+function pressure(overrides: Partial<ContextPressureProjection> = {}): ContextPressureProjection {
+  return { ...overrides }
+}
+
 describe('billedInputTokens', () => {
   it('sums the three disjoint prompt-side buckets', () => {
     expect(billedInputTokens(usage({ uncachedInputTokens: 100, cacheReadTokens: 40, cacheWriteTokens: 12 }))).toBe(152)
@@ -50,6 +59,21 @@ describe('billedInputTokens', () => {
 
   it('reads zero from an empty projection', () => {
     expect(billedInputTokens(usage())).toBe(0)
+  })
+})
+
+describe('sessionTotalTokens', () => {
+  it('adds every billed prompt bucket to output', () => {
+    expect(sessionTotalTokens(usage({
+      uncachedInputTokens: 100,
+      cacheReadTokens: 40,
+      cacheWriteTokens: 12,
+      outputTokens: 7,
+    }))).toBe(159)
+  })
+
+  it('reads zero from an empty projection', () => {
+    expect(sessionTotalTokens(usage())).toBe(0)
   })
 })
 
@@ -142,6 +166,51 @@ describe('formatThroughput', () => {
   })
 })
 
+describe('contextOccupancy', () => {
+  it('prefers the projected figure over the provider-anchored sample', () => {
+    expect(contextOccupancy(pressure({ pressureTokens: 1000, projectedTokens: 1100, contextWindow: 10000 })))
+      .toEqual({ percent: 11, usedTokens: 1100, contextWindow: 10000 })
+  })
+
+  it('falls back to the sampled pressure before anything is repriced', () => {
+    expect(contextOccupancy(pressure({ pressureTokens: 2500, contextWindow: 10000 }))).toEqual({
+      percent: 25,
+      usedTokens: 2500,
+      contextWindow: 10000,
+    })
+  })
+
+  it('caps an overfull context at 100 percent', () => {
+    expect(contextOccupancy(pressure({ projectedTokens: 12000, contextWindow: 10000 }))?.percent).toBe(100)
+  })
+
+  it('stays unavailable without a sample, a capacity, or a usable capacity', () => {
+    expect(contextOccupancy(undefined)).toBeNull()
+    expect(contextOccupancy(pressure({ contextWindow: 10000 }))).toBeNull()
+    expect(contextOccupancy(pressure({ pressureTokens: 100 }))).toBeNull()
+    expect(contextOccupancy(pressure({ pressureTokens: 100, contextWindow: 0 }))).toBeNull()
+  })
+})
+
+describe('contextRingDash', () => {
+  it('draws the reading as an arc of the shipped ring circumference', () => {
+    const [arc, full] = contextRingDash(50).split(' ')
+    expect(Number(full)).toBeCloseTo(CONTEXT_RING_CIRCUMFERENCE, 10)
+    expect(Number(full)).toBeCloseTo(2 * Math.PI * 5.5, 10)
+    expect(Number(arc) * 2).toBeCloseTo(Number(full), 10)
+  })
+
+  it('draws an empty ring at zero and a full one at one hundred', () => {
+    expect(contextRingDash(0).startsWith('0 ')).toBe(true)
+    expect(contextRingDash(100).split(' ')[0]).toBe(String(CONTEXT_RING_CIRCUMFERENCE))
+  })
+
+  it('clamps out-of-range percentages', () => {
+    expect(contextRingDash(-5)).toBe(contextRingDash(0))
+    expect(contextRingDash(140)).toBe(contextRingDash(100))
+  })
+})
+
 describe('locales', () => {
   it('mirrors every Chinese key in English', () => {
     for (const key of Object.keys(zh) as SessionMetricsKey[]) {
@@ -151,9 +220,29 @@ describe('locales', () => {
   })
 
   it('formats the spoken aria pieces for both languages', () => {
-    expect(zhT('aria.cache', { percent: '62' })).toBe('缓存命中率 62%')
-    expect(enT('aria.speed', { speed: '52 tok/s' })).toBe('Decode speed 52 tok/s')
     expect(enT('aria.input', { input: '12.2K' })).toBe('Input 12.2K tokens')
     expect(zhT('aria.output', { output: '517' })).toBe('输出 517 tokens')
+    expect(zhT('aria.context', { percent: '45%' })).toBe('上下文已用 45%')
+    expect(enT('aria.context', { percent: '45%' })).toBe('45% of context used')
+  })
+
+  it('formats the context figures row', () => {
+    expect(enT('panel.contextFigures', { used: '12.2K', window: '1M' })).toBe('~12.2K / 1M')
+    expect(zhT('panel.contextFigures', { used: '12.2K', window: '1M' })).toBe('~12.2K / 1M')
+  })
+
+  it('carries the shipped dialog copy for the merged sections', () => {
+    expect(enT('panel.title')).toBe('Session statistics')
+    expect(zhT('panel.title')).toBe('会话统计')
+    expect(enT('panel.usageTitle')).toBe('Token usage')
+    expect(zhT('panel.usageTitle')).toBe('Token 用量')
+    expect(enT('panel.counts', { turns: 3, steps: 12 })).toBe('3 turns 12 steps')
+    expect(zhT('panel.counts', { turns: 3, steps: 12 })).toBe('3 轮 12 步')
+    expect(enT('panel.count', { count: '1,145' })).toBe('1,145 tok')
+    expect(enT('panel.cacheRead')).toBe('Cached input')
+    expect(zhT('panel.input')).toBe('未缓存输入')
+    expect(enT('panel.speed')).toBe('Tokens per second (TPS)')
+    expect(enT('aria.panel')).toBe('Session metrics')
+    expect(zhT('aria.panel')).toBe('会话指标')
   })
 })

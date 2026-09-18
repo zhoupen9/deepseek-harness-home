@@ -2,14 +2,16 @@
  * Pure display folds for the session-metrics pill and its hover panel.
  *
  * Every figure rides the durable whole-log projections served by
- * `useProjection` (`tokenUsage` from dsh-token-meter, `sessionStats` from
- * dsh-session-stats) — the same sources the shipped chat StatsLine consumes.
- * These helpers are reimplemented here (they may not be imported from a
- * feature plugin package), mirroring ui-chat's numeric display rules:
+ * `useProjection` (`tokenUsage` and `contextPressure` from dsh-token-meter,
+ * `sessionStats` from dsh-session-stats) — the same sources the shipped chat
+ * StatsLine and the shipped composer context meter consume. These helpers are
+ * reimplemented here (they may not be imported from a feature plugin
+ * package), mirroring ui-chat's and ui-conversation's numeric display rules:
  * compact K/M token counts, grouped exact counts, cache-hit rounding that
- * never lies a partial hit up to 100%, and compact durations.
+ * never lies a partial hit up to 100%, compact durations, and the occupancy
+ * percentage the shipped meter computes.
  */
-import type { TokenUsageProjection } from '@deepseek-ai/dsh-token-meter/client'
+import type { ContextPressureProjection, TokenUsageProjection } from '@deepseek-ai/dsh-token-meter/client'
 import type { SessionMetricsTranslate } from './locales.ts'
 
 /**
@@ -19,6 +21,16 @@ import type { SessionMetricsTranslate } from './locales.ts'
  */
 export function billedInputTokens(usage: TokenUsageProjection): number {
   return usage.uncachedInputTokens + usage.cacheReadTokens + usage.cacheWriteTokens
+}
+
+/**
+ * Session-wide token total the shipped session-statistics dialog headlines:
+ * every prompt-side billing bucket plus output.
+ * @param usage - the session's token-usage projection value.
+ * @returns billed input plus output tokens.
+ */
+export function sessionTotalTokens(usage: TokenUsageProjection): number {
+  return billedInputTokens(usage) + usage.outputTokens
 }
 
 /** Whole-number rounding units, positive ties rounded up (ui-chat mirror). */
@@ -184,4 +196,56 @@ export function tokenFacts(usage: TokenUsageProjection): SessionTokenFacts {
  */
 export function hasUsage(facts: SessionTokenFacts): boolean {
   return facts.billedInputTokens > 0 || facts.outputTokens > 0
+}
+
+
+/** Context occupancy rendered by the header capsule and its details panel. */
+export interface ContextOccupancy {
+  /** Whole-percent occupancy, capped at 100. */
+  readonly percent: number
+  /** Tokens the next request would carry: the projected figure when present. */
+  readonly usedTokens: number
+  /** Newest route capacity the percentage divides by. */
+  readonly contextWindow: number
+}
+
+/**
+ * Resolve display occupancy from the independently updated pressure fields,
+ * mirroring ui-conversation's own fold so the capsule and the shipped meter it
+ * replaces never disagree about the percentage. A missing sample, a missing
+ * capacity, or a non-positive capacity yields null — the shipped fold divides
+ * by that capacity, which would render `NaN%` into a surface this plugin now
+ * owns.
+ * @param pressure - latest token-meter context-pressure projection.
+ * @returns occupancy, or null until numerator and capacity are usable.
+ */
+export function contextOccupancy(
+  pressure: ContextPressureProjection | undefined,
+): ContextOccupancy | null {
+  const usedTokens = pressure?.projectedTokens ?? pressure?.pressureTokens
+  const contextWindow = pressure?.contextWindow
+  if (usedTokens === undefined || contextWindow === undefined || contextWindow <= 0) return null
+  return {
+    percent: Math.min(100, Math.round(usedTokens / contextWindow * 100)),
+    usedTokens,
+    contextWindow,
+  }
+}
+
+/** Radius of the context ring in user units — the shipped meter's own geometry. */
+export const CONTEXT_RING_RADIUS = 5.5
+
+/** Full circumference of the context ring in user units. */
+export const CONTEXT_RING_CIRCUMFERENCE = 2 * Math.PI * CONTEXT_RING_RADIUS
+
+/**
+ * Stroke dash pattern drawing one occupancy reading onto the context ring.
+ * The shipped meter and this capsule share the geometry, so both rings show
+ * the same arc for the same percentage.
+ * @param percent - occupancy percentage, 0-100.
+ * @returns the `stroke-dasharray` value: the filled arc, then the whole ring.
+ */
+export function contextRingDash(percent: number): string {
+  const bounded = Math.min(100, Math.max(0, percent))
+  return String(CONTEXT_RING_CIRCUMFERENCE * bounded / 100) + ' ' + String(CONTEXT_RING_CIRCUMFERENCE)
 }

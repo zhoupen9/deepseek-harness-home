@@ -10,21 +10,47 @@ everything lives in /home/zhoupeng/.dsh).
   Header utility cluster (slot `conversation.session.header.utilities`,
   entry id `session-metrics`, order -11): it swaps with the shipped
   "Open In…" split button (order -10) so the row reads metrics · Open In… ·
-  Session log (order 0). Hover/focus opens the details panel.
-- **Replaced**: the bottom-of-chat metrics strip — ui-chat's StatsLine row
-  (slot `conversation.composer.dock`, entry id `stats`, priority 0). This
-  plugin registers the same cell id at priority -1 (same-id cells clash only
-  at equal priority; lowest priority renders) with an empty occupant, so the
-  strip disappears while the plugin is mounted and its content is served by
-  the header capsule instead. The shipped entry is shadowed, not unloaded.
+  Session log (order 0). Hover/focus opens the merged panel below it.
+- **Replaced**: the bottom-of-chat stats pills — ui-chat's StatsPills row
+  (slot `conversation.composer.dock`, entry id `stats`, priority 0), whose
+  two pills click-open the shipped session-statistics and token-usage dialogs.
+  This plugin registers the same cell id at priority -1 (same-id cells clash
+  only at equal priority; lowest priority renders) with an empty occupant, so
+  the row disappears while the plugin is mounted. Both dialogs' content is
+  served by the header capsule's single merged panel, in their own skin
+  (ui-chat's `stat-dialog.module.css` surface and row grid, copied because a
+  feature plugin may not import another feature plugin's stylesheet) and with
+  their own rows, conditions, and copy.
+- **Replaced**: the composer context meter — ui-conversation's ContextMeter
+  (ring + percentage below the card), and with it the meter's own panel. The
+  composer renders that meter directly rather than through a slot, so it owns
+  no cell to shadow by id and priority. The plugin's apply passes
+  `ctx.effect` a stylesheet that hides it (`document.head` gains a
+  `data-session-metrics="composer-context-meter"` style element; unloading the
+  plugin removes it). Its reading — the occupancy percentage, the
+  `~used / window` figures, the composition bar, and the heuristic
+  system/tools/messages legend — is served by the merged panel's context
+  section. The hide is defensive on purpose: if ui-conversation ever renders
+  that meter differently the selector stops matching and the shipped meter
+  simply returns.
+
+The merged panel therefore holds three sections, in the shipped order:
+Session statistics (gauge glyph, counts headline), Token usage (database
+glyph, billed-total headline), and Context usage (ring glyph, percentage
+headline). The per-turn dialogs inside the transcript (TurnUsagePanel /
+TurnTimePanel) stay where they are: each describes one turn, and no
+session-level panel can show a turn's own buckets.
 
 ## Steps taken
 
 1. Built `lib/` with the workspace toolchain (tsdown + lightningcss at
    /home/zhoupeng/.dsh; shared preset under `packages/client/`).
-2. Symlinked the package into the profile install fallback:
-   `profiles/node_modules/@deepseek-ai/dsh-client-ui-session-metrics` →
-   `packages/client/ui-session-metrics`.
+2. Installed the package as a **profile-local dependency**:
+   `dsh plugin --profile web add link:/home/zhoupeng/.dsh/packages/client/ui-session-metrics`,
+   which pnpm links under `profiles/web/node_modules/`. Runtime profile
+   resolution skips the legacy `profiles/node_modules` shared fallback, so a
+   link there alone does not resolve. ui-edits, ui-changes, and ui-git are
+   installed the same way.
 3. Inserted the loader entry into `profiles/web/cordis.patch.yml`:
    ```yaml
    - insert:
@@ -33,6 +59,17 @@ everything lives in /home/zhoupeng/.dsh).
    ```
    The web profile's `patchReload: live` recomposes the running loader — no
    server restart. A page refresh loads the new client bundle.
+
+### Fallback projections removed (2026-09-18)
+
+`profiles/node_modules` — the legacy shared fallback that mirrored the
+installed /usr/lib/deepseek-harness dependency surface — and the empty
+`profiles/web/.dsh-module-fallback` tree were deleted. Runtime resolution
+(the launcher default since 0.1.6-alpha.2) reads neither position: a miss
+skips both, and the four local plugins resolve from this profile's own
+`node_modules`. The fallback had also gone stale, mirroring the installed
+0.1.6-alpha.1 tree while this profile runs the 0.1.6-alpha.2 source. A
+link/dual-mode launch would materialize both again; nothing else needs them.
 
 ## Rebuild after source edits
 
@@ -49,15 +86,26 @@ cd /home/zhoupeng/.dsh/packages/client/ui-session-metrics
   `["slots","locale"]`.
 - Bundle route `/plugins/…client.js&rev=…` → HTTP 200 with the
   `window.__ModuleLoader__.load({ id: "@deepseek-ai/dsh-client-ui-session-metrics", …})`
-  handoff; bundle requires only baseline module-table rows (react,
-  react/jsx-runtime, react-dom).
-- Behavior: the bottom stats strip is gone; the header capsule shows
-  cache-rate / input / output for a session with usage and opens the details
-  panel on hover; disabling the patch row restores the shipped strip.
+  handoff; the factory requires only baseline module-table rows (react,
+  react/jsx-runtime, react-dom, `@deepseek-ai/dsh-client-ui-primitives`).
+- Behavior: the bottom pills, their dialogs, and the composer context ring are
+  gone; the header capsule shows the shipped token-usage icon with the
+  input/output figures and a live context ring whose arc is the occupancy
+  percentage (no number beside it; token speed and cache-hit rate stay in the
+  panel);
+  hovering it opens one panel
+  whose three sections carry the shipped dialog skin and the shipped rows.
+  Disabling the patch row restores every shipped surface.
+- Pure logic: `vitest run tests/session-metrics.client.spec.ts` covers the
+  occupancy fold (projected-over-sampled, capped at 100, null without a
+  sample or a usable capacity), the session token total, the quarter-filling
+  glyph, and both dictionaries.
 
 ## Rollback
 
 Remove the `ui-session-metrics` insert row from `profiles/web/cordis.patch.yml`
-and delete `profiles/node_modules/@deepseek-ai/dsh-client-ui-session-metrics`.
-The shipped StatsLine strip and the header are restored exactly (the shadowed
-`stats` cell re-emerges once this plugin's entry disappears).
+and drop the dependency with
+`dsh plugin --profile web remove @deepseek-ai/dsh-client-ui-session-metrics`.
+The shipped StatsPills row and its dialogs, the composer context meter, and
+the header are restored exactly: the shadowed `stats` cell re-emerges, the
+injected stylesheet leaves with the plugin, and the header capsule disappears.

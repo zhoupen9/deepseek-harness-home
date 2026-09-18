@@ -1,27 +1,40 @@
-/** Session-metrics namespace dictionaries for the chat-header metrics surface. */
+/** Session-metrics namespace dictionaries for the chat-header metrics surface.
+ *
+ * Row labels and templates mirror ui-chat's own `stats.dialog.*` and
+ * `message.turnUsage.*` copy and ui-conversation's `context.*` copy, so the
+ * merged panel reads exactly like the shipped dialogs it replaces; the two
+ * dictionaries stay complete against each other.
+ */
 
 /** Dictionary namespace owned by this plugin. */
 export const NS = 'session-metrics'
 
 /** Simplified Chinese dictionary (the key-set source of truth). */
 export const zh = {
-  'panel.title': "会话指标",
-  'panel.caption': "{turns} 轮 · {steps} 步",
-  'panel.modelTime': "模型耗时",
-  'panel.toolTime': "工具耗时",
-  'panel.ttft': "首 token 平均延迟",
-  'panel.decode': "解码速度",
-  'panel.input': "输入 tokens",
+  'panel.title': "会话统计",
+  'panel.usageTitle': "Token 用量",
+  'panel.context': "上下文占用",
+  'panel.counts': "{turns} 轮 {steps} 步",
+  'panel.llmTime': "模型用时",
+  'panel.toolTime': "工具调用用时",
+  'panel.ttft': "首 token 平均（TTFT）",
+  'panel.speed': "输出速度（TPS）",
+  'panel.cacheHit': "缓存命中",
+  'panel.input': "未缓存输入",
   'panel.cacheRead': "缓存读取",
   'panel.cacheWrite': "缓存写入",
-  'panel.uncached': "未命中缓存",
-  'panel.output': "输出 tokens",
-  'panel.cacheRate': "缓存命中率",
+  'panel.output': "输出",
+  'panel.count': "{count} tok",
+  'panel.contextUsed': "已用",
+  'panel.contextFigures': "~{used} / {window}",
+  'panel.contextSystem': "系统提示词",
+  'panel.contextTools': "工具定义",
+  'panel.contextMessages': "对话消息",
   'value.tokensPerSecond': "{throughput} tok/s",
-  'aria.speed': "解码速度 {speed}",
-  'aria.cache': "缓存命中率 {percent}%",
   'aria.input': "输入 {input} tokens",
   'aria.output': "输出 {output} tokens",
+  'aria.context': "上下文已用 {percent}",
+  'aria.panel': "会话指标",
   'aria.metrics': "会话指标：{items}",
   'number.groupSeparator': ",",
   'number.thousand': "{value}K",
@@ -45,23 +58,30 @@ export type SessionMetricsTranslate = import('@deepseek-ai/dsh-client-ui-slots')
 
 /** English dictionary, checked complete against the Chinese source of truth. */
 export const en: Record<SessionMetricsKey, string> = {
-  'panel.title': "Session metrics",
-  'panel.caption': "{turns} turns · {steps} steps",
-  'panel.modelTime': "Model time",
+  'panel.title': "Session statistics",
+  'panel.usageTitle': "Token usage",
+  'panel.context': "Context usage",
+  'panel.counts': "{turns} turns {steps} steps",
+  'panel.llmTime': "LLM time",
   'panel.toolTime': "Tool time",
-  'panel.ttft': "Avg TTFT",
-  'panel.decode': "Decode speed",
-  'panel.input': "Input tokens",
-  'panel.cacheRead': "Cache read",
+  'panel.ttft': "Avg time to first token (TTFT)",
+  'panel.speed': "Tokens per second (TPS)",
+  'panel.cacheHit': "Cache hit",
+  'panel.input': "Uncached input",
+  'panel.cacheRead': "Cached input",
   'panel.cacheWrite': "Cache write",
-  'panel.uncached': "Uncached",
-  'panel.output': "Output tokens",
-  'panel.cacheRate': "Cache hit rate",
+  'panel.output': "Output",
+  'panel.count': "{count} tok",
+  'panel.contextUsed': "Used",
+  'panel.contextFigures': "~{used} / {window}",
+  'panel.contextSystem': "System prompt",
+  'panel.contextTools': "Tool definitions",
+  'panel.contextMessages': "Messages",
   'value.tokensPerSecond': "{throughput} tok/s",
-  'aria.speed': "Decode speed {speed}",
-  'aria.cache': "Cache hit rate {percent}%",
   'aria.input': "Input {input} tokens",
   'aria.output': "Output {output} tokens",
+  'aria.context': "{percent} of context used",
+  'aria.panel': "Session metrics",
   'aria.metrics': "Session metrics: {items}",
   'number.groupSeparator': ",",
   'number.thousand': "{value}K",

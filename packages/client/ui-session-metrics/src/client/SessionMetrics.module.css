@@ -19,7 +19,7 @@
   padding: 5px 10px;
   font-family: var(--dsw-font-family);
   /* Compact capsule type scale — matches the row's 11px utility buttons
-     (Session log / Open In…); the hover details panel keeps its 12px text. */
+     (Session log / Open In…); the merged panel keeps its 12px text. */
   font-size: 11px;
   font-weight: 400;
   line-height: 16px;
@@ -43,97 +43,168 @@
 }
 
 .segment {
-  align-items: baseline;
+  align-items: center;
   gap: 4px;
   display: inline-flex;
 }
 
-.glyph {
-  font-size: 10px;
-  line-height: 16px;
+/* Shipped metric icons (ui-primitives) and the live context ring, sized to the
+   capsule's 11px row. */
+.icon {
+  width: 14px;
+  height: 14px;
+  flex: none;
   color: var(--dsw-alias-label-caption);
-  /* U+26A1 defaults to emoji presentation; keep glyphs monochrome. */
-  font-variant-emoji: text;
-}
-
-.glyphValue {
-  font-variant-numeric: tabular-nums;
-}
-
-.panel {
-  z-index: 1100;
-  position: fixed;
-  box-sizing: border-box;
-  min-width: 224px;
-  width: max-content;
-  max-width: min(380px, calc(100vw - 24px));
-  color: var(--dsw-alias-label-secondary);
-  cursor: default;
-  background: var(--dsw-specific-menu);
-  --dsw-elevation-stroke-color: var(--dsw-alias-border-l1);
-  box-shadow: var(--dsw-elevation-prominent);
-  border: 0;
-  border-radius: 12px;
-  padding: 12px 14px;
-  font-size: 12px;
-  line-height: 18px;
-}
-
-.title {
-  color: var(--dsw-alias-label-primary);
-  font-size: 12px;
-  font-weight: 500;
-  line-height: 18px;
-  margin: 0 0 4px;
-  white-space: nowrap;
-}
-
-.caption {
-  color: var(--dsw-alias-label-tertiary);
-  margin: 0 0 6px;
-  white-space: nowrap;
-}
-
-.row {
-  display: flex;
-  align-items: baseline;
-  justify-content: space-between;
-  gap: 24px;
-  padding: 1px 0;
-}
-
-.label {
-  color: var(--dsw-alias-label-tertiary);
-  white-space: nowrap;
-}
-
-.labelSub {
-  padding-left: 14px;
 }
 
 .value {
-  color: var(--dsw-alias-label-primary);
   font-variant-numeric: tabular-nums;
-  font-weight: 500;
-  text-align: right;
-  white-space: nowrap;
 }
 
-.valueSub {
+/* Live context ring: the shipped meter's track and arc tokens, drawn from the
+   occupancy reading so the capsule shows the percentage without printing it. */
+.ringTrack {
+  fill: none;
+  stroke: var(--dsw-alias-border-l3);
+  stroke-width: 2;
+}
+
+.ringFill {
+  fill: none;
+  stroke: var(--dsw-alias-label-tertiary);
+  stroke-width: 2;
+  stroke-linecap: round;
+}
+
+/* Merged stat-dialog surface: ui-chat's stat-dialog.module.css skin copied
+   here, because a feature plugin may not import another feature plugin's
+   stylesheet. Placement comes from the same ui-primitives seat those dialogs
+   use, so the panel keeps their fixed positioning, viewport clamp, and
+   layering above modal overlays (z 1000). */
+.panel {
+  position: fixed;
+  z-index: 1100;
+  box-sizing: border-box;
+  /* Size to the widest row so a long model route stays on one line, within a
+     cap. Both bounds yield to a viewport narrower than themselves (12px
+     margins), so a fixed floor cannot push the panel past the clamp. */
+  width: max-content;
+  min-width: min(300px, calc(100vw - 24px));
+  max-width: min(440px, calc(100vw - 24px));
+  padding: 16px;
+  border: 0;
+  border-radius: 12px;
+  background: var(--dsw-specific-menu);
+  --dsw-elevation-stroke-color: var(--dsw-alias-border-l1);
+  box-shadow: var(--dsw-elevation-prominent);
+  font-size: 12px;
+  line-height: 18px;
   color: var(--dsw-alias-label-secondary);
-  font-weight: 400;
+  cursor: default;
 }
 
-.valueRate {
-  color: var(--dsw-alias-state-business-primary);
+/* Dialog heading row: the section name left, the section's headline value
+   right, both at the primary weight. */
+.title {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 8px;
+  color: var(--dsw-alias-label-primary);
   font-weight: 500;
 }
 
-.divider {
+/* Rule under each section heading, above its rows. */
+.titleRule {
+  margin-bottom: 10px;
   border-top: 0.5px solid var(--dsw-alias-border-l2);
-  margin: 6px 0;
 }
 
-.hidden {
-  display: none;
+.titleValue {
+  font-variant-numeric: tabular-nums;
+}
+
+/* Section-heading icon seated left of the section name. */
+.titleLabel {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-width: 0;
+}
+
+.titleLabel svg {
+  width: 14px;
+  height: 14px;
+  flex: none;
+}
+
+.details {
+  display: grid;
+  grid-template-columns: minmax(76px, auto) minmax(0, 1fr);
+  gap: 6px 16px;
+  margin: 0;
+  color: var(--dsw-alias-label-tertiary);
+}
+
+.details dt,
+.details dd {
+  min-width: 0;
+  margin: 0;
+}
+
+.details dd {
+  color: var(--dsw-alias-label-secondary);
+  font-variant-numeric: tabular-nums;
+  text-align: right;
+}
+
+/* The shipped dialogs are one section each; merged, every section after the
+   first keeps their spacing. */
+.section + .section {
+  margin-top: 14px;
+}
+
+/* Context composition bar and legend swatches, from ui-conversation's own
+   meter panel: the bar's length is the provider-exact percentage while the
+   colored parts only proportion it. */
+.bar {
+  display: flex;
+  gap: 1px;
+  margin: 0 0 10px;
+  height: 4px;
+  border-radius: 999px;
+  corner-shape: round;
+  background: var(--dsw-alias-interactive-bg-hover);
+  overflow: hidden;
+}
+
+.barSegment {
+  flex: none;
+  min-width: 2px;
+  height: 100%;
+  border-radius: 1px;
+  background: var(--meter-tint, var(--dsw-alias-label-tertiary));
+}
+
+.swatch {
+  display: inline-block;
+  margin-right: 6px;
+  width: 8px;
+  height: 8px;
+  border-radius: 2px;
+  background: var(--meter-tint);
+  vertical-align: baseline;
+}
+
+.colorSystem {
+  --meter-tint: var(--dsw-static-neutral-bluish-400);
+}
+
+.colorTools {
+  /* The design platform ships no purple static token; violet-400 literal. */
+  --meter-tint: rgb(167, 139, 250);
+}
+
+.colorMessages {
+  --meter-tint: var(--dsw-static-blue-450);
 }
