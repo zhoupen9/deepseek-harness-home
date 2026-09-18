@@ -1,0 +1,13 @@
+/* Tab icon: a shipped 16px glyph sized to the 13px tab row. It is prepended to
+   the tab button, so it carries its own trailing gap and a baseline nudge.
+   Monochrome contract: every icon in the map paints with currentColor only,
+   and the tone is set here rather than inherited, so one fixed caption tone
+   carries across every tab — the shell's selected-tab blue (or any ancestor
+   svg rule) cannot tint an icon. */
+.icon {
+  width: 14px;
+  height: 14px;
+  margin-right: 5px;
+  vertical-align: -2px;
+  color: var(--dsw-alias-label-caption);
+}
