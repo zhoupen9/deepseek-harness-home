@@ -6,8 +6,17 @@
 # - cumulative per-file "Changes" view (@deepseek-ai/dsh-client-ui-changes)
 # - git history tree graph tab (@deepseek-ai/dsh-client-ui-git; host git remote — see its HOST_PRIMITIVES.md)
 # - chat-header session metrics (@deepseek-ai/dsh-client-ui-session-metrics; replaces the
-#   bottom-of-chat StatsLine strip — see its INTEGRATION.md)
+#   bottom-of-chat stats pills and the composer context meter — see its INTEGRATION.md)
+# - view-tab icons (@deepseek-ai/dsh-client-ui-chat-tab-icons; Chat/Trajectory/Edits/Changes/Git)
 # - podman container MCP server (@deepseek-ai/dsh-mcp-client; tools under mcp__podman__*)
+# The five local plugins are profile-local dependencies of this profile (pnpm
+# links under profiles/web/node_modules); reinstall after a harness upgrade
+# with:
+#   dsh plugin --profile web add link:<package dir>
+# The legacy profiles/node_modules shared fallback and the empty
+# profiles/web/.dsh-module-fallback projection were removed on 2026-09-18.
+# Runtime resolution (the launcher default since 0.1.6-alpha.2) never reads
+# either position, so a link placed there silently fails to resolve.
 # The shipped ui-deliverables row provides the produced-files chips and the
 # chatFileMentions provider; it stays enabled now that the local ui-files
 # plugin that used to supersede it is removed.
@@ -21,6 +30,8 @@
       name: '@deepseek-ai/dsh-client-ui-git'
     - id: ui-session-metrics
       name: '@deepseek-ai/dsh-client-ui-session-metrics'
+    - id: ui-chat-tab-icons
+      name: '@deepseek-ai/dsh-client-ui-chat-tab-icons'
     - id: mcp-podman
       name: '@deepseek-ai/dsh-mcp-client'
       config:
