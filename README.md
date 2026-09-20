@@ -15,6 +15,7 @@ It holds the per-profile configuration and a set of **client plugins** for the w
     │       ├── ui-changes/      # @deepseek-ai/dsh-client-ui-changes
     │       ├── ui-git/          # @deepseek-ai/dsh-client-ui-git
     │       ├── ui-session-metrics/ # @deepseek-ai/dsh-client-ui-session-metrics
+    │       ├── ui-chat-tab-icons/ # @deepseek-ai/dsh-client-ui-chat-tab-icons
     │       ├── tsdown.client.ts # shared clientBundle tsdown preset
     │       ├── modules/         # preset support modules (manifest/system)
     │       └── web/             # shared browser platform module list
@@ -28,7 +29,7 @@ It holds the per-profile configuration and a set of **client plugins** for the w
 
 | Profile | Bundles | Notes |
 | --- | --- | --- |
-| `web` | `@deepseek-ai/dsh-base`, `@deepseek-ai/dsh-web-app` | web GUI; `cordis.patch.yml` disables the shipped `ui-deliverables` row and inserts the five client plugins below |
+| `web` | `@deepseek-ai/dsh-base`, `@deepseek-ai/dsh-web-app`, `@anysearch/anysearch-dsh` | web GUI; `cordis.patch.yml` keeps the shipped `ui-deliverables` row enabled and inserts the five client plugins below plus a `podman` MCP server (`@deepseek-ai/dsh-mcp-client`) |
 
 `cordis.yml` is the profile root (an empty entry list). `cordis.patch.yml` is the patch layer applied on top of every bundle layer — edit `cordis.patch.yml`, never `cordis.yml`. `package.json` sets `dsh.profile.patchReload: "live"`, so patch changes are picked up without restarting the server.
 
@@ -36,8 +37,10 @@ It holds the per-profile configuration and a set of **client plugins** for the w
 
 The plugins are pure-frontend (pure-consumer) client plugins: each is a self-contained npm package with source in `src/`, compiled output in `lib/`, and tests in `tests/`. Each is wired into the web profile by two things:
 
-1. a symlink `profiles/node_modules/@deepseek-ai/<pkg-name>` → `packages/client/<dir>` (the mode-installation / fallback resolution — the profile points at the local source tree), and
+1. a `link:` dependency in `profiles/web/package.json` pointing at `packages/client/<dir>`, which pnpm materialises as a symlink at `profiles/web/node_modules/@deepseek-ai/<pkg-name>` → `packages/client/<dir>`, and
 2. an `insert:` entry in `profiles/web/cordis.patch.yml` that loads the package by `id` + `name`.
+
+Resolution reads only `profiles/web/node_modules`; the legacy `profiles/node_modules` fallback was removed on 2026-09-18, and a link placed there silently fails to resolve.
 
 | Directory | Package | Description |
 | --- | --- | --- |
@@ -45,6 +48,7 @@ The plugins are pure-frontend (pure-consumer) client plugins: each is a self-con
 | `packages/client/ui-changes` | `@deepseek-ai/dsh-client-ui-changes` | **Changes** tab: cumulative per-file view folding the loaded window into one net original → current diff |
 | `packages/client/ui-git` | `@deepseek-ai/dsh-client-ui-git` | **Git** tab: workspace repository commit-history tree graph (host git remote) |
 | `packages/client/ui-session-metrics` | `@deepseek-ai/dsh-client-ui-session-metrics` | **Session metrics**: chat-header capsule (cache rate · input/output tokens) anchoring the left edge of the header utilities row — left of the "Open In…" button and the Session log button — hover details; replaces the bottom-of-chat StatsLine strip |
+| `packages/client/ui-chat-tab-icons` | `@deepseek-ai/dsh-client-ui-chat-tab-icons` | **View-tab icons**: prepends a shipped icon to each conversation view tab (Chat / Trajectory / Edits / Changes / Git); presentation only — no slot entry, service, or session state |
 
 Each package has a `README.md` (behaviour and live status) and an `INTEGRATION.md` (wiring/removal notes).
 
@@ -55,7 +59,7 @@ The root `package.json` installs the build toolchain the harness `clientBundle` 
 Rebuild a plugin after editing its source:
 
 ```sh
-cd "$HOME/.dsh/packages/client/ui-edits"   # or ui-changes / ui-git / ui-session-metrics
+cd "$HOME/.dsh/packages/client/ui-edits"   # or ui-changes / ui-git / ui-chat-tab-icons / ui-session-metrics
 "$HOME/.dsh/node_modules/.bin/tsdown"
 ```
 
@@ -83,7 +87,7 @@ After a rebuild, refresh the web GUI tab — the boot graph is re-read on page l
 | `attachments/` | attachment object store |
 | `node_modules/` | regenerable dependencies |
 | `settings.yaml` | may contain private API endpoints |
-| self-referencing plugin symlinks | filesystem artifacts, not source |
+| self-referencing plugin symlinks | filesystem artifacts, not source (the profile-local `link:` symlinks under `profiles/web/node_modules/` are covered by `node_modules/`) |
 
 > API keys never live in this repo. After cloning, recreate `~/.dsh/.credentials.yaml` with your own keys.
 
@@ -99,14 +103,18 @@ git clone https://github.com/zhoupen9/deepseek-harness-home.git "$HOME/.dsh"
    cd "$HOME/.dsh" && pnpm install
    ```
 
-2. **Re-link the client plugins** (the symlinks live under `profiles/node_modules/`, which resolves against the installed `deepseek-harness` tree, so they are not tracked):
+2. **Re-link the client plugins.** The links live under `profiles/web/node_modules/` (gitignored). The tracked `profiles/web/package.json` already carries them, so reinstalling the profile deps recreates the symlinks — or register each package explicitly against the local source tree:
 
    ```sh
-   mkdir -p "$HOME/.dsh/profiles/node_modules/@deepseek-ai" && cd "$_"
-   ln -s "$HOME/.dsh/packages/client/ui-edits"   dsh-client-ui-edits
-   ln -s "$HOME/.dsh/packages/client/ui-changes" dsh-client-ui-changes
-   ln -s "$HOME/.dsh/packages/client/ui-git" dsh-client-ui-git
-   ln -s "$HOME/.dsh/packages/client/ui-session-metrics" dsh-client-ui-session-metrics
+   cd "$HOME/.dsh/profiles/web" && pnpm install
+   ```
+
+   ```sh
+   dsh plugin --profile web add link:"$HOME/.dsh/packages/client/ui-edits"
+   dsh plugin --profile web add link:"$HOME/.dsh/packages/client/ui-changes"
+   dsh plugin --profile web add link:"$HOME/.dsh/packages/client/ui-git"
+   dsh plugin --profile web add link:"$HOME/.dsh/packages/client/ui-session-metrics"
+   dsh plugin --profile web add link:"$HOME/.dsh/packages/client/ui-chat-tab-icons"
    ```
 
 3. **Recreate credentials** (`~/.dsh/.credentials.yaml`) with your `DEEPSEEK_API_KEY`.
