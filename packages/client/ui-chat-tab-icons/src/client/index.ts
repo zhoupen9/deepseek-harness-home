@@ -22,11 +22,11 @@ import { createElement, type ComponentType } from 'react'
 import { flushSync } from 'react-dom'
 import { createRoot } from 'react-dom/client'
 import {
-  IconBranchOutline16,
-  IconCodeOutline16,
-  IconEditOutline16,
-  IconNewChatOutline16,
-  IconThinkOutline16,
+  IconBranchOutlineRegular,
+  IconCodeOutlineRegular,
+  IconEditOutlineRegular,
+  IconNewChatOutlineRegular,
+  IconThinkOutlineRegular,
 } from '@deepseek-ai/dsh-client-ui-primitives'
 import type { Context } from '@deepseek-ai/cordis'
 // Type-only: the `conversation.view` SlotMap row this plugin reads.
@@ -39,11 +39,11 @@ export const inject = ['slots']
 
 /** Shipped icon drawn on each decorated view tab. */
 const TAB_ICONS: Readonly<Record<TabIconId, ComponentType<{ className?: string }>>> = {
-  chat: IconNewChatOutline16,
-  trajectory: IconThinkOutline16,
-  edits: IconEditOutline16,
-  changes: IconCodeOutline16,
-  git: IconBranchOutline16,
+  chat: IconNewChatOutlineRegular,
+  trajectory: IconThinkOutlineRegular,
+  edits: IconEditOutlineRegular,
+  changes: IconCodeOutlineRegular,
+  git: IconBranchOutlineRegular,
 }
 
 /**

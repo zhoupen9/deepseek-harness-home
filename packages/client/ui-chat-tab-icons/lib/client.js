@@ -82,11 +82,11 @@ window.__ModuleLoader__.load({
 		const inject = ["slots"];
 		/** Shipped icon drawn on each decorated view tab. */
 		const TAB_ICONS = {
-			chat: _deepseek_ai_dsh_client_ui_primitives.IconNewChatOutline16,
-			trajectory: _deepseek_ai_dsh_client_ui_primitives.IconThinkOutline16,
-			edits: _deepseek_ai_dsh_client_ui_primitives.IconEditOutline16,
-			changes: _deepseek_ai_dsh_client_ui_primitives.IconCodeOutline16,
-			git: _deepseek_ai_dsh_client_ui_primitives.IconBranchOutline16
+			chat: _deepseek_ai_dsh_client_ui_primitives.IconNewChatOutlineRegular,
+			trajectory: _deepseek_ai_dsh_client_ui_primitives.IconThinkOutlineRegular,
+			edits: _deepseek_ai_dsh_client_ui_primitives.IconEditOutlineRegular,
+			changes: _deepseek_ai_dsh_client_ui_primitives.IconCodeOutlineRegular,
+			git: _deepseek_ai_dsh_client_ui_primitives.IconBranchOutlineRegular
 		};
 		/**
 		* Render-site anchors that own the tab strip, most specific first. The strip
