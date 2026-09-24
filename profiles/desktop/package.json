@@ -1,0 +1,22 @@
+{
+  "name": "dsh-profile-web",
+  "private": true,
+  "dependencies": {
+    "@anysearch/anysearch-dsh": "^0.1.4",
+    "@deepseek-ai/dsh-client-ui-changes": "link:/home/zhoupeng/.dsh/packages/client/ui-changes",
+    "@deepseek-ai/dsh-client-ui-chat-tab-icons": "link:/home/zhoupeng/.dsh/packages/client/ui-chat-tab-icons",
+    "@deepseek-ai/dsh-client-ui-edits": "link:/home/zhoupeng/.dsh/packages/client/ui-edits",
+    "@deepseek-ai/dsh-client-ui-git": "link:/home/zhoupeng/.dsh/packages/client/ui-git",
+    "@deepseek-ai/dsh-client-ui-session-metrics": "link:/home/zhoupeng/.dsh/packages/client/ui-session-metrics"
+  },
+  "dsh": {
+    "profile": {
+      "bundles": [
+        "@deepseek-ai/dsh-base",
+        "@deepseek-ai/dsh-web-app",
+        "@anysearch/anysearch-dsh"
+      ],
+      "patchReload": "live"
+    }
+  }
+}
