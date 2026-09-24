@@ -4,6 +4,7 @@ window.__ModuleLoader__.load({
 		var module = { exports: {} };
 		var exports = module.exports;
 		Object.defineProperty(exports, Symbol.toStringTag, { value: "Module" });
+		let _deepseek_ai_dsh_client_store = require("@deepseek-ai/dsh-client-store");
 		let react = require("react");
 		let react_dom = require("react-dom");
 		let _deepseek_ai_dsh_client_ui_primitives = require("@deepseek-ai/dsh-client-ui-primitives");
@@ -103,18 +104,6 @@ window.__ModuleLoader__.load({
 			return t("number.million", { value: scaled(value / 1e6) });
 		}
 		/**
-		* Exact integer token count with locale-owned digit grouping.
-		* @param value - non-negative safe integer token count.
-		* @param t - namespace-bound translator.
-		* @returns an unrounded display string.
-		*/
-		function formatExactTokens(value, t) {
-			const digits = String(value);
-			const groups = [];
-			for (let end = digits.length; end > 0; end -= 3) groups.unshift(digits.slice(Math.max(0, end - 3), end));
-			return groups.join(t("number.groupSeparator"));
-		}
-		/**
 		* Compact duration: 45.2s under a minute, 2m42s from there on (ui-chat rule).
 		* @param ms - duration in milliseconds.
 		* @param t - namespace-bound translator.
@@ -163,8 +152,8 @@ window.__ModuleLoader__.load({
 		* mirroring ui-conversation's own fold so the capsule and the shipped meter it
 		* replaces never disagree about the percentage. A missing sample, a missing
 		* capacity, or a non-positive capacity yields null — the shipped fold divides
-		* by that capacity, which would render `NaN%` into a surface this plugin now
-		* owns.
+		* by that capacity and would report a full 100% (or a negative share) into a
+		* surface this plugin now owns.
 		* @param pressure - latest token-meter context-pressure projection.
 		* @returns occupancy, or null until numerator and capacity are usable.
 		*/
@@ -192,9 +181,27 @@ window.__ModuleLoader__.load({
 		function contextRingDash(percent) {
 			return String(CONTEXT_RING_CIRCUMFERENCE * Math.min(100, Math.max(0, percent)) / 100) + " " + String(CONTEXT_RING_CIRCUMFERENCE);
 		}
+		/** Detail level a session presents without an explicit Chat preference. */
+		const DEFAULT_PERFORMANCE_USAGE = "detailed";
+		/**
+		* Derive the compact readings the shipped composer strip presents for its
+		* compact detail level — decode throughput and the cache-hit share — under the
+		* shipped conditions: throughput needs a decode-timed step, and the share needs
+		* billed input.
+		* @param usage - the session's token-usage projection value, when served.
+		* @param stats - the session's whole-log statistics projection value, when served.
+		* @returns the two readings; each is null while its own source cannot answer.
+		*/
+		function compactFacts(usage, stats) {
+			const facts = usage === void 0 ? null : tokenFacts(usage);
+			return {
+				speed: stats !== void 0 && stats.decodeMs > 0 ? formatThroughput(stats.decodeTokens / (stats.decodeMs / 1e3)) : null,
+				cacheHitPercent: facts !== null && hasUsage(facts) ? facts.cacheHitPercent : null
+			};
+		}
 		//#endregion
 		//#region \0dsh-css:/home/zhoupeng/.dsh/packages/client/ui-session-metrics/src/client/SessionMetrics.module.css.mjs
-		const css = "._33_2oW_root{align-items:center;display:inline-flex}._33_2oW_trigger{color:var(--dsw-alias-label-secondary);cursor:default;border:.5px solid var(--dsw-alias-border-l4);box-sizing:border-box;height:26px;font-family:var(--dsw-font-family);white-space:nowrap;font-variant-numeric:tabular-nums;background:0 0;border-radius:13px;align-items:center;gap:6px;margin-bottom:0;padding:5px 10px;font-size:11px;font-weight:400;line-height:16px;display:inline-flex}._33_2oW_trigger:hover{background:var(--dsw-alias-interactive-bg-hover);color:var(--dsw-alias-label-primary)}._33_2oW_trigger:active{background:var(--dsw-alias-interactive-bg-hover-solid)}._33_2oW_sep{color:var(--dsw-alias-label-caption);flex:none}._33_2oW_segment{align-items:center;gap:4px;display:inline-flex}._33_2oW_icon{width:14px;height:14px;color:var(--dsw-alias-label-caption);flex:none}._33_2oW_value{font-variant-numeric:tabular-nums}._33_2oW_ringTrack{fill:none;stroke:var(--dsw-alias-border-l3);stroke-width:2px}._33_2oW_ringFill{fill:none;stroke:var(--dsw-alias-label-tertiary);stroke-width:2px;stroke-linecap:round}._33_2oW_panel{z-index:1100;box-sizing:border-box;background:var(--dsw-specific-menu);--dsw-elevation-stroke-color:var(--dsw-alias-border-l1);width:max-content;min-width:min(300px,100vw - 24px);max-width:min(440px,100vw - 24px);box-shadow:var(--dsw-elevation-prominent);color:var(--dsw-alias-label-secondary);cursor:default;border:0;border-radius:12px;padding:16px;font-size:12px;line-height:18px;position:fixed}._33_2oW_title{color:var(--dsw-alias-label-primary);justify-content:space-between;gap:16px;margin-bottom:8px;font-weight:500;display:flex}._33_2oW_titleRule{border-top:.5px solid var(--dsw-alias-border-l2);margin-bottom:10px}._33_2oW_titleValue{font-variant-numeric:tabular-nums}._33_2oW_titleLabel{align-items:center;gap:6px;min-width:0;display:inline-flex}._33_2oW_titleLabel svg{flex:none;width:14px;height:14px}._33_2oW_details{color:var(--dsw-alias-label-tertiary);grid-template-columns:minmax(76px,auto) minmax(0,1fr);gap:6px 16px;margin:0;display:grid}._33_2oW_details dt,._33_2oW_details dd{min-width:0;margin:0}._33_2oW_details dd{color:var(--dsw-alias-label-secondary);font-variant-numeric:tabular-nums;text-align:right}._33_2oW_section+._33_2oW_section{margin-top:14px}._33_2oW_bar{corner-shape:round;background:var(--dsw-alias-interactive-bg-hover);border-radius:999px;gap:1px;height:4px;margin:0 0 10px;display:flex;overflow:hidden}._33_2oW_barSegment{background:var(--meter-tint,var(--dsw-alias-label-tertiary));border-radius:1px;flex:none;min-width:2px;height:100%}._33_2oW_swatch{background:var(--meter-tint);vertical-align:baseline;border-radius:2px;width:8px;height:8px;margin-right:6px;display:inline-block}._33_2oW_colorSystem{--meter-tint:var(--dsw-static-neutral-bluish-400)}._33_2oW_colorTools{--meter-tint:#a78bfa}._33_2oW_colorMessages{--meter-tint:var(--dsw-static-blue-450)}";
+		const css = "._33_2oW_root{align-items:center;display:inline-flex}._33_2oW_trigger{color:var(--dsw-alias-label-secondary);cursor:default;border:.5px solid var(--dsw-alias-border-l4);box-sizing:border-box;height:26px;font-family:var(--dsw-font-family);white-space:nowrap;font-variant-numeric:tabular-nums;background:0 0;border-radius:13px;align-items:center;gap:6px;margin-bottom:0;padding:5px 10px;font-size:11px;font-weight:400;line-height:16px;display:inline-flex}._33_2oW_trigger:hover{background:var(--dsw-alias-interactive-bg-hover);color:var(--dsw-alias-label-primary)}._33_2oW_trigger:active{background:var(--dsw-alias-interactive-bg-hover-solid)}._33_2oW_sep{color:var(--dsw-alias-label-caption);flex:none}._33_2oW_segment{align-items:center;gap:4px;display:inline-flex}._33_2oW_icon{width:14px;height:14px;color:var(--dsw-alias-label-caption);flex:none}._33_2oW_value{font-variant-numeric:tabular-nums}._33_2oW_ringTrack{fill:none;stroke:var(--dsw-alias-border-l3);stroke-width:2px}._33_2oW_ringFill{fill:none;stroke:var(--dsw-alias-label-tertiary);stroke-width:2px;stroke-linecap:round}._33_2oW_panel{z-index:1100;box-sizing:border-box;background:var(--dsw-specific-menu);width:max-content;min-width:min(300px,100vw - 24px);max-width:min(440px,100vw - 24px);backdrop-filter:var(--dsw-menu-backdrop-filter);--dsw-elevation-stroke-color:var(--dsw-alias-border-l1);box-shadow:var(--dsw-elevation-prominent);color:var(--dsw-alias-label-secondary);cursor:default;border:0;border-radius:12px;padding:16px;font-size:12px;line-height:18px;position:fixed}._33_2oW_title{color:var(--dsw-alias-label-primary);justify-content:space-between;gap:16px;margin-bottom:8px;font-weight:500;display:flex}._33_2oW_titleRule{border-top:.5px solid var(--dsw-alias-border-l2);margin-bottom:10px}._33_2oW_titleValue{font-variant-numeric:tabular-nums}._33_2oW_titleLabel{align-items:center;gap:6px;min-width:0;display:inline-flex}._33_2oW_titleLabel svg{flex:none;width:14px;height:14px}._33_2oW_details{color:var(--dsw-alias-label-tertiary);grid-template-columns:minmax(76px,auto) minmax(0,1fr);gap:6px 16px;margin:0;display:grid}._33_2oW_details dt,._33_2oW_details dd{min-width:0;margin:0}._33_2oW_details dd{color:var(--dsw-alias-label-secondary);font-variant-numeric:tabular-nums;text-align:right}._33_2oW_section+._33_2oW_section{margin-top:14px}._33_2oW_bar{corner-shape:round;background:var(--dsw-alias-interactive-bg-hover);border-radius:999px;gap:1px;height:4px;margin:0 0 10px;display:flex;overflow:hidden}._33_2oW_barSegment{background:var(--meter-tint,var(--dsw-alias-label-tertiary));border-radius:1px;flex:none;min-width:2px;height:100%}._33_2oW_swatch{background:var(--meter-tint);vertical-align:baseline;border-radius:2px;width:8px;height:8px;margin-right:6px;display:inline-block}._33_2oW_colorSystem{--meter-tint:var(--dsw-static-neutral-bluish-400)}._33_2oW_colorTools{--meter-tint:#a78bfa}._33_2oW_colorMessages{--meter-tint:var(--dsw-static-blue-450)}";
 		const tagId = "@deepseek-ai/dsh-client-ui-session-metrics/SessionMetrics.module.css";
 		if (typeof document !== "undefined" && document.querySelector("style[data-plugin-css=" + JSON.stringify(tagId) + "]") === null) {
 			const tag = document.createElement("style");
@@ -307,7 +314,8 @@ window.__ModuleLoader__.load({
 		* @returns the capsule, or null while the session has neither a step, nor
 		* billable usage, nor a context sample with a known capacity.
 		*/
-		const SessionMetricsTrigger = (0, react.memo)(function SessionMetricsTrigger({ useProjection, t }) {
+		const SessionMetricsTrigger = (0, react.memo)(function SessionMetricsTrigger({ useProjection, usePerformanceUsage, t }) {
+			const compact = usePerformanceUsage((value) => value) === "compact";
 			const usage = useProjection("tokenUsage");
 			const stats = useProjection("sessionStats");
 			const pressure = useProjection("contextPressure");
@@ -349,7 +357,12 @@ window.__ModuleLoader__.load({
 				setOpen(true);
 			}, [clearCloseTimer]);
 			(0, react.useEffect)(() => clearCloseTimer, [clearCloseTimer]);
-			if (facts === null && occupancy === null && !stepped) return null;
+			const compactReadings = compact ? compactFacts(usage, stats) : null;
+			const speedText = compactReadings?.speed ?? void 0;
+			const cacheHitText = compactReadings?.cacheHitPercent ?? void 0;
+			if (compact) {
+				if (speedText === void 0 && cacheHitText === void 0 && occupancy === null) return null;
+			} else if (facts === null && occupancy === null && !stepped) return null;
 			const inputText = facts === null ? void 0 : formatCompactTokens(facts.billedInputTokens, t);
 			const outputText = facts === null ? void 0 : formatCompactTokens(facts.outputTokens, t);
 			const contextText = occupancy === null ? void 0 : occupancy.percent + "%";
@@ -377,17 +390,27 @@ window.__ModuleLoader__.load({
 					children: [icon, parts]
 				}, key));
 			};
-			const tokenValues = [];
-			if (inputText !== void 0) tokenValues.push(inputText);
-			if (outputText !== void 0) tokenValues.push(outputText);
-			if (tokenValues.length > 0) pushSegment("tokens", /* @__PURE__ */ (0, react_jsx_runtime.jsx)(_deepseek_ai_dsh_client_ui_primitives.IconDatabaseOutline16, { className: SessionMetrics_module_css_default.icon }), tokenValues);
+			if (compact) {
+				if (speedText !== void 0) pushSegment("speed", /* @__PURE__ */ (0, react_jsx_runtime.jsx)(_deepseek_ai_dsh_client_ui_primitives.IconGaugeOutlineRegular, { className: SessionMetrics_module_css_default.icon }), [t("value.tokensPerSecond", { throughput: speedText })]);
+				if (cacheHitText !== void 0) pushSegment("cacheHit", /* @__PURE__ */ (0, react_jsx_runtime.jsx)(_deepseek_ai_dsh_client_ui_primitives.IconDatabaseOutlineRegular, { className: SessionMetrics_module_css_default.icon }), [t("value.cacheHit", { percent: cacheHitText })]);
+			} else {
+				const tokenValues = [];
+				if (inputText !== void 0) tokenValues.push(inputText);
+				if (outputText !== void 0) tokenValues.push(outputText);
+				if (tokenValues.length > 0) pushSegment("tokens", /* @__PURE__ */ (0, react_jsx_runtime.jsx)(_deepseek_ai_dsh_client_ui_primitives.IconDatabaseOutlineRegular, { className: SessionMetrics_module_css_default.icon }), tokenValues);
+			}
 			if (occupancy !== null) pushSegment("context", /* @__PURE__ */ (0, react_jsx_runtime.jsx)(ContextRing, { percent: occupancy.percent }), []);
 			const ariaParts = [];
-			if (inputText !== void 0) ariaParts.push(t("aria.input", { input: inputText }));
-			if (outputText !== void 0) ariaParts.push(t("aria.output", { output: outputText }));
+			if (compact) {
+				if (speedText !== void 0) ariaParts.push(t("value.tokensPerSecond", { throughput: speedText }));
+				if (cacheHitText !== void 0) ariaParts.push(t("value.cacheHit", { percent: cacheHitText }));
+			} else {
+				if (inputText !== void 0) ariaParts.push(t("aria.input", { input: inputText }));
+				if (outputText !== void 0) ariaParts.push(t("aria.output", { output: outputText }));
+			}
 			if (occupancy !== null && contextText !== void 0) ariaParts.push(t("aria.context", { percent: contextText }));
 			const ariaLabel = t("aria.metrics", { items: ariaParts.join(" · ") });
-			const panel = open ? (0, react_dom.createPortal)(/* @__PURE__ */ (0, react_jsx_runtime.jsx)("div", {
+			const panel = open && !compact ? (0, react_dom.createPortal)(/* @__PURE__ */ (0, react_jsx_runtime.jsx)("div", {
 				ref: panelRef,
 				className: SessionMetrics_module_css_default.panel,
 				role: "dialog",
@@ -405,7 +428,12 @@ window.__ModuleLoader__.load({
 			}), document.body) : null;
 			return /* @__PURE__ */ (0, react_jsx_runtime.jsxs)("div", {
 				className: SessionMetrics_module_css_default.root,
-				children: [/* @__PURE__ */ (0, react_jsx_runtime.jsx)("button", {
+				children: [compact ? /* @__PURE__ */ (0, react_jsx_runtime.jsx)("span", {
+					className: SessionMetrics_module_css_default.trigger,
+					role: "group",
+					"aria-label": ariaLabel,
+					children: segments
+				}) : /* @__PURE__ */ (0, react_jsx_runtime.jsx)("button", {
 					ref: triggerRef,
 					type: "button",
 					className: SessionMetrics_module_css_default.trigger,
@@ -469,9 +497,9 @@ window.__ModuleLoader__.load({
 			const usageRows = [];
 			if (usage !== void 0 && total > 0) {
 				if (cacheHit !== null) usageRows.push(/* @__PURE__ */ (0, react_jsx_runtime.jsxs)(react.Fragment, { children: [/* @__PURE__ */ (0, react_jsx_runtime.jsx)("dt", { children: t("panel.cacheHit") }), /* @__PURE__ */ (0, react_jsx_runtime.jsx)("dd", { children: cacheHit + "%" })] }, "cache"));
-				usageRows.push(/* @__PURE__ */ (0, react_jsx_runtime.jsxs)(react.Fragment, { children: [/* @__PURE__ */ (0, react_jsx_runtime.jsx)("dt", { children: t("panel.input") }), /* @__PURE__ */ (0, react_jsx_runtime.jsx)("dd", { children: t("panel.count", { count: formatExactTokens(usage.uncachedInputTokens, t) }) })] }, "input"), /* @__PURE__ */ (0, react_jsx_runtime.jsxs)(react.Fragment, { children: [/* @__PURE__ */ (0, react_jsx_runtime.jsx)("dt", { children: t("panel.cacheRead") }), /* @__PURE__ */ (0, react_jsx_runtime.jsx)("dd", { children: t("panel.count", { count: formatExactTokens(usage.cacheReadTokens, t) }) })] }, "cacheRead"));
-				if (usage.cacheWriteTokens !== 0) usageRows.push(/* @__PURE__ */ (0, react_jsx_runtime.jsxs)(react.Fragment, { children: [/* @__PURE__ */ (0, react_jsx_runtime.jsx)("dt", { children: t("panel.cacheWrite") }), /* @__PURE__ */ (0, react_jsx_runtime.jsx)("dd", { children: t("panel.count", { count: formatExactTokens(usage.cacheWriteTokens, t) }) })] }, "cacheWrite"));
-				usageRows.push(/* @__PURE__ */ (0, react_jsx_runtime.jsxs)(react.Fragment, { children: [/* @__PURE__ */ (0, react_jsx_runtime.jsx)("dt", { children: t("panel.output") }), /* @__PURE__ */ (0, react_jsx_runtime.jsx)("dd", { children: t("panel.count", { count: formatExactTokens(usage.outputTokens, t) }) })] }, "output"));
+				usageRows.push(/* @__PURE__ */ (0, react_jsx_runtime.jsxs)(react.Fragment, { children: [/* @__PURE__ */ (0, react_jsx_runtime.jsx)("dt", { children: t("panel.input") }), /* @__PURE__ */ (0, react_jsx_runtime.jsx)("dd", { children: t("panel.count", { count: formatCompactTokens(usage.uncachedInputTokens, t) }) })] }, "input"), /* @__PURE__ */ (0, react_jsx_runtime.jsxs)(react.Fragment, { children: [/* @__PURE__ */ (0, react_jsx_runtime.jsx)("dt", { children: t("panel.cacheRead") }), /* @__PURE__ */ (0, react_jsx_runtime.jsx)("dd", { children: t("panel.count", { count: formatCompactTokens(usage.cacheReadTokens, t) }) })] }, "cacheRead"));
+				if (usage.cacheWriteTokens !== 0) usageRows.push(/* @__PURE__ */ (0, react_jsx_runtime.jsxs)(react.Fragment, { children: [/* @__PURE__ */ (0, react_jsx_runtime.jsx)("dt", { children: t("panel.cacheWrite") }), /* @__PURE__ */ (0, react_jsx_runtime.jsx)("dd", { children: t("panel.count", { count: formatCompactTokens(usage.cacheWriteTokens, t) }) })] }, "cacheWrite"));
+				usageRows.push(/* @__PURE__ */ (0, react_jsx_runtime.jsxs)(react.Fragment, { children: [/* @__PURE__ */ (0, react_jsx_runtime.jsx)("dt", { children: t("panel.output") }), /* @__PURE__ */ (0, react_jsx_runtime.jsx)("dd", { children: t("panel.count", { count: formatCompactTokens(usage.outputTokens, t) }) })] }, "output"));
 			}
 			const occupancy = contextOccupancy(pressure);
 			const breakdownTotal = breakdown === void 0 ? 0 : breakdown.systemTokens + breakdown.toolsTokens + breakdown.messageTokens;
@@ -509,7 +537,7 @@ window.__ModuleLoader__.load({
 					used: formatCompactTokens(occupancy.usedTokens, t),
 					window: formatCompactTokens(occupancy.contextWindow, t)
 				}) })] }, "used"));
-				if (breakdown !== void 0 && breakdownTotal > 0) {
+				if (breakdown !== void 0) {
 					const legend = [
 						{
 							key: "system",
@@ -538,7 +566,7 @@ window.__ModuleLoader__.load({
 			}
 			return /* @__PURE__ */ (0, react_jsx_runtime.jsxs)(react_jsx_runtime.Fragment, { children: [
 				counts !== void 0 && /* @__PURE__ */ (0, react_jsx_runtime.jsx)(Section, {
-					icon: /* @__PURE__ */ (0, react_jsx_runtime.jsx)(_deepseek_ai_dsh_client_ui_primitives.IconGaugeOutline16, {}),
+					icon: /* @__PURE__ */ (0, react_jsx_runtime.jsx)(_deepseek_ai_dsh_client_ui_primitives.IconGaugeOutlineRegular, {}),
 					label: t("panel.title"),
 					value: counts,
 					children: timingRows.length > 0 && /* @__PURE__ */ (0, react_jsx_runtime.jsx)("dl", {
@@ -547,16 +575,16 @@ window.__ModuleLoader__.load({
 					})
 				}),
 				usageRows.length > 0 && /* @__PURE__ */ (0, react_jsx_runtime.jsx)(Section, {
-					icon: /* @__PURE__ */ (0, react_jsx_runtime.jsx)(_deepseek_ai_dsh_client_ui_primitives.IconDatabaseOutline16, {}),
+					icon: /* @__PURE__ */ (0, react_jsx_runtime.jsx)(_deepseek_ai_dsh_client_ui_primitives.IconDatabaseOutlineRegular, {}),
 					label: t("panel.usageTitle"),
-					value: t("panel.count", { count: formatExactTokens(total, t) }),
+					value: t("panel.count", { count: formatCompactTokens(total, t) }),
 					children: /* @__PURE__ */ (0, react_jsx_runtime.jsx)("dl", {
 						className: SessionMetrics_module_css_default.details,
 						children: usageRows
 					})
 				}),
 				occupancy !== null && /* @__PURE__ */ (0, react_jsx_runtime.jsxs)(Section, {
-					icon: /* @__PURE__ */ (0, react_jsx_runtime.jsx)(_deepseek_ai_dsh_client_ui_primitives.IconCompactOutline16, {}),
+					icon: /* @__PURE__ */ (0, react_jsx_runtime.jsx)(_deepseek_ai_dsh_client_ui_primitives.IconCompactOutlineRegular, {}),
 					label: t("panel.context"),
 					value: occupancy.percent + "%",
 					children: [contextBar, /* @__PURE__ */ (0, react_jsx_runtime.jsx)("dl", {
@@ -602,18 +630,18 @@ window.__ModuleLoader__.load({
 			"panel.cacheWrite": "缓存写入",
 			"panel.output": "输出",
 			"panel.count": "{count} tok",
-			"panel.contextUsed": "已用",
+			"panel.contextUsed": "上下文已用",
 			"panel.contextFigures": "~{used} / {window}",
 			"panel.contextSystem": "系统提示词",
 			"panel.contextTools": "工具定义",
 			"panel.contextMessages": "对话消息",
 			"value.tokensPerSecond": "{throughput} tok/s",
+			"value.cacheHit": "缓存命中 {percent}%",
 			"aria.input": "输入 {input} tokens",
 			"aria.output": "输出 {output} tokens",
 			"aria.context": "上下文已用 {percent}",
 			"aria.panel": "会话指标",
 			"aria.metrics": "会话指标：{items}",
-			"number.groupSeparator": ",",
 			"number.thousand": "{value}K",
 			"number.million": "{value}M",
 			"duration.compactSeconds": "{seconds}秒",
@@ -635,18 +663,18 @@ window.__ModuleLoader__.load({
 			"panel.cacheWrite": "Cache write",
 			"panel.output": "Output",
 			"panel.count": "{count} tok",
-			"panel.contextUsed": "Used",
+			"panel.contextUsed": "of context used",
 			"panel.contextFigures": "~{used} / {window}",
 			"panel.contextSystem": "System prompt",
 			"panel.contextTools": "Tool definitions",
 			"panel.contextMessages": "Messages",
 			"value.tokensPerSecond": "{throughput} tok/s",
+			"value.cacheHit": "Cache hit {percent}%",
 			"aria.input": "Input {input} tokens",
 			"aria.output": "Output {output} tokens",
 			"aria.context": "{percent} of context used",
 			"aria.panel": "Session metrics",
 			"aria.metrics": "Session metrics: {items}",
-			"number.groupSeparator": ",",
 			"number.thousand": "{value}K",
 			"number.million": "{value}M",
 			"duration.compactSeconds": "{seconds}s",
@@ -654,8 +682,12 @@ window.__ModuleLoader__.load({
 		};
 		//#endregion
 		//#region src/client/index.ts
-		/** Required services: the slot ledger and the locale face. */
-		const inject = ["slots", "locale"];
+		/** Required services: the slot ledger, the locale face, and the configuration forms. */
+		const inject = [
+			"slots",
+			"locale",
+			"configForms"
+		];
 		/**
 		* Hides the shipped composer context meter. It is named by the static facts
 		* its markup exposes — a `span` whose direct child is the meter button,
@@ -678,6 +710,29 @@ window.__ModuleLoader__.load({
 				style.remove();
 			};
 		}
+		/** Namespace owning the Chat target's durable settings section. */
+		const CHAT_SETTINGS_NAMESPACE = "ui-chat";
+		/**
+		* Mirror the accepted performance-and-usage detail level, so the capsule can
+		* present the readings the shipped composer strip presents for that level. The
+		* Settings row stays the only writer; this source never writes.
+		* @param ctx - client root context holding the configuration-form service.
+		* @returns live source of the accepted detail level.
+		*/
+		function performanceUsageSource(ctx) {
+			const mode = (0, _deepseek_ai_dsh_client_store.createSnapshotStore)(DEFAULT_PERFORMANCE_USAGE);
+			const form = ctx.configForms.get(CHAT_SETTINGS_NAMESPACE);
+			ctx.effect(() => {
+				const adopt = () => {
+					const accepted = form.getSnapshot().value?.performanceUsage;
+					if (accepted !== void 0) mode.set(accepted);
+				};
+				const unsubscribe = form.subscribe(adopt);
+				adopt();
+				return unsubscribe;
+			}, "ui-session-metrics: performance-usage level");
+			return mode;
+		}
 		/**
 		* Client plugin body: register the header capsule, shadow the shipped stats
 		* strip, and hide the shipped composer context meter. Every effect is removed
@@ -690,11 +745,13 @@ window.__ModuleLoader__.load({
 				en
 			}), "ui-session-metrics: dictionaries");
 			ctx.effect(hideComposerContextMeter, "ui-session-metrics: composer context meter");
+			const performanceUsage = performanceUsageSource(ctx);
 			ctx.slots.inject("conversation.session.header.utilities", () => ctx.slots.register({
 				name: "conversation.session.header.utilities",
 				id: "session-metrics",
 				order: -11,
-				locale: NS
+				locale: NS,
+				inject: () => ({ hooks: { performanceUsage } })
 			}, SessionMetricsTrigger));
 			ctx.slots.inject("conversation.composer.dock", () => ctx.slots.register({
 				name: "conversation.composer.dock",

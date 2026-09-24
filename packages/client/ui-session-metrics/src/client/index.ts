@@ -22,17 +22,21 @@
  *   shadow by id and priority; the header capsule now carries its reading.
  */
 import type { Context } from '@deepseek-ai/cordis'
-// Type-only: pulls the locale plugin's Context merge (ctx.locale) and the
-// slot declarations the register calls below target.
+import { createSnapshotStore, type ObservableSnapshot } from '@deepseek-ai/dsh-client-store'
+// Type-only: pulls the locale plugin's Context merge (ctx.locale), the
+// configuration-form service merge (ctx.configForms), and the slot
+// declarations the register calls below target.
 import type {} from '@deepseek-ai/dsh-client-locale/client'
 import type {} from '@deepseek-ai/dsh-client-ui-conversation/client'
 import type {} from '@deepseek-ai/dsh-client-ui-renderer/client'
 import type {} from '@deepseek-ai/dsh-client-ui-session/client'
+import type {} from '@deepseek-ai/dsh-client-ui-settings/client'
 import { SessionMetricsSuppressed, SessionMetricsTrigger } from './SessionMetrics.tsx'
 import { en, NS, zh } from './locales.ts'
+import { DEFAULT_PERFORMANCE_USAGE, type PerformanceUsageMode } from './session-metrics.ts'
 
-/** Required services: the slot ledger and the locale face. */
-export const inject = ['slots', 'locale']
+/** Required services: the slot ledger, the locale face, and the configuration forms. */
+export const inject = ['slots', 'locale', 'configForms']
 
 /**
  * Hides the shipped composer context meter. It is named by the static facts
@@ -59,6 +63,37 @@ function hideComposerContextMeter(): () => void {
   return () => { style.remove() }
 }
 
+/** Namespace owning the Chat target's durable settings section. */
+const CHAT_SETTINGS_NAMESPACE = 'ui-chat'
+
+/** The one Chat settings field this plugin reads. */
+interface ChatDetailSettings {
+  /** Accepted performance-and-usage detail level; absent before the first acceptance. */
+  readonly performanceUsage?: PerformanceUsageMode | undefined
+}
+
+/**
+ * Mirror the accepted performance-and-usage detail level, so the capsule can
+ * present the readings the shipped composer strip presents for that level. The
+ * Settings row stays the only writer; this source never writes.
+ * @param ctx - client root context holding the configuration-form service.
+ * @returns live source of the accepted detail level.
+ */
+function performanceUsageSource(ctx: Context): ObservableSnapshot<PerformanceUsageMode> {
+  const mode = createSnapshotStore<PerformanceUsageMode>(DEFAULT_PERFORMANCE_USAGE)
+  const form = ctx.configForms.get<ChatDetailSettings>(CHAT_SETTINGS_NAMESPACE)
+  ctx.effect(() => {
+    const adopt = (): void => {
+      const accepted = form.getSnapshot().value?.performanceUsage
+      if (accepted !== undefined) mode.set(accepted)
+    }
+    const unsubscribe = form.subscribe(adopt)
+    adopt()
+    return unsubscribe
+  }, 'ui-session-metrics: performance-usage level')
+  return mode
+}
+
 /**
  * Client plugin body: register the header capsule, shadow the shipped stats
  * strip, and hide the shipped composer context meter. Every effect is removed
@@ -68,6 +103,7 @@ function hideComposerContextMeter(): () => void {
 export function apply(ctx: Context): void {
   ctx.effect(() => ctx.locale.register(NS, { zh, en }), 'ui-session-metrics: dictionaries')
   ctx.effect(hideComposerContextMeter, 'ui-session-metrics: composer context meter')
+  const performanceUsage = performanceUsageSource(ctx)
   ctx.slots.inject('conversation.session.header.utilities', () => ctx.slots.register({
     name: 'conversation.session.header.utilities',
     id: 'session-metrics',
@@ -76,6 +112,9 @@ export function apply(ctx: Context): void {
     // previously held; session-log-download stays rightmost at order 0.
     order: -11,
     locale: NS,
+    // Registrant-private reactive fact: the level whose readings the capsule
+    // mirrors, delivered as the component's usePerformanceUsage seat.
+    inject: () => ({ hooks: { performanceUsage } }),
   }, SessionMetricsTrigger))
   ctx.slots.inject('conversation.composer.dock', () => ctx.slots.register({
     name: 'conversation.composer.dock',

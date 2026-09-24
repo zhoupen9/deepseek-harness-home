@@ -7,10 +7,11 @@
  * StatsLine and the shipped composer context meter consume. These helpers are
  * reimplemented here (they may not be imported from a feature plugin
  * package), mirroring ui-chat's and ui-conversation's numeric display rules:
- * compact K/M token counts, grouped exact counts, cache-hit rounding that
- * never lies a partial hit up to 100%, compact durations, and the occupancy
- * percentage the shipped meter computes.
+ * compact K/M token counts, cache-hit rounding that never lies a partial hit
+ * up to 100%, compact durations, and the occupancy percentage the shipped
+ * meter computes.
  */
+import type { SessionStatsProjection } from '@deepseek-ai/dsh-session-stats/client'
 import type { ContextPressureProjection, TokenUsageProjection } from '@deepseek-ai/dsh-token-meter/client'
 import type { SessionMetricsTranslate } from './locales.ts'
 
@@ -122,21 +123,6 @@ export function formatCompactTokens(value: number, t: SessionMetricsTranslate): 
 }
 
 /**
- * Exact integer token count with locale-owned digit grouping.
- * @param value - non-negative safe integer token count.
- * @param t - namespace-bound translator.
- * @returns an unrounded display string.
- */
-export function formatExactTokens(value: number, t: SessionMetricsTranslate): string {
-  const digits = String(value)
-  const groups: string[] = []
-  for (let end = digits.length; end > 0; end -= 3) {
-    groups.unshift(digits.slice(Math.max(0, end - 3), end))
-  }
-  return groups.join(t('number.groupSeparator'))
-}
-
-/**
  * Compact duration: 45.2s under a minute, 2m42s from there on (ui-chat rule).
  * @param ms - duration in milliseconds.
  * @param t - namespace-bound translator.
@@ -214,8 +200,8 @@ export interface ContextOccupancy {
  * mirroring ui-conversation's own fold so the capsule and the shipped meter it
  * replaces never disagree about the percentage. A missing sample, a missing
  * capacity, or a non-positive capacity yields null — the shipped fold divides
- * by that capacity, which would render `NaN%` into a surface this plugin now
- * owns.
+ * by that capacity and would report a full 100% (or a negative share) into a
+ * surface this plugin now owns.
  * @param pressure - latest token-meter context-pressure projection.
  * @returns occupancy, or null until numerator and capacity are usable.
  */
@@ -249,3 +235,40 @@ export function contextRingDash(percent: number): string {
   const bounded = Math.min(100, Math.max(0, percent))
   return String(CONTEXT_RING_CIRCUMFERENCE * bounded / 100) + ' ' + String(CONTEXT_RING_CIRCUMFERENCE)
 }
+
+/** Performance-and-usage detail levels; mirrors the Chat target's own setting. */
+export type PerformanceUsageMode = 'compact' | 'detailed'
+
+/** Detail level a session presents without an explicit Chat preference. */
+export const DEFAULT_PERFORMANCE_USAGE: PerformanceUsageMode = 'detailed'
+
+/** Compact-level readings the shipped composer strip presents as plain values. */
+export interface CompactUsageFacts {
+  /** Decode throughput digits without the unit; null until a decode step is timed. */
+  readonly speed: string | null
+  /** Cache-hit share text without the percent sign; null without billed input. */
+  readonly cacheHitPercent: string | null
+}
+
+/**
+ * Derive the compact readings the shipped composer strip presents for its
+ * compact detail level — decode throughput and the cache-hit share — under the
+ * shipped conditions: throughput needs a decode-timed step, and the share needs
+ * billed input.
+ * @param usage - the session's token-usage projection value, when served.
+ * @param stats - the session's whole-log statistics projection value, when served.
+ * @returns the two readings; each is null while its own source cannot answer.
+ */
+export function compactFacts(
+  usage: TokenUsageProjection | undefined,
+  stats: SessionStatsProjection | undefined,
+): CompactUsageFacts {
+  const facts = usage === undefined ? null : tokenFacts(usage)
+  return {
+    speed: stats !== undefined && stats.decodeMs > 0
+      ? formatThroughput(stats.decodeTokens / (stats.decodeMs / 1000))
+      : null,
+    cacheHitPercent: facts !== null && hasUsage(facts) ? facts.cacheHitPercent : null,
+  }
+}
+

@@ -28,9 +28,9 @@
 import { Fragment, memo, useCallback, useEffect, useMemo, useRef, useState, type CSSProperties, type ReactNode } from 'react'
 import { createPortal } from 'react-dom'
 import {
-  IconCompactOutline16,
-  IconDatabaseOutline16,
-  IconGaugeOutline16,
+  IconCompactOutlineRegular,
+  IconDatabaseOutlineRegular,
+  IconGaugeOutlineRegular,
   useAnchoredPosition,
 } from '@deepseek-ai/dsh-client-ui-primitives'
 import type { UseProjection } from '@deepseek-ai/dsh-api-session-controller/client'
@@ -38,14 +38,15 @@ import type { ContextBreakdownProjection, ContextPressureProjection, TokenUsageP
 import type { SessionStatsProjection } from '@deepseek-ai/dsh-session-stats/client'
 import type { SessionMetricsTranslate } from './locales.ts'
 import {
+  type PerformanceUsageMode,
   type SessionTokenFacts,
   CONTEXT_RING_RADIUS,
   cacheHitPercentText,
+  compactFacts,
   contextOccupancy,
   contextRingDash,
   formatCompactTokens,
   formatDuration,
-  formatExactTokens,
   formatThroughput,
   hasUsage,
   sessionTotalTokens,
@@ -53,10 +54,16 @@ import {
 } from './session-metrics.ts'
 import css from './SessionMetrics.module.css'
 
-/** Props: the projection read seat plus the namespace-bound locale seat. */
+/** Selector hook over the live performance-and-usage detail level. */
+export type UsePerformanceUsageMode =
+  <Selected>(selector: (mode: PerformanceUsageMode) => Selected) => Selected
+
+/** Props: the projection and detail-level read seats plus the locale seat. */
 export interface SessionMetricsProps {
   /** Key-addressed session projection reader (session-standard seat). */
   useProjection: UseProjection
+  /** Live accepted detail level, mirroring the shipped composer strip's mode. */
+  usePerformanceUsage: UsePerformanceUsageMode
   /** The owning header row's locale seat. */
   t: SessionMetricsTranslate
 }
@@ -109,8 +116,11 @@ function ContextRing({ percent }: { percent: number }) {
  */
 export const SessionMetricsTrigger = memo(function SessionMetricsTrigger({
   useProjection,
+  usePerformanceUsage,
   t,
 }: SessionMetricsProps) {
+  const mode = usePerformanceUsage(value => value)
+  const compact = mode === 'compact'
   const usage = useProjection('tokenUsage')
   const stats = useProjection('sessionStats')
   const pressure = useProjection('contextPressure')
@@ -159,7 +169,18 @@ export const SessionMetricsTrigger = memo(function SessionMetricsTrigger({
   // Drop any pending close on unmount.
   useEffect(() => clearCloseTimer, [clearCloseTimer])
 
-  if (facts === null && occupancy === null && !stepped) return null
+  // The shipped strip presents different readings per detail level: compact is
+  // throughput and cache share as plain values, detailed is counts and totals
+  // behind its two dialogs. The capsule mirrors the level whose figures it
+  // replaces, including that level's own visibility conditions.
+  const compactReadings = compact ? compactFacts(usage, stats) : null
+  const speedText = compactReadings?.speed ?? undefined
+  const cacheHitText = compactReadings?.cacheHitPercent ?? undefined
+  if (compact) {
+    if (speedText === undefined && cacheHitText === undefined && occupancy === null) return null
+  } else if (facts === null && occupancy === null && !stepped) {
+    return null
+  }
 
   const inputText = facts === null ? undefined : formatCompactTokens(facts.billedInputTokens, t)
   const outputText = facts === null ? undefined : formatCompactTokens(facts.outputTokens, t)
@@ -188,11 +209,25 @@ export const SessionMetricsTrigger = memo(function SessionMetricsTrigger({
       </span>,
     )
   }
-  const tokenValues: string[] = []
-  if (inputText !== undefined) tokenValues.push(inputText)
-  if (outputText !== undefined) tokenValues.push(outputText)
-  if (tokenValues.length > 0) {
-    pushSegment('tokens', <IconDatabaseOutline16 className={css.icon} />, tokenValues)
+  if (compact) {
+    // Compact presents the two shipped plain readings under their own icons.
+    if (speedText !== undefined) {
+      pushSegment('speed', <IconGaugeOutlineRegular className={css.icon} />, [
+        t('value.tokensPerSecond', { throughput: speedText }),
+      ])
+    }
+    if (cacheHitText !== undefined) {
+      pushSegment('cacheHit', <IconDatabaseOutlineRegular className={css.icon} />, [
+        t('value.cacheHit', { percent: cacheHitText }),
+      ])
+    }
+  } else {
+    const tokenValues: string[] = []
+    if (inputText !== undefined) tokenValues.push(inputText)
+    if (outputText !== undefined) tokenValues.push(outputText)
+    if (tokenValues.length > 0) {
+      pushSegment('tokens', <IconDatabaseOutlineRegular className={css.icon} />, tokenValues)
+    }
   }
   if (occupancy !== null) {
     pushSegment('context', <ContextRing percent={occupancy.percent} />, [])
@@ -200,18 +235,25 @@ export const SessionMetricsTrigger = memo(function SessionMetricsTrigger({
 
   // Spoken summary keeps the metric words (the icons alone cannot).
   const ariaParts: string[] = []
-  if (inputText !== undefined) {
-    ariaParts.push(t('aria.input', { input: inputText }))
-  }
-  if (outputText !== undefined) {
-    ariaParts.push(t('aria.output', { output: outputText }))
+  if (compact) {
+    if (speedText !== undefined) ariaParts.push(t('value.tokensPerSecond', { throughput: speedText }))
+    if (cacheHitText !== undefined) ariaParts.push(t('value.cacheHit', { percent: cacheHitText }))
+  } else {
+    if (inputText !== undefined) {
+      ariaParts.push(t('aria.input', { input: inputText }))
+    }
+    if (outputText !== undefined) {
+      ariaParts.push(t('aria.output', { output: outputText }))
+    }
   }
   if (occupancy !== null && contextText !== undefined) {
     ariaParts.push(t('aria.context', { percent: contextText }))
   }
   const ariaLabel = t('aria.metrics', { items: ariaParts.join(' · ') })
 
-  const panel = open ? (
+  // Compact offers no detail surface in the shipped UI, so the capsule stays a
+  // plain reading there instead of opening the merged panel.
+  const panel = open && !compact ? (
     createPortal(
       <div
         ref={panelRef}
@@ -236,23 +278,27 @@ export const SessionMetricsTrigger = memo(function SessionMetricsTrigger({
 
   return (
     <div className={css.root}>
-      <button
-        ref={triggerRef}
-        type="button"
-        className={css.trigger}
-        aria-label={ariaLabel}
-        aria-haspopup="dialog"
-        aria-expanded={open}
-        onMouseEnter={keepOpen}
-        onMouseLeave={scheduleClose}
-        onFocus={keepOpen}
-        onBlur={scheduleClose}
-        onKeyDown={(event) => {
-          if (event.key === 'Escape') setOpen(false)
-        }}
-      >
-        {segments}
-      </button>
+      {compact ? (
+        <span className={css.trigger} role="group" aria-label={ariaLabel}>{segments}</span>
+      ) : (
+        <button
+          ref={triggerRef}
+          type="button"
+          className={css.trigger}
+          aria-label={ariaLabel}
+          aria-haspopup="dialog"
+          aria-expanded={open}
+          onMouseEnter={keepOpen}
+          onMouseLeave={scheduleClose}
+          onFocus={keepOpen}
+          onBlur={scheduleClose}
+          onKeyDown={(event) => {
+            if (event.key === 'Escape') setOpen(false)
+          }}
+        >
+          {segments}
+        </button>
+      )}
       {panel}
     </div>
   )
@@ -339,25 +385,25 @@ function SessionMetricsDetails({
     usageRows.push(
       <Fragment key="input">
         <dt>{t('panel.input')}</dt>
-        <dd>{t('panel.count', { count: formatExactTokens(usage.uncachedInputTokens, t) })}</dd>
+        <dd>{t('panel.count', { count: formatCompactTokens(usage.uncachedInputTokens, t) })}</dd>
       </Fragment>,
       <Fragment key="cacheRead">
         <dt>{t('panel.cacheRead')}</dt>
-        <dd>{t('panel.count', { count: formatExactTokens(usage.cacheReadTokens, t) })}</dd>
+        <dd>{t('panel.count', { count: formatCompactTokens(usage.cacheReadTokens, t) })}</dd>
       </Fragment>,
     )
     if (usage.cacheWriteTokens !== 0) {
       usageRows.push(
         <Fragment key="cacheWrite">
           <dt>{t('panel.cacheWrite')}</dt>
-          <dd>{t('panel.count', { count: formatExactTokens(usage.cacheWriteTokens, t) })}</dd>
+          <dd>{t('panel.count', { count: formatCompactTokens(usage.cacheWriteTokens, t) })}</dd>
         </Fragment>,
       )
     }
     usageRows.push(
       <Fragment key="output">
         <dt>{t('panel.output')}</dt>
-        <dd>{t('panel.count', { count: formatExactTokens(usage.outputTokens, t) })}</dd>
+        <dd>{t('panel.count', { count: formatCompactTokens(usage.outputTokens, t) })}</dd>
       </Fragment>,
     )
   }
@@ -397,7 +443,7 @@ function SessionMetricsDetails({
         })}</dd>
       </Fragment>,
     )
-    if (breakdown !== undefined && breakdownTotal > 0) {
+    if (breakdown !== undefined) {
       const legend = [
         { key: 'system', color: css.colorSystem, label: t('panel.contextSystem'), tokens: breakdown.systemTokens },
         { key: 'tools', color: css.colorTools, label: t('panel.contextTools'), tokens: breakdown.toolsTokens },
@@ -416,22 +462,22 @@ function SessionMetricsDetails({
   return (
     <>
       {counts !== undefined && (
-        <Section icon={<IconGaugeOutline16 />} label={t('panel.title')} value={counts}>
+        <Section icon={<IconGaugeOutlineRegular />} label={t('panel.title')} value={counts}>
           {timingRows.length > 0 && <dl className={css.details}>{timingRows}</dl>}
         </Section>
       )}
       {usageRows.length > 0 && (
         <Section
-          icon={<IconDatabaseOutline16 />}
+          icon={<IconDatabaseOutlineRegular />}
           label={t('panel.usageTitle')}
-          value={t('panel.count', { count: formatExactTokens(total, t) })}
+          value={t('panel.count', { count: formatCompactTokens(total, t) })}
         >
           <dl className={css.details}>{usageRows}</dl>
         </Section>
       )}
       {occupancy !== null && (
         <Section
-          icon={<IconCompactOutline16 />}
+          icon={<IconCompactOutlineRegular />}
           label={t('panel.context')}
           value={occupancy.percent + '%'}
         >

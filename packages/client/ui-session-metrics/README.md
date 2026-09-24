@@ -24,29 +24,35 @@ keeps no cross-session state.
 ## What it looks like / how it behaves
 
 - **Capsule** (Session Header title row, left edge of the right-aligned utility cluster): the shipped
-  metric icons carrying three readings — the token-usage database cylinder with
-  the input and output counts, then the context ring:
-  `[database] 12.2K · 517 · [ring]`. The ring is live: its arc is the occupancy
-  percentage, drawn with the shipped meter's own radius and dash geometry, so
-  the capsule carries that reading without printing a number beside it (the
-  trigger's spoken label and the panel still state it). The reading order
-  inside the token group is fixed (input, then output) and the panel always
-  spells the metric names out. Token speed and cache-hit rate are not on the
-  capsule — they live in the panel, which is where they are worth reading. The
-  capsule renders as soon as the session has a step, billable usage, or a
-  context sample with a known capacity — the union of the shipped gates, which
-  is exactly what this plugin now hides — and the figures ride the durable
-  whole-log projections, so paging and compaction never skew them.
-- **Merged panel** (hover or keyboard focus; the shipped stat-dialog surface —
+  metric icons carrying the reading set the shipped composer strip presents for the accepted
+  `Performance & usage` level (the Chat target's `performanceUsage` setting, mirrored live):
+  - *Detailed* (the default): the token-usage database cylinder with the input and output counts,
+    then the context ring — `[database] 12.2K · 517 · [ring]`. The reading order inside the token
+    group is fixed (input, then output) and the panel always spells the metric names out.
+  - *Compact*: the two plain readings the shipped compact strip shows — decode throughput under the
+    gauge icon, then the cache-hit share under the database cylinder — plus the context ring. This
+    level opens no panel, because the shipped compact strip opens no dialog either: the capsule is
+    a plain reading (`role="group"`), not a button.
+  The ring is live in both levels: its arc is the occupancy percentage, drawn with the shipped
+  meter's own radius and dash geometry, so the capsule carries that reading without printing a
+  number beside it (the capsule's spoken label, and in the detailed level the panel, still state
+  it). The capsule renders as soon as the session has a step, billable usage, or a context sample
+  with a known capacity — the union of the shipped gates, which is exactly what this plugin now
+  hides — and the figures ride the durable whole-log projections, so paging and compaction never
+  skew them.
+- **Merged panel** (detailed level only; opens on hover or keyboard focus; the shipped stat-dialog surface —
   menu background, 12px radius, prominent elevation, 16px padding, a section
   heading with its icon and headline value, a rule, then the shipped
   two-column row grid):
-  - *Session statistics* (gauge icon): turn and step counts as the headline,
+  - *Session statistics* (gauge icon): the turn and step counts as the headline,
     then LLM time, tool time, average time to first token, and output speed —
     the shipped gauge dialog's rows under its own positive-figure conditions.
   - *Token usage* (database icon): the billed total as the headline, then
     cache hit, uncached input, cached input, cache write when any, and output —
-    the shipped database dialog's rows.
+    the shipped database dialog's rows. Every token count here renders in the
+    shared compact form (`12.2K`, `7.1M`) rather than the shipped dialog's
+    grouped exact digits, so the panel, the capsule, and the rest of the app
+    read on one scale.
   - *Context usage* (ring icon): the occupancy percentage as the headline, the
     shipped composition bar, then `~used / window` and the heuristic system
     prompt / tool definitions / messages legend.
@@ -108,10 +114,17 @@ another feature plugin's stylesheet.
 
     cd /home/zhoupeng/.dsh/packages/client/ui-session-metrics
     /home/zhoupeng/.dsh/node_modules/.bin/tsdown
-    /home/zhoupeng/.dsh/node_modules/.bin/vitest run tests/session-metrics.client.spec.ts
+    /home/zhoupeng/.dsh/node_modules/.bin/vitest run
 
 The served bundle is re-read from disk per page load, so rebuild + a browser
 refresh is enough.
+
+The suite includes an upstream drift guard (`tests/upstream-drift.client.spec.ts`):
+because a profile-local plugin may not import another feature plugin's values or
+stylesheet, the shipped skin, formatting rules, copy, baseline exports, and
+slot/setting contracts are mirrored here by hand, and the guard compares every
+mirror against the harness the local `dsh` runs from. Point `DSH_HARNESS_DIR` at
+a different checkout to check against that one.
 
 ## Notes
 

@@ -43,7 +43,9 @@
   },
   "scripts": {
     "bundle": "tsdown",
-    "watch": "tsdown --watch"
+    "watch": "tsdown --watch",
+    "test": "vitest run",
+    "test:upstream": "vitest run tests/upstream-drift.client.spec.ts"
   },
   "license": "MIT",
   "dependencies": {},

@@ -10,18 +10,19 @@
  * package is dropped into packages/client/ui-session-metrics.
  */
 import { describe, expect, it } from 'vitest'
+import type { SessionStatsProjection } from '@deepseek-ai/dsh-session-stats/client'
 import type { ContextPressureProjection, TokenUsageProjection } from '@deepseek-ai/dsh-token-meter/client'
 import { en, zh, type SessionMetricsKey } from '../src/client/locales.ts'
 import {
   billedInputTokens,
   cacheHitPercentText,
+  compactFacts,
   CONTEXT_RING_CIRCUMFERENCE,
   contextOccupancy,
   contextRingDash,
   formatCacheHitPercent,
   formatCompactTokens,
   formatDuration,
-  formatExactTokens,
   formatThroughput,
   hasUsage,
   sessionTotalTokens,
@@ -50,6 +51,13 @@ function usage(overrides: Partial<TokenUsageProjection> = {}): TokenUsageProject
 
 function pressure(overrides: Partial<ContextPressureProjection> = {}): ContextPressureProjection {
   return { ...overrides }
+}
+
+function stats(overrides: Partial<SessionStatsProjection> = {}): SessionStatsProjection {
+  return {
+    turns: 0, steps: 0, llmMs: 0, toolMs: 0, ttftMs: 0, ttftSteps: 0, decodeMs: 0, decodeTokens: 0,
+    ...overrides,
+  }
 }
 
 describe('billedInputTokens', () => {
@@ -117,6 +125,31 @@ describe('cacheHitPercentText / tokenFacts', () => {
   })
 })
 
+describe('compactFacts', () => {
+  it('reports the shipped compact readings for a timed, cached session', () => {
+    expect(compactFacts(
+      usage({ uncachedInputTokens: 30, cacheReadTokens: 60, cacheWriteTokens: 10 }),
+      stats({ decodeMs: 2_000, decodeTokens: 100 }),
+    )).toEqual({ speed: '50', cacheHitPercent: '60' })
+  })
+
+  it('drops the throughput reading without a decode-timed step', () => {
+    const facts = compactFacts(usage({ cacheReadTokens: 60 }), stats({ decodeTokens: 100 }))
+    expect(facts.speed).toBeNull()
+    expect(facts.cacheHitPercent).toBe('100')
+  })
+
+  it('drops the cache share without billed input', () => {
+    const facts = compactFacts(usage(), stats({ decodeMs: 1_000, decodeTokens: 10 }))
+    expect(facts.speed).toBe('10')
+    expect(facts.cacheHitPercent).toBeNull()
+  })
+
+  it('reads both readings as absent while neither projection is served', () => {
+    expect(compactFacts(undefined, undefined)).toEqual({ speed: null, cacheHitPercent: null })
+  })
+})
+
 describe('formatCompactTokens', () => {
   it('renders raw digits under one thousand', () => {
     expect(formatCompactTokens(517, enT)).toBe('517')
@@ -135,14 +168,6 @@ describe('formatCompactTokens', () => {
 
   it('keeps the K unit in the Chinese dictionary too', () => {
     expect(formatCompactTokens(12200, zhT)).toBe('12.2K')
-  })
-})
-
-describe('formatExactTokens', () => {
-  it('groups digits with the locale separator', () => {
-    expect(formatExactTokens(0, enT)).toBe('0')
-    expect(formatExactTokens(517, enT)).toBe('517')
-    expect(formatExactTokens(1234567, enT)).toBe('1,234,567')
   })
 })
 
