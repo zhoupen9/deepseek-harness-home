@@ -6,6 +6,9 @@
 sessions/
 storages/
 
+# Plugin manager state (per-profile pnpm operation logs from `dsh plugin`)
+.plugin-manager/
+
 # Dependencies (regenerable via pnpm install)
 node_modules/
 .pnpm-store/
