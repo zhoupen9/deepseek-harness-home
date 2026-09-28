@@ -3,3 +3,5 @@ packages:
 
 nodeLinker: hoisted
 autoInstallPeers: false
+patchedDependencies:
+  '@anysearch/anysearch-dsh@0.1.6': patches/@anysearch__anysearch-dsh@0.1.6.patch

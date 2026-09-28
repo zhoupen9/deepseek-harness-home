@@ -2,7 +2,7 @@
   "name": "dsh-profile-web",
   "private": true,
   "dependencies": {
-    "@anysearch/anysearch-dsh": "^0.1.4",
+    "@anysearch/anysearch-dsh": "^0.1.6",
     "@deepseek-ai/dsh-client-ui-changes": "link:/home/zhoupeng/.dsh/packages/client/ui-changes",
     "@deepseek-ai/dsh-client-ui-chat-tab-icons": "link:/home/zhoupeng/.dsh/packages/client/ui-chat-tab-icons",
     "@deepseek-ai/dsh-client-ui-edits": "link:/home/zhoupeng/.dsh/packages/client/ui-edits",
