@@ -5,7 +5,7 @@ settings:
   excludeLinksFromLockfile: false
 
 patchedDependencies:
-  '@anysearch/anysearch-dsh@0.1.6': 676372d8d61abc9c5ddc44f69b91971339347c5e552cc653e07946653486d5d1
+  '@anysearch/anysearch-dsh@0.1.6': 38c5d6bd202ca53870f9af2d0691ba3c7a3554731f5ffce185e702d21499748f
 
 importers:
 
@@ -13,7 +13,7 @@ importers:
     dependencies:
       '@anysearch/anysearch-dsh':
         specifier: ^0.1.6
-        version: 0.1.6(patch_hash=676372d8d61abc9c5ddc44f69b91971339347c5e552cc653e07946653486d5d1)
+        version: 0.1.6(patch_hash=38c5d6bd202ca53870f9af2d0691ba3c7a3554731f5ffce185e702d21499748f)
       '@deepseek-ai/dsh-client-ui-changes':
         specifier: link:/home/zhoupeng/.dsh/packages/client/ui-changes
         version: link:../../packages/client/ui-changes
@@ -54,7 +54,7 @@ packages:
 
 snapshots:
 
-  '@anysearch/anysearch-dsh@0.1.6(patch_hash=676372d8d61abc9c5ddc44f69b91971339347c5e552cc653e07946653486d5d1)':
+  '@anysearch/anysearch-dsh@0.1.6(patch_hash=38c5d6bd202ca53870f9af2d0691ba3c7a3554731f5ffce185e702d21499748f)':
     dependencies:
       '@deepseek-ai/schemastery': 3.18.2
 
