@@ -46,7 +46,7 @@ window.__ModuleLoader__.load({
 		}
 		//#endregion
 		//#region \0dsh-css:/home/zhoupeng/.dsh/packages/client/ui-chat-tab-icons/src/client/TabIcons.module.css.mjs
-		const css = ".N2z-Mq_icon{vertical-align:-2px;width:14px;height:14px;color:var(--dsw-alias-label-caption);margin-right:5px}";
+		const css = ".N2z-Mq_icon{width:14px;height:14px;color:var(--dsw-alias-label-caption);margin-right:5px}";
 		const tagId = "@deepseek-ai/dsh-client-ui-chat-tab-icons/TabIcons.module.css";
 		if (typeof document !== "undefined" && document.querySelector("style[data-plugin-css=" + JSON.stringify(tagId) + "]") === null) {
 			const tag = document.createElement("style");
@@ -74,6 +74,9 @@ window.__ModuleLoader__.load({
 		*
 		* Each icon is rendered once from its shipped `ui-primitives` component and
 		* cloned into the tab button, so React never owns a child this plugin moved.
+		* The tab is laid out as a flex row in the same pass: the shipped label is a
+		* block element (it owns the ellipsis), so without that the inline icon would
+		* open its own line above the text.
 		* A `MutationObserver` re-applies after the shell re-renders the strip (a
 		* view registering or unregistering, a session switch), filtered to mutations
 		* that actually touch a tab list so streaming transcript churn costs nothing.
@@ -162,19 +165,39 @@ window.__ModuleLoader__.load({
 			return Array.from(document.querySelectorAll(TABLIST));
 		}
 		/**
+		* Lay a decorated tab out as one row, so the prepended icon sits left of the
+		* label instead of stacking above it.
+		*
+		* The label is a block element in the shipped tab — that is what gives it its
+		* ellipsis — and a block child breaks onto its own line beside an inline icon.
+		* The tab carries no React-owned `style`, so these two properties survive a
+		* re-render that would drop an added class; disposal resets them.
+		* @param tab - the rendered tab element.
+		* @param styled - collects the tabs touched, so disposal can reset them.
+		*/
+		function applyRowLayout(tab, styled) {
+			if (!(tab instanceof HTMLElement)) return;
+			tab.style.display = "inline-flex";
+			tab.style.alignItems = "center";
+			styled.add(tab);
+		}
+		/**
 		* Place the icons on the session tab row, in view order.
 		* @param icons - icon node per view id.
 		* @param viewIds - registered view ids, in tab order.
+		* @param styled - collects the tabs touched, so disposal can reset them.
 		*/
-		function decorateTabRow(icons, viewIds) {
+		function decorateTabRow(icons, viewIds, styled) {
 			for (const tablist of findTabRows()) {
 				const tabs = Array.from(tablist.querySelectorAll(TAB));
 				if (!isSessionTabRow(tabs.length, viewIds.length)) continue;
 				tabs.forEach((tab, index) => {
 					const id = viewIds[index];
 					const icon = hasTabIcon(id) ? icons.get(id) : void 0;
+					if (icon === void 0) return;
+					applyRowLayout(tab, styled);
 					/* v8 ignore next -- an icon already in its tab is the steady state. */
-					if (icon === void 0 || icon.parentElement === tab) return;
+					if (icon.parentElement === tab) return;
 					tab.prepend(icon);
 				});
 			}
@@ -187,8 +210,9 @@ window.__ModuleLoader__.load({
 		function apply(ctx) {
 			ctx.slots.inject("conversation.view", () => {
 				const icons = buildTabIcons();
+				const styled = /* @__PURE__ */ new Set();
 				const decorate = () => {
-					decorateTabRow(icons, ctx.slots.entries("conversation.view").map((entry) => entry.options.id));
+					decorateTabRow(icons, ctx.slots.entries("conversation.view").map((entry) => entry.options.id), styled);
 				};
 				let scheduled = false;
 				const schedule = (records) => {
@@ -208,6 +232,11 @@ window.__ModuleLoader__.load({
 				return () => {
 					observer.disconnect();
 					for (const icon of icons.values()) icon.remove();
+					for (const tab of styled) {
+						tab.style.display = "";
+						tab.style.alignItems = "";
+					}
+					styled.clear();
 				};
 			});
 		}
