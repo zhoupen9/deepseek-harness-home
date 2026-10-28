@@ -80,15 +80,22 @@
 - id: ui-theme
   name: "@deepseek-ai/dsh-client-ui-theme"
   config:
-    preference: system
-    fontSize: 14
     variantFont: Adwaita Sans
     monoFont: Monaspace Neon
+    preference: system
+    fontSize: 13
+    codeFontSize: 13
+    textFontFamily: '"Adwaita Sans"'
+    codeFontFamily: '"Monaspace Neon"'
+    terminalFontFamily: '"Monaspace Neon"'
     fontColorDark: "#bfc0bf"
+    terminalFontSize: 12
 - id: llm-pi-ai
   name: "@deepseek-ai/dsh-llm-pi-ai"
   config:
-    providers: {}
+    providers:
+      zai-coding-cn:
+        apiKeyEnv: ZAI_CODING_CN_API_KEY
 - id: ui-settings-account
   name: "@deepseek-ai/dsh-client-ui-settings-account"
   config:
@@ -103,7 +110,7 @@
   name: "@deepseek-ai/dsh-client-ui-chat"
   config:
     transcriptView: standard
-    performanceUsage: detailed
+    performanceUsage: hidden
 - id: ui-settings
   name: "@deepseek-ai/dsh-client-ui-settings"
   config:

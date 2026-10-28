@@ -4,16 +4,13 @@ settings:
   autoInstallPeers: false
   excludeLinksFromLockfile: false
 
-patchedDependencies:
-  '@anysearch/anysearch-dsh@0.1.6': 38c5d6bd202ca53870f9af2d0691ba3c7a3554731f5ffce185e702d21499748f
-
 importers:
 
   .:
     dependencies:
       '@anysearch/anysearch-dsh':
-        specifier: ^0.1.6
-        version: 0.1.6(patch_hash=38c5d6bd202ca53870f9af2d0691ba3c7a3554731f5ffce185e702d21499748f)
+        specifier: ^0.1.8
+        version: 0.1.8
       '@deepseek-ai/dsh-client-ui-changes':
         specifier: link:/home/zhoupeng/.dsh/packages/client/ui-changes
         version: link:../../packages/client/ui-changes
@@ -32,16 +29,16 @@ importers:
 
 packages:
 
-  '@anysearch/anysearch-dsh@0.1.6':
-    resolution: {integrity: sha512-ZJMehdf0KUjfb7HKgq6YUD2+/4iMszddbRwXZbyo5GV/6l8XfJNAGA7CFtQVssa9HUgmy6yI2OPo4lKVtMhLfA==}
+  '@anysearch/anysearch-dsh@0.1.8':
+    resolution: {integrity: sha512-N00VwXW5j2+IJKtURJIv5eaLJBqr+b/1oLL+B8pX2CfaHjIGPXop0l5fKXpr/iR9cS8cf9yjFOSeVaUa+rEO9A==}
     engines: {node: ^22.19.0 || >=24.0.0}
     peerDependencies:
-      '@deepseek-ai/cordis': '>=4.0.1-rc.1 <5'
-      '@deepseek-ai/dsh-credentials': 0.0.1-rc.5 || >=0.1.0-rc.2 <=0.1.0-rc.8 || >=0.1.1-rc.1 <=0.1.1-rc.2 || >=0.1.2-alpha.2 <=0.1.2-rc.1 || 0.1.3-alpha.2 || >=0.1.5-alpha.1 <=0.1.5-rc.2 || >=0.1.6-alpha.1 <=0.1.6-alpha.2
-      '@deepseek-ai/dsh-system-prompt': 0.0.1-rc.5 || >=0.1.0-rc.2 <=0.1.0-rc.8 || >=0.1.1-rc.1 <=0.1.1-rc.2 || >=0.1.2-alpha.2 <=0.1.2-rc.1 || 0.1.3-alpha.2 || >=0.1.5-alpha.1 <=0.1.5-rc.2 || >=0.1.6-alpha.1 <=0.1.6-alpha.2
-      '@deepseek-ai/dsh-tool-web': 0.0.1-rc.5 || >=0.1.0-rc.2 <=0.1.0-rc.8 || >=0.1.1-rc.1 <=0.1.1-rc.2 || >=0.1.2-alpha.2 <=0.1.2-rc.1 || 0.1.3-alpha.2 || >=0.1.5-alpha.1 <=0.1.5-rc.2 || >=0.1.6-alpha.1 <=0.1.6-alpha.2
-      '@deepseek-ai/dsh-tools': 0.0.1-rc.5 || >=0.1.0-rc.2 <=0.1.0-rc.8 || >=0.1.1-rc.1 <=0.1.1-rc.2 || >=0.1.2-alpha.2 <=0.1.2-rc.1 || 0.1.3-alpha.2 || >=0.1.5-alpha.1 <=0.1.5-rc.2 || >=0.1.6-alpha.1 <=0.1.6-alpha.2
-      '@deepseek-ai/dsh-web': 0.0.1-rc.5 || >=0.1.0-rc.2 <=0.1.0-rc.8 || >=0.1.1-rc.1 <=0.1.1-rc.2 || >=0.1.2-alpha.2 <=0.1.2-rc.1 || 0.1.3-alpha.2 || >=0.1.5-alpha.1 <=0.1.5-rc.2 || >=0.1.6-alpha.1 <=0.1.6-alpha.2
+      '@deepseek-ai/cordis': '>=4.0.1-rc.1 <5 || 4.0.5-alpha.1'
+      '@deepseek-ai/dsh-credentials': '*'
+      '@deepseek-ai/dsh-system-prompt': '*'
+      '@deepseek-ai/dsh-tool-web': '*'
+      '@deepseek-ai/dsh-tools': '*'
+      '@deepseek-ai/dsh-web': '*'
 
   '@deepseek-ai/cosmokit@1.8.3':
     resolution: {integrity: sha512-qBo+ronVM6Eu2WNVJXi8JcMiqZ19T9BRIpV+5qJUFPXjGH/Z0QKcQMC/IZJ7L394YTOtJgcovbk9qP0w2GsBXQ==}
@@ -54,7 +51,7 @@ packages:
 
 snapshots:
 
-  '@anysearch/anysearch-dsh@0.1.6(patch_hash=38c5d6bd202ca53870f9af2d0691ba3c7a3554731f5ffce185e702d21499748f)':
+  '@anysearch/anysearch-dsh@0.1.8':
     dependencies:
       '@deepseek-ai/schemastery': 3.18.2
 

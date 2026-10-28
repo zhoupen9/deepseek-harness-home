@@ -51,7 +51,7 @@
 - id: ui-settings-general
   name: "@deepseek-ai/dsh-client-ui-settings-general"
   config:
-    welcomeNoticeVersion: 2026-08-13.1
+    welcomeNoticeVersion: 2026-09-28.1
 - id: llm-deepseek
   name: "@deepseek-ai/dsh-llm-deepseek"
   config:
@@ -75,14 +75,16 @@
   config:
     provider: deepseek
     model: deepseek-v4-flash
-    reasoningEffort: max
 - id: ui-theme
   name: "@deepseek-ai/dsh-client-ui-theme"
   config:
-    preference: system
-    fontSize: 14
     variantFont: Adwaita Sans
     monoFont: Monaspace Neon
+    preference: system
+    fontSize: 14
+    codeFontSize: 13
+    textFontFamily: '"Adwaita Sans"'
+    codeFontFamily: '"Monaspace Neon"'
     fontColorDark: "#bfc0bf"
 - id: llm-pi-ai
   name: "@deepseek-ai/dsh-llm-pi-ai"
@@ -111,3 +113,7 @@
             input:
               - text
         apiKeyEnv: DEEPSEEK_API_KEY
+- id: ui-chat
+  name: "@deepseek-ai/dsh-client-ui-chat"
+  config:
+    performanceUsage: hidden
