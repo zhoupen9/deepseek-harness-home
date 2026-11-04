@@ -26,6 +26,9 @@ importers:
       '@deepseek-ai/dsh-client-ui-session-metrics':
         specifier: link:/home/zhoupeng/.dsh/packages/client/ui-session-metrics
         version: link:../../packages/client/ui-session-metrics
+      '@deepseek-ai/dsh-client-ui-todo-pill':
+        specifier: link:/home/zhoupeng/.dsh/packages/client/ui-todo-pill
+        version: link:../../packages/client/ui-todo-pill
 
 packages:
 

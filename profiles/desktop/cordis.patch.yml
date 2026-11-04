@@ -8,8 +8,10 @@
 # - chat-header session metrics (@deepseek-ai/dsh-client-ui-session-metrics; replaces the
 #   bottom-of-chat stats pills and the composer context meter — see its INTEGRATION.md)
 # - view-tab icons (@deepseek-ai/dsh-client-ui-chat-tab-icons; Chat/Trajectory/Edits/Changes/Git)
+# - chat-header To-dos pill (@deepseek-ai/dsh-client-ui-todo-pill; replaces the composer's
+#   To-dos card and shadows its dock cell — see its INTEGRATION.md)
 # - podman container MCP server (@deepseek-ai/dsh-mcp-client; tools under mcp__podman__*)
-# The five local plugins are profile-local dependencies of this profile (pnpm
+# The six local plugins are profile-local dependencies of this profile (pnpm
 # links under profiles/web/node_modules); reinstall after a harness upgrade
 # with:
 #   dsh plugin --profile web add link:<package dir>
@@ -37,6 +39,8 @@
       name: '@deepseek-ai/dsh-client-ui-session-metrics'
     - id: ui-chat-tab-icons
       name: '@deepseek-ai/dsh-client-ui-chat-tab-icons'
+    - id: ui-todo-pill
+      name: '@deepseek-ai/dsh-client-ui-todo-pill'
     - id: mcp-podman
       name: '@deepseek-ai/dsh-mcp-client'
       config:
@@ -71,12 +75,6 @@
         inputModalities:
           - text
     baseURL: https://napi.nroad.com.cn
-- id: agent-default-model
-  name: "@deepseek-ai/dsh-agent-default-model"
-  config:
-    provider: deepseek-official
-    model: deepseek-flash
-    reasoningEffort: max
 - id: ui-theme
   name: "@deepseek-ai/dsh-client-ui-theme"
   config:
@@ -85,11 +83,11 @@
     preference: system
     fontSize: 13
     codeFontSize: 13
+    terminalFontSize: 12
     textFontFamily: '"Adwaita Sans"'
     codeFontFamily: '"Monaspace Neon"'
     terminalFontFamily: '"Monaspace Neon"'
     fontColorDark: "#bfc0bf"
-    terminalFontSize: 12
 - id: llm-pi-ai
   name: "@deepseek-ai/dsh-llm-pi-ai"
   config:
@@ -119,3 +117,9 @@
   name: "@deepseek-ai/dsh-llm-deepseek-api-key"
   config:
     baseURL: https://napi.nroad.com.cn/v1
+- id: agent-default-model
+  name: "@deepseek-ai/dsh-agent-default-model"
+  config:
+    provider: deepseek-official
+    model: deepseek-flash
+    reasoningEffort: max

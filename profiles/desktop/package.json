@@ -7,7 +7,8 @@
     "@deepseek-ai/dsh-client-ui-chat-tab-icons": "link:/home/zhoupeng/.dsh/packages/client/ui-chat-tab-icons",
     "@deepseek-ai/dsh-client-ui-edits": "link:/home/zhoupeng/.dsh/packages/client/ui-edits",
     "@deepseek-ai/dsh-client-ui-git": "link:/home/zhoupeng/.dsh/packages/client/ui-git",
-    "@deepseek-ai/dsh-client-ui-session-metrics": "link:/home/zhoupeng/.dsh/packages/client/ui-session-metrics"
+    "@deepseek-ai/dsh-client-ui-session-metrics": "link:/home/zhoupeng/.dsh/packages/client/ui-session-metrics",
+    "@deepseek-ai/dsh-client-ui-todo-pill": "link:/home/zhoupeng/.dsh/packages/client/ui-todo-pill"
   },
   "dsh": {
     "profile": {

@@ -1,0 +1,185 @@
+/* To-dos header pill and its list panel. The pill wears the header's utility
+   capsule skin (the session-metrics capsule beside it); the panel wears the
+   shipped To-dos card's menu surface, because it is the same list moved up
+   from above the composer. */
+
+.root {
+  display: inline-flex;
+  align-items: center;
+  min-width: 0;
+}
+
+.trigger {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  box-sizing: border-box;
+  max-width: 240px;
+  min-width: 0;
+  height: 26px;
+  padding: 5px 10px;
+  border: 0.5px solid var(--dsw-alias-border-l4);
+  border-radius: 13px;
+  background: none;
+  color: var(--dsw-alias-label-secondary);
+  font-family: var(--dsw-font-family);
+  font-size: 11px;
+  font-weight: 400;
+  line-height: 16px;
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+/* Hover is a fine-pointer affordance only: a tap on a phone must not leave a
+   background behind. */
+@media (hover: hover) {
+  .trigger:hover {
+    background: var(--dsw-alias-interactive-bg-hover);
+    color: var(--dsw-alias-label-primary);
+  }
+}
+
+.trigger:active {
+  background: var(--dsw-alias-interactive-bg-hover-solid);
+}
+
+.trigger:focus-visible {
+  outline: var(--dsw-focus-ring-width) solid var(--dsw-focus-ring-color, var(--dsw-alias-state-business-primary));
+  outline-offset: 2px;
+}
+
+.icon {
+  flex: none;
+  width: 14px;
+  height: 14px;
+  color: var(--dsw-alias-label-caption);
+}
+
+.full {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  font-variant-numeric: tabular-nums;
+}
+
+.compact {
+  display: none;
+  font-variant-numeric: tabular-nums;
+}
+
+/* The header title row is the enclosing inline-size container: shed the
+   summary before the row runs out of space, then shed the fraction too. The
+   full summary stays reachable through the tooltip, the accessible name, and
+   the panel. */
+@container (max-width: 760px) {
+  .full {
+    display: none;
+  }
+
+  .compact {
+    display: inline;
+  }
+}
+
+@container (max-width: 600px) {
+  .compact {
+    display: none;
+  }
+}
+
+/* The moved To-dos card: shipped menu surface, panel elevation, and the l2
+   scrollbar colors the card's scrolling list used. */
+.panel {
+  position: fixed;
+  z-index: 1100;
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+  width: max-content;
+  min-width: min(280px, calc(100vw - 24px));
+  max-width: min(420px, calc(100vw - 24px));
+  max-height: var(--dsh-anchored-max-height, none);
+  padding: 16px;
+  border: 0;
+  --dsw-elevation-stroke-color: var(--dsw-alias-border-l1);
+  border-radius: var(--dsw-radius-lg);
+  background: var(--dsw-specific-menu);
+  backdrop-filter: var(--dsw-menu-backdrop-filter);
+  box-shadow: var(--dsw-elevation-panel);
+  color: var(--dsw-alias-label-secondary);
+  font-size: 12px;
+  line-height: 18px;
+  cursor: default;
+  --dsh-scrollbar-thumb: var(--dsw-alias-scrollbar-bg-l2);
+  --dsh-scrollbar-thumb-hover: var(--dsw-alias-scrollbar-hover-l2);
+}
+
+.head {
+  display: flex;
+  flex: none;
+  justify-content: space-between;
+  gap: 16px;
+  color: var(--dsw-alias-label-primary);
+  font-weight: 500;
+}
+
+.headTitle {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-width: 0;
+}
+
+.panelIcon {
+  flex: none;
+  width: 14px;
+  height: 14px;
+}
+
+.headValue {
+  flex: none;
+  color: var(--dsw-alias-label-tertiary);
+  font-weight: 400;
+  font-variant-numeric: tabular-nums;
+}
+
+.rule {
+  flex: none;
+  margin: 8px 0 10px;
+  border-top: 0.5px solid var(--dsw-alias-border-l2);
+}
+
+.list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  min-height: 0;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  overflow-y: auto;
+}
+
+.item {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  min-width: 0;
+  font-size: 13px;
+  line-height: 20px;
+  color: var(--dsw-alias-label-secondary);
+}
+
+.glyph {
+  display: grid;
+  flex: none;
+  place-items: center;
+  width: 16px;
+  height: 16px;
+  margin-top: 2px;
+}
+
+.content {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
