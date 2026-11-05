@@ -202,9 +202,9 @@ if [ "$verify_failed" = 1 ]; then
 fi
 
 if [ "$touch_bundles" = 1 ] || [ "$links_changed" = 1 ] || [ "$touch_profiles" = 1 ]; then
-  say "  Bundle, profile, or link changes: reload the GUI tab. If the Edits / Changes / Git tabs"
-  say "  or the header pills are missing after reloading, restart the desktop app so the"
-  say "  composition is re-read from disk."
+  say "  Bundle, profile, or link changes: reload the GUI tab. dsh-hmr recomposes a running app,"
+  say "  but if the Edits / Changes / Git tabs or the header pills are still missing after"
+  say "  reloading, restart the desktop app or the dsh web server so the composition is re-read."
 elif [ "$touch_plugins" = 1 ]; then
   say "  Client plugins were rebuilt: reload the GUI tab to load the new bundles."
 else

@@ -2,19 +2,21 @@
   "name": "dsh-profile-web",
   "private": true,
   "dependencies": {
-    "@anysearch/anysearch-dsh": "^0.1.6",
+    "@anysearch/anysearch-dsh": "0.1.8",
     "@zar-desktop/ui-changes": "link:../../packages/client/ui-changes",
     "@zar-desktop/ui-chat-tab-icons": "link:../../packages/client/ui-chat-tab-icons",
     "@zar-desktop/ui-edits": "link:../../packages/client/ui-edits",
     "@zar-desktop/ui-git": "link:../../packages/client/ui-git",
     "@zar-desktop/ui-session-metrics": "link:../../packages/client/ui-session-metrics",
-    "@zar-desktop/ui-todo-pill": "link:../../packages/client/ui-todo-pill"
+    "@zar-desktop/ui-todo-pill": "link:../../packages/client/ui-todo-pill",
+    "@zhp-dev/zar-desktop": "link:../../packages/bundles/zar-desktop"
   },
   "dsh": {
     "profile": {
       "bundles": [
         "@deepseek-ai/dsh-base",
         "@deepseek-ai/dsh-web-app",
+        "@zhp-dev/zar-desktop",
         "@anysearch/anysearch-dsh"
       ],
       "patchReload": "live"

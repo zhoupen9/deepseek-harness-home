@@ -36,19 +36,19 @@ It holds the per-profile configuration and a set of **client plugins** for the w
 
 | Profile | Bundles | Notes |
 | --- | --- | --- |
-| `desktop` | `@deepseek-ai/dsh-base`, `@deepseek-ai/dsh-web-app`, `@anysearch/anysearch-dsh`, `@deepseek-ai/dsh-experimental-tool-worktree`, `@deepseek-ai/dsh-experimental-forge-bundle`, `@zhp-dev/zar-desktop` | desktop app profile; the six client plugins arrive through the `@zhp-dev/zar-desktop` bundle, so its `cordis.patch.yml` inserts only a `podman` MCP server (`@deepseek-ai/dsh-mcp-client`) |
-| `web` | `@deepseek-ai/dsh-base`, `@deepseek-ai/dsh-web-app`, `@anysearch/anysearch-dsh` | web GUI profile; `cordis.patch.yml` inserts the six client plugins itself plus the same `podman` MCP server |
+| `desktop` | `@deepseek-ai/dsh-base`, `@deepseek-ai/dsh-web-app`, `@deepseek-ai/dsh-experimental-tool-worktree`, `@deepseek-ai/dsh-experimental-forge-bundle`, `@zhp-dev/zar-desktop`, `@anysearch/anysearch-dsh` | desktop app profile; the six client plugins arrive through the `@zhp-dev/zar-desktop` bundle, so its `cordis.patch.yml` inserts only a `podman` MCP server (`@deepseek-ai/dsh-mcp-client`) |
+| `web` | `@deepseek-ai/dsh-base`, `@deepseek-ai/dsh-web-app`, `@zhp-dev/zar-desktop`, `@anysearch/anysearch-dsh` | web GUI profile; it selects the same bundle, so its `cordis.patch.yml` inserts only the `podman` MCP server plus its own theme, model, and patch preferences |
 
-`cordis.yml` is the profile root (an empty entry list). `cordis.patch.yml` is the patch layer applied on top of every bundle layer — edit `cordis.patch.yml`, never `cordis.yml`. `package.json` sets `dsh.profile.patchReload: "live"`, so patch changes are picked up without restarting the server.
+`cordis.yml` is the profile root (an empty entry list). `cordis.patch.yml` is the patch layer applied on top of every bundle layer — edit `cordis.patch.yml`, never `cordis.yml`. `@deepseek-ai/dsh-hmr` watches that file and `package.json` and recomposes the running profile, so a patch edit — or a new `dsh.profile.bundles` entry — applies without a restart; a dependency that is not linked yet still needs `pnpm install` first.
 
-Both profiles carry a `link:` dependency on each `packages/client/<dir>`, which is what makes the bare specifiers in a patch resolvable at all — see below.
+Both profiles carry a `link:` dependency on each `packages/client/<dir>`, and on the bundle itself so `@zhp-dev/zar-desktop` resolves from the profile — that is what makes the bare specifiers in a patch resolvable at all. See below.
 
 ## Client plugins
 
 The plugins are pure-frontend (pure-consumer) client plugins: each is a self-contained npm package with source in `src/`, compiled output in `lib/`, and tests in `tests/`. Two things make one load in a profile:
 
 1. a `link:` dependency in `profiles/<profile>/package.json` pointing at `packages/client/<dir>`, which pnpm materialises as a symlink at `profiles/<profile>/node_modules/@zar-desktop/<pkg-name>` → `packages/client/<dir>`, and
-2. a row that loads the package by `id` + `name` — inserted either by the `@zhp-dev/zar-desktop` bundle (desktop profile) or by the profile's own `cordis.patch.yml` (web profile).
+2. a row that loads the package by `id` + `name` — inserted by the `@zhp-dev/zar-desktop` bundle, which both profiles select.
 
 Resolution reads only the running profile's `node_modules`; the legacy `profiles/node_modules` fallback was removed on 2026-09-18, and a link placed there silently fails to resolve.
 
@@ -65,11 +65,11 @@ Each package has a `README.md` (behaviour and live status) and an `INTEGRATION.m
 
 ## The `@zhp-dev/zar-desktop` bundle
 
-[`packages/bundles/zar-desktop`](packages/bundles/zar-desktop) is a profile bundle: a package whose `package.json` declares `dsh.bundle.patch`, pointing at a `cordis.patch.yml` that inserts the six plugin rows. The desktop profile selects it in `dsh.profile.bundles`, so one row in that list enables or disables all six plugins.
+[`packages/bundles/zar-desktop`](packages/bundles/zar-desktop) is a profile bundle: a package whose `package.json` declares `dsh.bundle.patch`, pointing at a `cordis.patch.yml` that inserts the six plugin rows. Both profiles select it in `dsh.profile.bundles`, so one row in that list enables or disables all six plugins.
 
-- **Ownership.** The bundle owns the six row ids (`ui-edits`, `ui-changes`, …). A profile that selects it must **not** also insert those ids in its own patch: two layers inserting the same id make the loader throw `entry <id> already exists in the target tree` and the profile stops composing. That is why the desktop patch inserts only `mcp-podman`.
+- **Ownership.** The bundle owns the six row ids (`ui-edits`, `ui-changes`, …). A profile that selects it must **not** also insert those ids in its own patch: two layers inserting the same id make the loader throw `entry <id> already exists in the target tree` and the profile stops composing. That is why neither profile's patch inserts them: `desktop` and `web` both insert only `mcp-podman`.
 - **No dependencies.** The bundle declares no `dependencies`, no `peerDependencies`, and no `engines.dsh`. It does not install the plugins; it names them as bare specifiers that resolve from the profile's own `link:` dependencies. Declaring `@deepseek-ai/dsh-*` peers would make the installer reject the bundle as `incompatible-version`, because the plugins are `0.1.x-alpha` while the dsh runtime is `0.2.x`.
-- **Installing it** is a plugin-manager operation, not a pnpm one: pass the absolute package directory to `install_bundle` (Settings → Plugins, or the agent's plugin manager). That adds the `link:` dependency, appends `@zhp-dev/zar-desktop` to `dsh.profile.bundles`, and reloads live. Hand-editing the profile `package.json` or running pnpm by hand does **not** select the bundle.
+- **Installing it** into a profile that does not select it is a plugin-manager operation: pass the absolute package directory to `install_bundle` (Settings → Plugins, or the agent's plugin manager). That adds the `link:` dependency, appends `@zhp-dev/zar-desktop` to `dsh.profile.bundles`, and reloads live. The same two entries plus `pnpm install` in the profile directory reach the same state on disk, which is how this repo carries it — but install the link first: the profile watcher reacts to the manifest change immediately, and a name that is not linked yet does not resolve.
 
 ## Building
 
@@ -99,9 +99,9 @@ Download it to a file instead of piping into `bash`: the update itself works eit
 `pnpm setup` repairs what a pull can invalidate, then proves the result:
 
 1. installs the root toolchain (`node_modules/` is gitignored),
-2. re-runs `pnpm install` in `profiles/desktop` and `profiles/web`, which recreates the `@zar-desktop/*` symlinks under the gitignored `profiles/*/node_modules/`,
+2. re-runs `pnpm install` in `profiles/desktop` and `profiles/web`, which recreates the `@zar-desktop/*` and `@zhp-dev/zar-desktop` symlinks under the gitignored `profiles/*/node_modules/`,
 3. rebuilds all six plugins from `src/`,
-4. verifies each `lib/client.js` declares the package's current name, both profiles' links resolve, and the desktop profile selects the `@zhp-dev/zar-desktop` bundle.
+4. verifies each `lib/client.js` declares the package's current name, both profiles' links resolve, and both profiles select the `@zhp-dev/zar-desktop` bundle.
 
 A pull that renames a package (as the move to the `@zar-desktop` scope did) leaves the old symlink names in place until step 2 runs, so the bundle's six rows resolve to nothing and the tabs silently disappear — **that**, not a missing build, is what makes them look broken after a pull. The compiled `lib/` is tracked, so when `src/` has not changed no build is needed; when it has, `pnpm setup` regenerates it.
 
@@ -166,7 +166,7 @@ Then recreate `~/.dsh/.credentials.yaml` with your `DEEPSEEK_API_KEY`. That is t
 
 `@zhp-dev/zar-desktop` needs no install step, because its selection is tracked data rather than an action:
 
-- `profiles/desktop/package.json` already lists it in `dsh.profile.bundles` **and** as a `link:` dependency, both committed. The profile's `pnpm install` is what materialises `profiles/desktop/node_modules/@zhp-dev/zar-desktop`; once that link exists, the loader resolves the bundle and the six rows it inserts.
+- Both profiles' `package.json` files already list it in `dsh.profile.bundles` **and** as a `link:` dependency, both committed. Each profile's `pnpm install` is what materialises `profiles/<profile>/node_modules/@zhp-dev/zar-desktop`; once that link exists, the loader resolves the bundle and the six rows it inserts.
 - Running the plugin manager's `install_bundle` against a restored profile does not help: it rejects a package that is already a dependency (`already-installed`), and it exists to *add* the bundle to a profile that does not list it, or to re-point it after its directory moves.
 - There is nothing to compile for the bundle — it is a patch, two locale files, an icon, and an `export {}` module, all tracked. The rebuild in `pnpm setup` is for the six client plugins, and even that is a refresh: their `lib/` is committed, so a clone runs without compiling.
 

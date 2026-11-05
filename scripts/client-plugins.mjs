@@ -9,7 +9,7 @@
  *                 resolving nothing until the links are recreated.
  * `pnpm build`  — rebuild the six plugins only (regenerates `lib/` from `src/`).
  * `pnpm verify` — read-only checks: built identity strings, profile links, and
- *                 that the desktop profile selects the `@zhp-dev/zar-desktop` bundle.
+ *                 that both profiles select the `@zhp-dev/zar-desktop` bundle.
  *
  * No dependencies besides Node: this has to run before `node_modules` exists.
  */
@@ -118,7 +118,9 @@ function verify() {
     const manifest = join(dir, 'package.json')
     if (!existsSync(manifest)) continue
     const pkg = readJson(manifest)
-    const links = Object.keys(pkg.dependencies ?? {}).filter((name) => name.startsWith('@zar-desktop/'))
+    const links = Object.keys(pkg.dependencies ?? {}).filter(
+      (name) => name.startsWith('@zar-desktop/') || name === '@zhp-dev/zar-desktop',
+    )
     let broken = 0
     for (const name of links) {
       const linked = join(dir, 'node_modules', ...name.split('/'), 'package.json')
@@ -141,15 +143,16 @@ function verify() {
         fail(`profiles/${profile}: ${name} links to a missing directory; run "pnpm setup"`)
       }
     }
-    if (links.length > 0 && broken === 0) ok(`profiles/${profile}: ${links.length} @zar-desktop link(s) resolve`)
+    if (links.length > 0 && broken === 0) ok(`profiles/${profile}: ${links.length} local link(s) resolve`)
   }
 
   console.log('\nVerifying bundle selection')
-  const desktop = join(ROOT, 'profiles', 'desktop', 'package.json')
-  if (existsSync(desktop)) {
-    const bundles = readJson(desktop).dsh?.profile?.bundles ?? []
-    if (bundles.includes('@zhp-dev/zar-desktop')) ok('desktop profile selects the @zhp-dev/zar-desktop bundle')
-    else fail('desktop profile does not list "@zhp-dev/zar-desktop" in dsh.profile.bundles')
+  for (const profile of PROFILES) {
+    const manifest = join(ROOT, 'profiles', profile, 'package.json')
+    if (!existsSync(manifest)) continue
+    const bundles = readJson(manifest).dsh?.profile?.bundles ?? []
+    if (bundles.includes('@zhp-dev/zar-desktop')) ok(`profiles/${profile}: selects the @zhp-dev/zar-desktop bundle`)
+    else fail(`profiles/${profile}: does not list "@zhp-dev/zar-desktop" in dsh.profile.bundles`)
   }
 }
 

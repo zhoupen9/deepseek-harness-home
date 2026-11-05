@@ -19,7 +19,7 @@ It does not vendor, rebuild, or reinstall those six packages. They remain
 `link:` dependencies of each profile that uses them:
 
 ```json
-"@zar-desktop/ui-edits": "link:/home/<user>/.dsh/packages/client/ui-edits"
+"@zar-desktop/ui-edits": "link:../../packages/client/ui-edits"
 ```
 
 The bundle's patch names them as bare specifiers, which resolve from the
@@ -30,10 +30,14 @@ entry would make the installer reject the bundle as `incompatible-version`.
 
 ## Install
 
-From the profile that should use it, pass the absolute package directory to the
-plugin manager (`install_bundle`). It adds the `link:` dependency, selects the
-bundle in `dsh.profile.bundles`, and reloads live. Do not hand-edit the profile
-`package.json` or run pnpm in the profile directory.
+From a live profile, pass the absolute package directory to the plugin manager
+(`install_bundle`). It adds the `link:` dependency, selects the bundle in
+`dsh.profile.bundles`, and reloads the desktop app live. In a tracked profile —
+such as `profiles/*` in this repo — the same end state is those two entries
+committed plus `pnpm install` in the profile directory. Editing
+`dsh.profile.bundles` alone does not install the link, and only the desktop app
+reloads a changed bundle stack live: a `dsh web` server reads the list at boot,
+so restart it afterwards.
 
 Before installing into a profile whose `cordis.patch.yml` still inserts any of
 the six row ids, delete those rows: two layers inserting the same id make the
