@@ -1,5 +1,5 @@
 {
-  "name": "@deepseek-ai/dsh-client-ui-chat-tab-icons",
+  "name": "@zar-desktop/ui-chat-tab-icons",
   "description": "Icons for the conversation view tabs: a pure-consumer plugin that prepends the shipped icon set to the Chat, Trajectory, Edits, Changes, and Git tabs (no service)",
   "version": "0.1.0-alpha.1",
   "publishConfig": {

@@ -22,7 +22,7 @@ the `conversation.view` entry order so nothing depends on label text.
    ```yaml
    - insert:
        - id: ui-chat-tab-icons
-         name: '@deepseek-ai/dsh-client-ui-chat-tab-icons'
+         name: '@zar-desktop/ui-chat-tab-icons'
    ```
    The web profile's `patchReload: live` recomposes the running loader — no
    server restart. A page refresh loads the new client bundle.
@@ -38,7 +38,7 @@ cd /home/zhoupeng/.dsh/packages/client/ui-chat-tab-icons
 ## Verification
 
 - Boot graph (`GET /plugins/events`) carries the row
-  `@deepseek-ai/dsh-client-ui-chat-tab-icons`.
+  `@zar-desktop/ui-chat-tab-icons`.
 - Bundle route `/plugins/…client.js&rev=…` → HTTP 200 with the loader
   handoff; the factory requires only baseline rows (react, react-dom,
   react-dom/client, ui-primitives).
@@ -51,5 +51,5 @@ cd /home/zhoupeng/.dsh/packages/client/ui-chat-tab-icons
 
 Remove the `ui-chat-tab-icons` insert row from
 `profiles/web/cordis.patch.yml` and drop the dependency with
-`dsh plugin --profile web remove @deepseek-ai/dsh-client-ui-chat-tab-icons`.
+`dsh plugin --profile web remove @zar-desktop/ui-chat-tab-icons`.
 The tab row returns to labels alone.

@@ -1,0 +1,27 @@
+{
+  "name": "zar-desktop",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Groups the locally developed desktop UI plugins: per-turn Edits, cumulative Changes, the Git history graph, chat-header session metrics, view-tab icons, and the To-dos pill.",
+  "type": "module",
+  "main": "index.js",
+  "exports": {
+    ".": "./index.js",
+    "./cordis.patch.yml": "./cordis.patch.yml",
+    "./locale/*.json": "./locale/*.json",
+    "./icon": "./icon.svg",
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "index.js",
+    "cordis.patch.yml",
+    "locale/*.json",
+    "icon.svg",
+    "README.md"
+  ],
+  "dsh": {
+    "bundle": {
+      "patch": "./cordis.patch.yml"
+    }
+  }
+}

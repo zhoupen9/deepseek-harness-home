@@ -76,8 +76,8 @@ deliberate step. Re-run it after every harness merge.
 
 ## Verification
 
-- Resolution: from `profiles/web`, `node -e "import('@deepseek-ai/dsh-client-ui-todo-pill')"`
-  exports `apply`, and `import.meta.resolve('@deepseek-ai/dsh-client-ui-todo-pill/client')`
+- Resolution: from `profiles/web`, `node -e "import('@zar-desktop/ui-todo-pill')"`
+  exports `apply`, and `import.meta.resolve('@zar-desktop/ui-todo-pill/client')`
   resolves to the plugin's `lib/client.js`; the patch row names the same
   package.
 - Behavior (page refresh): the composer's To-dos card is gone and the wide pill
@@ -94,8 +94,8 @@ deliberate step. Re-run it after every harness merge.
 Remove the `ui-todo-pill` insert row from both `cordis.patch.yml` files and
 drop the dependency:
 
-    cd /home/zhoupeng/.dsh/profiles/web && pnpm remove @deepseek-ai/dsh-client-ui-todo-pill
-    cd /home/zhoupeng/.dsh/profiles/desktop && pnpm remove @deepseek-ai/dsh-client-ui-todo-pill
+    cd /home/zhoupeng/.dsh/profiles/web && pnpm remove @zar-desktop/ui-todo-pill
+    cd /home/zhoupeng/.dsh/profiles/desktop && pnpm remove @zar-desktop/ui-todo-pill
 
 The shipped To-dos card and its expandable list return exactly: the shadow
 occupant disappears with the plugin and the cell falls back to the shipped

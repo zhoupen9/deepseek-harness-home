@@ -1,6 +1,6 @@
 /**
- * Package-owned invariant companion for `@deepseek-ai/dsh-client-ui-git`.
- * @module @deepseek-ai/dsh-client-ui-git/invariant
+ * Package-owned invariant companion for `@zar-desktop/ui-git`.
+ * @module @zar-desktop/ui-git/invariant
  */
 
 /** Cordis companion plugin name. */
@@ -17,4 +17,4 @@ const install = () => {}
  * @returns the installed registration's disposer after setup succeeds.
  */
 export const apply = (ctx) =>
-  Promise.resolve(ctx.invariants.register('@deepseek-ai/dsh-client-ui-git', install))
+  Promise.resolve(ctx.invariants.register('@zar-desktop/ui-git', install))

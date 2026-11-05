@@ -1,5 +1,5 @@
 window.__ModuleLoader__.load({
-	id: "@deepseek-ai/dsh-client-ui-edits",
+	id: "@zar-desktop/ui-edits",
 	factory: (require) => {
 		var module = { exports: {} };
 		var exports = module.exports;
@@ -1195,7 +1195,7 @@ window.__ModuleLoader__.load({
 		* are the spec keys ./edits-highlight.ts resolves (ts->typescript, py->python,
 		* sh->shell, ...). Unknown or non-code extensions yield undefined and the
 		* diff renders plain monospace - never an error.
-		* @module @deepseek-ai/dsh-client-ui-edits/client
+		* @module @zar-desktop/ui-edits/client
 		*/
 		/** Extension (without dot, lower-cased) -> language hint. */
 		const LANG_BY_EXTENSION = {
@@ -1260,10 +1260,10 @@ window.__ModuleLoader__.load({
 		//#endregion
 		//#region \0dsh-css:/home/zhoupeng/.dsh/packages/client/ui-edits/src/client/EditsDiff.module.css.mjs
 		const css$1 = ".Q3Rw_G_block{color:var(--dsw-alias-label-primary,#1f2328);background:var(--dsw-alias-markdown-code-block,#f6f8fa);border:1px solid var(--dsw-alias-border-l2,#0000001a);border-radius:8px;margin:8px 0;position:relative;overflow:hidden}.Q3Rw_G_copyButton{z-index:1;color:var(--dsw-alias-label-secondary,#59636e);cursor:pointer;background:0 0;border:none;margin:0;padding:0;font-size:12px;line-height:18px;position:absolute;top:6px;right:12px}.Q3Rw_G_copyButton:hover{color:var(--dsw-alias-label-primary,#1f2328)}.Q3Rw_G_body{font-family:var(--dsh-font-mono,ui-monospace, SFMono-Regular, Menlo, Consolas, monospace);padding:8px 12px;font-size:12px;line-height:20px;overflow:auto hidden}.Q3Rw_G_line{white-space:pre;min-height:20px}.Q3Rw_G_path{color:var(--dsw-alias-label-primary,#1f2328);padding-right:56px;font-weight:600}.Q3Rw_G_gap{color:var(--dsw-alias-label-tertiary,#59636e)}.Q3Rw_G_del:before{content:\"- \";color:var(--dsw-alias-state-error-primary,#d1242f)}.Q3Rw_G_del{background-color:color-mix(in srgb, var(--dsw-alias-state-error-primary,#d1242f) 14%, transparent);color:var(--dsw-alias-state-error-primary,#d1242f)}.Q3Rw_G_add:before{content:\"+ \";color:var(--dsw-alias-state-success-primary,#1a7f37)}.Q3Rw_G_add{background-color:color-mix(in srgb, var(--dsw-alias-state-success-primary,#1a7f37) 14%, transparent);color:var(--dsw-alias-state-success-primary,#1a7f37)}.Q3Rw_G_expand{width:100%;color:var(--dsw-alias-label-tertiary,#59636e);cursor:pointer;font:inherit;text-align:left;background:0 0;border:none;padding:0;display:block}.Q3Rw_G_expand:hover{color:var(--dsw-alias-label-secondary,#59636e)}.Q3Rw_G_footer{font-family:var(--dsh-font-mono,ui-monospace, SFMono-Regular, Menlo, Consolas, monospace);color:var(--dsw-alias-label-tertiary,#59636e);padding:4px 12px 8px;font-size:12px}.Q3Rw_G_tokComment{color:var(--shiki-token-comment,#868e96);font-style:italic}.Q3Rw_G_tokString{color:var(--shiki-token-string,#2f9e44)}.Q3Rw_G_tokKeyword{color:var(--shiki-token-keyword,#d6336c)}.Q3Rw_G_tokLiteral,.Q3Rw_G_tokNumber{color:var(--shiki-token-constant,#1c7ed6)}.Q3Rw_G_tokFunction{color:var(--shiki-token-function,#6741d9)}.Q3Rw_G_tokVariable{color:var(--shiki-token-parameter,#e8590c)}";
-		const tagId$1 = "@deepseek-ai/dsh-client-ui-edits/EditsDiff.module.css";
+		const tagId$1 = "@zar-desktop/ui-edits/EditsDiff.module.css";
 		if (typeof document !== "undefined" && document.querySelector("style[data-plugin-css=" + JSON.stringify(tagId$1) + "]") === null) {
 			const tag = document.createElement("style");
-			tag.dataset.plugin = "@deepseek-ai/dsh-client-ui-edits";
+			tag.dataset.plugin = "@zar-desktop/ui-edits";
 			tag.dataset.pluginCss = tagId$1;
 			tag.textContent = css$1;
 			document.head.appendChild(tag);
@@ -1450,10 +1450,10 @@ window.__ModuleLoader__.load({
 		//#endregion
 		//#region \0dsh-css:/home/zhoupeng/.dsh/packages/client/ui-edits/src/client/EditsView.module.css.mjs
 		const css = ".sFFisa_view{width:100%;max-width:var(--dsh-chat-content-width);box-sizing:border-box;flex-direction:column;gap:12px;margin:0 auto;padding:16px;display:flex}.sFFisa_empty{color:var(--dsh-text-secondary,#8b949e);padding:24px 16px;font-size:14px}.sFFisa_older{border:1px solid var(--dsh-border,#30363d);color:inherit;cursor:pointer;background:0 0;border-radius:6px;align-self:flex-start;padding:4px 12px;font-size:13px}.sFFisa_older:disabled{opacity:.6;cursor:default}.sFFisa_turn{flex-direction:column;gap:8px;display:flex}.sFFisa_turnHeader{border-bottom:1px solid var(--dsh-border,#30363d);padding-bottom:6px}.sFFisa_turnToggle{width:100%;color:inherit;font:inherit;text-align:left;cursor:pointer;background:0 0;border:none;align-items:center;gap:8px;margin:0;padding:0;display:flex}.sFFisa_turnToggle:hover .sFFisa_turnTitle{text-decoration:underline}.sFFisa_chevron{opacity:.7;border-top:5px solid;border-left:4px solid #0000;border-right:4px solid #0000;flex:none;width:0;height:0;transition:transform .12s}.sFFisa_chevron[data-collapsed=true]{transform:rotate(-90deg)}.sFFisa_turnTitle{margin:0;font-size:13px;font-weight:600}.sFFisa_turnCount{color:var(--dsh-text-secondary,#8b949e);font-size:12px}.sFFisa_entry{border-radius:8px;flex-direction:column;gap:6px;padding:10px 12px;display:flex}.sFFisa_entryHeader{align-items:center;gap:8px;min-width:0;display:flex}.sFFisa_badge{background:var(--dsh-badge-bg,#7f7f7f29);color:var(--dsh-text-secondary,#8b949e);border-radius:10px;flex:none;padding:1px 8px;font-size:11px;line-height:18px}.sFFisa_path{text-overflow:ellipsis;white-space:nowrap;min-width:0;font-family:var(--dsh-font-mono,ui-monospace, SFMono-Regular, Menlo, monospace);flex:1;font-size:12px;overflow:hidden}.sFFisa_error{color:var(--dsh-danger,#f85149);flex:none;font-size:11px}.sFFisa_diff{border-radius:6px;overflow:hidden}";
-		const tagId = "@deepseek-ai/dsh-client-ui-edits/EditsView.module.css";
+		const tagId = "@zar-desktop/ui-edits/EditsView.module.css";
 		if (typeof document !== "undefined" && document.querySelector("style[data-plugin-css=" + JSON.stringify(tagId) + "]") === null) {
 			const tag = document.createElement("style");
-			tag.dataset.plugin = "@deepseek-ai/dsh-client-ui-edits";
+			tag.dataset.plugin = "@zar-desktop/ui-edits";
 			tag.dataset.pluginCss = tagId;
 			tag.textContent = css;
 			document.head.appendChild(tag);

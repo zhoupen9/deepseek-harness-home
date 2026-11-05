@@ -3,7 +3,7 @@
  * Remote namespace (the client mirror of HOST_PRIMITIVES.md). The browser
  * cannot run git, so every commit, parent link, ref, and detail fact crosses
  * the wire from the Host; nothing here reaches a Host-only symbol.
- * @module @deepseek-ai/dsh-client-ui-git/client
+ * @module @zar-desktop/ui-git/client
  */
 
 /** Repo context of a log/show request. */

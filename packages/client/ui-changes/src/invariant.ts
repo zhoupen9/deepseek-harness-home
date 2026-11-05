@@ -1,13 +1,13 @@
 /**
- * Package-owned invariant companion for `@deepseek-ai/dsh-client-ui-changes`.
- * @module @deepseek-ai/dsh-client-ui-changes/invariant
+ * Package-owned invariant companion for `@zar-desktop/ui-changes`.
+ * @module @zar-desktop/ui-changes/invariant
  */
 
 /* jscpd:ignore-start */
 import type { Context } from '@deepseek-ai/cordis'
 import type { InvariantInstaller } from '@deepseek-ai/dsh-invariants'
 
-const PACKAGE_NAME = '@deepseek-ai/dsh-client-ui-changes'
+const PACKAGE_NAME = '@zar-desktop/ui-changes'
 
 /** Cordis companion plugin name. */
 export const name = 'client-ui-changes-invariant'

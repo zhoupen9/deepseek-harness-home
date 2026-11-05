@@ -11,11 +11,11 @@ It holds the per-profile configuration and a set of **client plugins** for the w
     │   └── web/                 # web GUI profile (the only profile)
     ├── packages/
     │   └── client/              # client plugins + build preset (monorepo-mirrored)
-    │       ├── ui-edits/        # @deepseek-ai/dsh-client-ui-edits
-    │       ├── ui-changes/      # @deepseek-ai/dsh-client-ui-changes
-    │       ├── ui-git/          # @deepseek-ai/dsh-client-ui-git
-    │       ├── ui-session-metrics/ # @deepseek-ai/dsh-client-ui-session-metrics
-    │       ├── ui-chat-tab-icons/ # @deepseek-ai/dsh-client-ui-chat-tab-icons
+    │       ├── ui-edits/        # @zar-desktop/ui-edits
+    │       ├── ui-changes/      # @zar-desktop/ui-changes
+    │       ├── ui-git/          # @zar-desktop/ui-git
+    │       ├── ui-session-metrics/ # @zar-desktop/ui-session-metrics
+    │       ├── ui-chat-tab-icons/ # @zar-desktop/ui-chat-tab-icons
     │       ├── tsdown.client.ts # shared clientBundle tsdown preset
     │       ├── modules/         # preset support modules (manifest/system)
     │       └── web/             # shared browser platform module list
@@ -37,18 +37,18 @@ It holds the per-profile configuration and a set of **client plugins** for the w
 
 The plugins are pure-frontend (pure-consumer) client plugins: each is a self-contained npm package with source in `src/`, compiled output in `lib/`, and tests in `tests/`. Each is wired into the web profile by two things:
 
-1. a `link:` dependency in `profiles/web/package.json` pointing at `packages/client/<dir>`, which pnpm materialises as a symlink at `profiles/web/node_modules/@deepseek-ai/<pkg-name>` → `packages/client/<dir>`, and
+1. a `link:` dependency in `profiles/web/package.json` pointing at `packages/client/<dir>`, which pnpm materialises as a symlink at `profiles/web/node_modules/@zar-desktop/<pkg-name>` → `packages/client/<dir>`, and
 2. an `insert:` entry in `profiles/web/cordis.patch.yml` that loads the package by `id` + `name`.
 
 Resolution reads only `profiles/web/node_modules`; the legacy `profiles/node_modules` fallback was removed on 2026-09-18, and a link placed there silently fails to resolve.
 
 | Directory | Package | Description |
 | --- | --- | --- |
-| `packages/client/ui-edits` | `@deepseek-ai/dsh-client-ui-edits` | **Edits** tab: per-turn record of every `edit`/`write` tool result carrying `FsDiffMeta`, with plugin-owned inline diffs |
-| `packages/client/ui-changes` | `@deepseek-ai/dsh-client-ui-changes` | **Changes** tab: cumulative per-file view folding the loaded window into one net original → current diff |
-| `packages/client/ui-git` | `@deepseek-ai/dsh-client-ui-git` | **Git** tab: workspace repository commit-history tree graph (host git remote) |
-| `packages/client/ui-session-metrics` | `@deepseek-ai/dsh-client-ui-session-metrics` | **Session metrics**: chat-header capsule (cache rate · input/output tokens) anchoring the left edge of the header utilities row — left of the "Open In…" button and the Session log button — hover details; replaces the bottom-of-chat StatsLine strip |
-| `packages/client/ui-chat-tab-icons` | `@deepseek-ai/dsh-client-ui-chat-tab-icons` | **View-tab icons**: prepends a shipped icon to each conversation view tab (Chat / Trajectory / Edits / Changes / Git); presentation only — no slot entry, service, or session state |
+| `packages/client/ui-edits` | `@zar-desktop/ui-edits` | **Edits** tab: per-turn record of every `edit`/`write` tool result carrying `FsDiffMeta`, with plugin-owned inline diffs |
+| `packages/client/ui-changes` | `@zar-desktop/ui-changes` | **Changes** tab: cumulative per-file view folding the loaded window into one net original → current diff |
+| `packages/client/ui-git` | `@zar-desktop/ui-git` | **Git** tab: workspace repository commit-history tree graph (host git remote) |
+| `packages/client/ui-session-metrics` | `@zar-desktop/ui-session-metrics` | **Session metrics**: chat-header capsule (cache rate · input/output tokens) anchoring the left edge of the header utilities row — left of the "Open In…" button and the Session log button — hover details; replaces the bottom-of-chat StatsLine strip |
+| `packages/client/ui-chat-tab-icons` | `@zar-desktop/ui-chat-tab-icons` | **View-tab icons**: prepends a shipped icon to each conversation view tab (Chat / Trajectory / Edits / Changes / Git); presentation only — no slot entry, service, or session state |
 
 Each package has a `README.md` (behaviour and live status) and an `INTEGRATION.md` (wiring/removal notes).
 

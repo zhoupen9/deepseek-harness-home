@@ -4,7 +4,7 @@
  * window.__ModuleLoader__.load, resolves externals through the injected
  * require, returns the exports (apply + inject), and a mounted apply
  * registers the view tab into a real SlotRegistry ring. Skips when dist/ is
- * not built (`pnpm --filter @deepseek-ai/dsh-client-ui-changes bundle`).
+ * not built (`pnpm --filter @zar-desktop/ui-changes bundle`).
  */
 import { readFileSync } from 'node:fs'
 import { resolve } from 'node:path'
@@ -14,7 +14,7 @@ import { afterEach, describe, expect, it } from 'vitest'
 import { UiConversation } from '@deepseek-ai/dsh-client-ui-conversation/client'
 import { SlotRegistry } from '@deepseek-ai/dsh-client-ui-renderer/client'
 
-const PLUGIN_ID = '@deepseek-ai/dsh-client-ui-changes'
+const PLUGIN_ID = '@zar-desktop/ui-changes'
 
 interface Handoff { id: string; factory: (require: (spec: string) => unknown) => Record<string, unknown> }
 type Win = { __ModuleLoader__?: { load(h: Handoff): void } }

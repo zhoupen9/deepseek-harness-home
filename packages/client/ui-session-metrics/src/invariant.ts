@@ -1,13 +1,13 @@
 /**
  * Package-owned invariant companion for
- * `@deepseek-ai/dsh-client-ui-session-metrics`.
- * @module @deepseek-ai/dsh-client-ui-session-metrics/invariant
+ * `@zar-desktop/ui-session-metrics`.
+ * @module @zar-desktop/ui-session-metrics/invariant
  */
 
 import type { Context } from '@deepseek-ai/cordis'
 import type { InvariantInstaller } from '@deepseek-ai/dsh-invariants'
 
-const PACKAGE_NAME = '@deepseek-ai/dsh-client-ui-session-metrics'
+const PACKAGE_NAME = '@zar-desktop/ui-session-metrics'
 
 /** Cordis companion plugin name. */
 export const name = 'client-ui-session-metrics-invariant'

@@ -3,7 +3,7 @@
  * parent links, assign each commit a column and route every parent edge as a
  * straight or L-shaped polyline. Fully deterministic and replayable — the view
  * renders exactly what this function returns, with no hidden state.
- * @module @deepseek-ai/dsh-client-ui-git/client
+ * @module @zar-desktop/ui-git/client
  */
 import type { GitCommit } from './git-contract.ts'
 

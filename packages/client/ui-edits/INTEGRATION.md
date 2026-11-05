@@ -12,7 +12,7 @@ Goal: add a pure-frontend client plugin to the running DeepSeek Harness web GUI
    preset: `window.__ModuleLoader__.load({ id, factory })`, externals resolved
    from the platform module table (`react/jsx-runtime`,
    `@deepseek-ai/dsh-client-ui-primitives`), CSS modules compiled and injected.
-3. **Resolution** — `profiles/node_modules/@deepseek-ai/dsh-client-ui-edits`
+3. **Resolution** — `profiles/node_modules/@zar-desktop/ui-edits`
    symlinks to the package. The profile `node_modules` is the installation
    fallback (app-boot `healProfilesModuleFallback`); Node resolution from the
    profile anchor (the include plugin re-anchors the loader `baseUrl` to the
@@ -21,7 +21,7 @@ Goal: add a pure-frontend client plugin to the running DeepSeek Harness web GUI
    ```yaml
    - insert:
        - id: ui-edits
-         name: '@deepseek-ai/dsh-client-ui-edits'
+         name: '@zar-desktop/ui-edits'
    ```
    The web profile has `patchReload: live`, so the edit was applied to the
    running app without restart.
@@ -29,7 +29,7 @@ Goal: add a pure-frontend client plugin to the running DeepSeek Harness web GUI
 ## Verified (against the live server)
 
 - `GET /plugins/events` (SSE, public) boot graph contains
-  `{"id":"@deepseek-ai/dsh-client-ui-edits","url":"/plugins/??…&rev=f38d39a0f481128c-46","inject":[…5 services…]}`
+  `{"id":"@zar-desktop/ui-edits","url":"/plugins/??…&rev=f38d39a0f481128c-46","inject":[…5 services…]}`
   in the application phase.
 - The bundle route serves HTTP 200 with the built artifact; evaluating it
   yields the loader handoff and `{ apply, inject }` (smoke-tested).

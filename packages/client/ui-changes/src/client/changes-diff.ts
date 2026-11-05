@@ -3,7 +3,7 @@
  * reconstructed before/after texts, collapsed into change regions padded with
  * a few context lines. Rows are rendered by the plugin's own NetDiff surface
  * (DiffBlock only draws raw removed/added sides and cannot align context).
- * @module @deepseek-ai/dsh-client-ui-changes/client
+ * @module @zar-desktop/ui-changes/client
  */
 import { contentLines } from './changes-text.ts'
 

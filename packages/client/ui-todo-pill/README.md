@@ -1,4 +1,4 @@
-# @deepseek-ai/dsh-client-ui-todo-pill — wide To-dos pill in the chat header
+# @zar-desktop/ui-todo-pill — wide To-dos pill in the chat header
 
 A pure-frontend client plugin for DeepSeek Harness's web GUI. It **moves the
 agent's To-dos surface** out of the composer stack — ui-conversation's To-dos
@@ -52,7 +52,7 @@ stylesheet).
 ## Source layout
 
     packages/client/ui-todo-pill/
-      package.json                # @deepseek-ai/dsh-client-ui-todo-pill
+      package.json                # @zar-desktop/ui-todo-pill
       tsconfig.json               # standalone build config (see note)
       tsdown.config.ts            # clientBundle preset
       lib/                        # BUILT artifacts (tsdown output)

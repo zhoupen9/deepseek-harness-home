@@ -1,4 +1,4 @@
-# @deepseek-ai/dsh-client-ui-chat-tab-icons — icons for the conversation view tabs
+# @zar-desktop/ui-chat-tab-icons — icons for the conversation view tabs
 
 A pure-frontend client plugin for DeepSeek Harness's web GUI: it prepends one
 shipped icon to each conversation view tab — Chat, Trajectory, Edits, Changes,
@@ -60,7 +60,7 @@ inserted, and the tab row is otherwise untouched.
 ## Source layout
 
     packages/client/ui-chat-tab-icons/
-      package.json                # @deepseek-ai/dsh-client-ui-chat-tab-icons
+      package.json                # @zar-desktop/ui-chat-tab-icons
       tsconfig.json               # standalone build config (see note)
       tsdown.config.ts            # clientBundle preset
       lib/                        # BUILT artifacts (tsdown output)

@@ -1,13 +1,13 @@
 /**
- * Package-owned invariant companion for `@deepseek-ai/dsh-client-ui-git`.
- * @module @deepseek-ai/dsh-client-ui-git/invariant
+ * Package-owned invariant companion for `@zar-desktop/ui-git`.
+ * @module @zar-desktop/ui-git/invariant
  */
 
 /* jscpd:ignore-start */
 import type { Context } from '@deepseek-ai/cordis'
 import type { InvariantInstaller } from '@deepseek-ai/dsh-invariants'
 
-const PACKAGE_NAME = '@deepseek-ai/dsh-client-ui-git'
+const PACKAGE_NAME = '@zar-desktop/ui-git'
 
 /** Cordis companion plugin name. */
 export const name = 'client-ui-git-invariant'

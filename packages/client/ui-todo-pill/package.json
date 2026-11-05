@@ -1,5 +1,5 @@
 {
-  "name": "@deepseek-ai/dsh-client-ui-todo-pill",
+  "name": "@zar-desktop/ui-todo-pill",
   "description": "To-dos pill for the chat header: a pure-consumer plugin replacing the composer's To-dos card with a wide pill left of the session-metrics capsule (no service)",
   "version": "0.1.0-alpha.1",
   "publishConfig": { "access": "public" },

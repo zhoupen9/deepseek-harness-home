@@ -1,5 +1,5 @@
 {
-  "name": "@deepseek-ai/dsh-client-ui-session-metrics",
+  "name": "@zar-desktop/ui-session-metrics",
   "description": "Session metrics for the chat header: a pure-consumer plugin replacing the bottom-of-chat stats pills and the composer context meter with a compact icon-prefixed pill (input/output tokens · context occupancy; hover opens one merged panel carrying the shipped session-statistics, token-usage, and context-usage sections) placed at the left edge of the header's utility cluster, left of the Open In… button (no service)",
   "version": "0.1.0-alpha.1",
   "publishConfig": {

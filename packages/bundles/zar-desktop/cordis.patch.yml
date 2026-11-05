@@ -1,0 +1,31 @@
+# The zar-desktop bundle patch: the six locally developed desktop UI plugins
+# of this machine, inserted as ONE layer over the shipped bundles.
+#
+# This bundle OWNS these row ids. The profile patch (profiles/<name>/cordis.patch.yml)
+# must not insert them as well: two layers inserting the same id make the loader
+# throw "entry <id> already exists in the target tree" and the profile stops
+# composing. Disabling this bundle removes all six plugins at once.
+#
+# The row specs are bare package specifiers resolved from the profile's own
+# node_modules, where the packages are `link:` dependencies:
+#   @zar-desktop/ui-edits
+#   @zar-desktop/ui-changes
+#   @zar-desktop/ui-git
+#   @zar-desktop/ui-session-metrics
+#   @zar-desktop/ui-chat-tab-icons
+#   @zar-desktop/ui-todo-pill
+# They stay plain dependencies of the profile; this bundle does not reinstall
+# them (see README.md).
+- insert:
+    - id: ui-edits
+      name: '@zar-desktop/ui-edits'
+    - id: ui-changes
+      name: '@zar-desktop/ui-changes'
+    - id: ui-git
+      name: '@zar-desktop/ui-git'
+    - id: ui-session-metrics
+      name: '@zar-desktop/ui-session-metrics'
+    - id: ui-chat-tab-icons
+      name: '@zar-desktop/ui-chat-tab-icons'
+    - id: ui-todo-pill
+      name: '@zar-desktop/ui-todo-pill'

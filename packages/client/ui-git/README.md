@@ -1,4 +1,4 @@
-# @deepseek-ai/dsh-client-ui-git — "Git" history tree graph
+# @zar-desktop/ui-git — "Git" history tree graph
 
 A pure-frontend client plugin for DeepSeek Harness's web GUI. It registers a
 new **Git** tab in the conversation view that renders the workspace
@@ -43,7 +43,7 @@ any `GitCommit[]`.
 ## Layout
 
     packages/client/ui-git/
-      package.json            # @deepseek-ai/dsh-client-ui-git
+      package.json            # @zar-desktop/ui-git
       tsconfig.json           # standalone build config (jsx react-jsx; see note)
       tsdown.config.ts        # clientBundle preset (harness-relative import)
       lib/                    # BUILT artifacts (tsdown output)

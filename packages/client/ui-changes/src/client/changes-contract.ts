@@ -4,7 +4,7 @@
  * shell publishes for the `changes` view target. Unlike the per-turn Edits
  * records, each file carries its NET difference (original state at first
  * in-window mutation vs. current state), reconstructed from the applied hunks.
- * @module @deepseek-ai/dsh-client-ui-changes/client
+ * @module @zar-desktop/ui-changes/client
  */
 import type { DiffHunk } from '@deepseek-ai/dsh-client-ui-primitives'
 import type { SnapshotSelectorHook } from '@deepseek-ai/dsh-client-ui-slots'

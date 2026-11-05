@@ -2,7 +2,7 @@
  * Edits view contract: per-turn file-edit records derived from the shared
  * Session window, plus the target-neutral snapshot the conversation shell
  * publishes for the `edits` view target.
- * @module @deepseek-ai/dsh-client-ui-edits/client
+ * @module @zar-desktop/ui-edits/client
  */
 import type { DiffHunk } from '@deepseek-ai/dsh-client-ui-primitives'
 import type { SnapshotSelectorHook } from '@deepseek-ai/dsh-client-ui-slots'

@@ -5,7 +5,7 @@
  * numbers, function calls, and shell/php variables - for the well-known code
  * extensions the diff always highlights. Unknown languages fall back to a
  * single plain span; colors live in ChangesView.module.css, never here.
- * @module @deepseek-ai/dsh-client-ui-changes/client
+ * @module @zar-desktop/ui-changes/client
  */
 
 /** A token category; the view maps each to a CSS class (plain = inherited). */

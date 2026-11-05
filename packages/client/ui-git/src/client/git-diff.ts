@@ -2,7 +2,7 @@
  * Pure presentation helper for a unified git diff: classify one diff line so
  * the details pane can color it. Git diff lines are data (kept verbatim); this
  * only derives a display kind.
- * @module @deepseek-ai/dsh-client-ui-git/client
+ * @module @zar-desktop/ui-git/client
  */
 
 /** Display kind of one unified-diff line. */

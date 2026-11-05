@@ -1,24 +1,29 @@
 # Your patch layer for this dsh profile, applied after every bundle layer:
 # a top-level YAML array of loader patch entries (id-targeted config
 # overrides, disables, and insert lists; `!!js` expressions allowed).
-# Registered client plugins:
-# - per-turn "Edits" view (@deepseek-ai/dsh-client-ui-edits)
-# - cumulative per-file "Changes" view (@deepseek-ai/dsh-client-ui-changes)
-# - git history tree graph tab (@deepseek-ai/dsh-client-ui-git; host git remote — see its HOST_PRIMITIVES.md)
-# - chat-header session metrics (@deepseek-ai/dsh-client-ui-session-metrics; replaces the
+# Registered client plugins. The six local UI plugins listed below are supplied
+# by the `zar-desktop` bundle (packages/bundles/zar-desktop), which owns their
+# row ids — this file must not insert them:
+# - per-turn "Edits" view (@zar-desktop/ui-edits)
+# - cumulative per-file "Changes" view (@zar-desktop/ui-changes)
+# - git history tree graph tab (@zar-desktop/ui-git; host git remote — see its HOST_PRIMITIVES.md)
+# - chat-header session metrics (@zar-desktop/ui-session-metrics; replaces the
 #   bottom-of-chat stats pills and the composer context meter — see its INTEGRATION.md)
-# - view-tab icons (@deepseek-ai/dsh-client-ui-chat-tab-icons; Chat/Trajectory/Edits/Changes/Git)
-# - chat-header To-dos pill (@deepseek-ai/dsh-client-ui-todo-pill; replaces the composer's
+# - view-tab icons (@zar-desktop/ui-chat-tab-icons; Chat/Trajectory/Edits/Changes/Git)
+# - chat-header To-dos pill (@zar-desktop/ui-todo-pill; replaces the composer's
 #   To-dos card and shadows its dock cell — see its INTEGRATION.md)
-# - podman container MCP server (@deepseek-ai/dsh-mcp-client; tools under mcp__podman__*)
-# The six local plugins are profile-local dependencies of this profile (pnpm
-# links under profiles/web/node_modules); reinstall after a harness upgrade
-# with:
-#   dsh plugin --profile web add link:<package dir>
-# The legacy profiles/node_modules shared fallback and the empty
-# profiles/web/.dsh-module-fallback projection were removed on 2026-09-18.
-# Runtime resolution (the launcher default since 0.1.6-alpha.2) never reads
-# either position, so a link placed there silently fails to resolve.
+# They stay `link:` dependencies of this profile (pnpm links under
+# profiles/desktop/node_modules), so reinstall them after a harness upgrade with:
+#   dsh plugin --profile desktop add link:<package dir>
+# Disabling or removing the `zar-desktop` bundle removes all six at once; never
+# re-add them as `insert` rows here, because two layers inserting the same id
+# make the loader throw "entry <id> already exists in the target tree".
+# The removed profiles/node_modules shared fallback and the empty
+# profiles/web/.dsh-module-fallback projection are not read by runtime resolution
+# (the launcher default since 0.1.6-alpha.2), so a link placed there silently
+# fails to resolve.
+# Not provided by the bundle: the podman container MCP server row below
+# (@deepseek-ai/dsh-mcp-client; tools under mcp__podman__*).
 # The shipped ui-deliverables row provides the produced-files chips and the
 # chatFileMentions provider; it stays enabled now that the local ui-files
 # plugin that used to supersede it is removed.
@@ -29,18 +34,6 @@
 - id: ui-sidebar-browser
   disabled: false
 - insert:
-    - id: ui-edits
-      name: '@deepseek-ai/dsh-client-ui-edits'
-    - id: ui-changes
-      name: '@deepseek-ai/dsh-client-ui-changes'
-    - id: ui-git
-      name: '@deepseek-ai/dsh-client-ui-git'
-    - id: ui-session-metrics
-      name: '@deepseek-ai/dsh-client-ui-session-metrics'
-    - id: ui-chat-tab-icons
-      name: '@deepseek-ai/dsh-client-ui-chat-tab-icons'
-    - id: ui-todo-pill
-      name: '@deepseek-ai/dsh-client-ui-todo-pill'
     - id: mcp-podman
       name: '@deepseek-ai/dsh-mcp-client'
       config:

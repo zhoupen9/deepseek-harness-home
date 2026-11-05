@@ -1,7 +1,7 @@
 /**
  * Edits view builder: aggregates Edits-owned contributions into the published
  * per-turn snapshot, preserving stable references across transactions.
- * @module @deepseek-ai/dsh-client-ui-edits/client
+ * @module @zar-desktop/ui-edits/client
  */
 import type {
   ConversationTimelineSnapshot, ConversationViewBuilder, ConversationViewDefinition,

@@ -4,7 +4,7 @@
  * the host side must expose a `ctx.remote.git` namespace with the `log`
  * and `show` verbs. Until that namespace exists, `resolveGitRemote` returns
  * undefined and the Git view renders a "requires host" notice.
- * @module @deepseek-ai/dsh-client-ui-git/client
+ * @module @zar-desktop/ui-git/client
  */
 import type { Context } from '@deepseek-ai/cordis'
 import type { SessionId } from '@deepseek-ai/dsh-session/types'

@@ -1,6 +1,6 @@
 /**
  * Shared text helpers for the Changes reconstruction and net-diff rendering.
- * @module @deepseek-ai/dsh-client-ui-changes/client
+ * @module @zar-desktop/ui-changes/client
  */
 
 /**

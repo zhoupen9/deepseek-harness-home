@@ -1,13 +1,13 @@
 /**
- * Package-owned invariant companion for `@deepseek-ai/dsh-client-ui-chat-tab-icons`.
- * @module `@deepseek-ai/dsh-client-ui-chat-tab-icons/invariant`
+ * Package-owned invariant companion for `@zar-desktop/ui-chat-tab-icons`.
+ * @module `@zar-desktop/ui-chat-tab-icons/invariant`
  */
 
 /* jscpd:ignore-start */
 import type { Context } from '@deepseek-ai/cordis'
 import type { InvariantInstaller } from '@deepseek-ai/dsh-invariants'
 
-const PACKAGE_NAME = '@deepseek-ai/dsh-client-ui-chat-tab-icons'
+const PACKAGE_NAME = '@zar-desktop/ui-chat-tab-icons'
 
 /** Cordis companion plugin name. */
 export const name = 'client-ui-chat-tab-icons-invariant'

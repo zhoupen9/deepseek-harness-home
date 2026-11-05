@@ -1,5 +1,5 @@
 {
-  "name": "@deepseek-ai/dsh-client-ui-changes",
+  "name": "@zar-desktop/ui-changes",
   "description": "Cumulative file-change view for the conversation: a pure-consumer plugin registering a \"Changes\" tab that shows each file's latest net edit/write difference (no service)",
   "version": "0.1.2-alpha.1",
   "publishConfig": {

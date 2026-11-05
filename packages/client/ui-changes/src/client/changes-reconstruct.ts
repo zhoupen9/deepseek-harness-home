@@ -4,7 +4,7 @@
  * path. Only regions ever touched appear — untouched regions are invisible to
  * the session log and stay out of the difference, which is exactly what a
  * cumulative "current difference" view wants.
- * @module @deepseek-ai/dsh-client-ui-changes/client
+ * @module @zar-desktop/ui-changes/client
  */
 import type { ChangeMutation, ChangesFile } from './changes-contract.ts'
 import { contentLines, joinLines } from './changes-text.ts'

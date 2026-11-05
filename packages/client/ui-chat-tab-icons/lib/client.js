@@ -1,5 +1,5 @@
 window.__ModuleLoader__.load({
-	id: "@deepseek-ai/dsh-client-ui-chat-tab-icons",
+	id: "@zar-desktop/ui-chat-tab-icons",
 	factory: (require) => {
 		var module = { exports: {} };
 		var exports = module.exports;
@@ -47,10 +47,10 @@ window.__ModuleLoader__.load({
 		//#endregion
 		//#region \0dsh-css:/home/zhoupeng/.dsh/packages/client/ui-chat-tab-icons/src/client/TabIcons.module.css.mjs
 		const css = ".N2z-Mq_icon{width:14px;height:14px;color:var(--dsw-alias-label-caption);margin-right:5px}";
-		const tagId = "@deepseek-ai/dsh-client-ui-chat-tab-icons/TabIcons.module.css";
+		const tagId = "@zar-desktop/ui-chat-tab-icons/TabIcons.module.css";
 		if (typeof document !== "undefined" && document.querySelector("style[data-plugin-css=" + JSON.stringify(tagId) + "]") === null) {
 			const tag = document.createElement("style");
-			tag.dataset.plugin = "@deepseek-ai/dsh-client-ui-chat-tab-icons";
+			tag.dataset.plugin = "@zar-desktop/ui-chat-tab-icons";
 			tag.dataset.pluginCss = tagId;
 			tag.textContent = css;
 			document.head.appendChild(tag);

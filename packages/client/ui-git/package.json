@@ -1,5 +1,5 @@
 {
-  "name": "@deepseek-ai/dsh-client-ui-git",
+  "name": "@zar-desktop/ui-git",
   "description": "Git history tree graph for the conversation view: a pure-consumer plugin registering a \"Git\" tab that renders the workspace repository commit graph (no service; reads a host git remote when present)",
   "version": "0.1.2-alpha.1",
   "publishConfig": {

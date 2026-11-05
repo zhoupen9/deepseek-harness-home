@@ -1,4 +1,4 @@
-# @deepseek-ai/dsh-client-ui-session-metrics — chat-header session metrics
+# @zar-desktop/ui-session-metrics — chat-header session metrics
 
 A pure-frontend client plugin for DeepSeek Harness's web GUI. It **replaces
 the bottom-of-chat statistics pills** (ui-chat's StatsPills: the gauge and
@@ -92,7 +92,7 @@ another feature plugin's stylesheet.
 ## Source layout
 
     packages/client/ui-session-metrics/
-      package.json                # @deepseek-ai/dsh-client-ui-session-metrics
+      package.json                # @zar-desktop/ui-session-metrics
       tsconfig.json               # standalone build config (see note)
       tsdown.config.ts            # clientBundle preset
       lib/                        # BUILT artifacts (tsdown output)

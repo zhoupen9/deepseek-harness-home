@@ -10,13 +10,13 @@ direction ("don't touch /usr/lib/deepseek-harness instead register in
    typescript at /home/zhoupeng/.dsh; preset files copied under
    `packages/client/` + `scripts/`).
 2. Symlinked the package into the profile install fallback:
-   `profiles/node_modules/@deepseek-ai/dsh-client-ui-changes` →
+   `profiles/node_modules/@zar-desktop/ui-changes` →
    `packages/client/ui-changes`.
 3. Inserted the loader entry into `profiles/web/cordis.patch.yml`:
    ```yaml
    - insert:
        - id: ui-changes
-         name: '@deepseek-ai/dsh-client-ui-changes'
+         name: '@zar-desktop/ui-changes'
    ```
    The web profile's `patchReload: live` recomposed the running loader — no
    server restart.
@@ -24,10 +24,10 @@ direction ("don't touch /usr/lib/deepseek-harness instead register in
 ## Verification (all against the live server, no auth channels)
 
 - `GET /plugins/events` boot graph contains
-  `{"id":"@deepseek-ai/dsh-client-ui-changes","url":"/plugins/??…/client.js&rev=…","inject":[…5 services]}`
+  `{"id":"@zar-desktop/ui-changes","url":"/plugins/??…/client.js&rev=…","inject":[…5 services]}`
   in the application phase.
-- Bundle route `/plugins/??@deepseek-ai/dsh-client-ui-changes/client.js&rev=…`
-  → HTTP 200, head is `window.__ModuleLoader__.load({ id: "@deepseek-ai/dsh-client-ui-changes", …})`.
+- Bundle route `/plugins/??@zar-desktop/ui-changes/client.js&rev=…`
+  → HTTP 200, head is `window.__ModuleLoader__.load({ id: "@zar-desktop/ui-changes", …})`.
 - Node smoke eval of the served bundle: handoff id matches, exports are
   `['apply','inject']`, inject list `["slots","sessions","uiSession","uiConversation","locale"]`.
 - 33/33 vitest specs green (reconstruction, net diff, definition, builder).
@@ -45,4 +45,4 @@ by the profile watcher), so a rebuild + browser refresh is enough.
 ## Rollback
 
 Remove the `ui-changes` insert row from `profiles/web/cordis.patch.yml` and
-delete `profiles/node_modules/@deepseek-ai/dsh-client-ui-changes`.
+delete `profiles/node_modules/@zar-desktop/ui-changes`.

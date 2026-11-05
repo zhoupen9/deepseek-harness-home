@@ -1,4 +1,4 @@
-# @deepseek-ai/dsh-client-ui-changes — cumulative "Changes" view
+# @zar-desktop/ui-changes — cumulative "Changes" view
 
 A pure-frontend client plugin for DeepSeek Harness's web GUI. It reads the same
 persisted file-mutation records as the **Edits** plugin (`edit`/`write`
@@ -16,11 +16,11 @@ user profile (no harness-tree changes):
   harness `packages/client/ui-changes` layout so the real `clientBundle`
   tsdown preset runs).
 - Loader entry: `insert` row in `/home/zhoupeng/.dsh/profiles/web/cordis.patch.yml`
-  (id `ui-changes`, name `@deepseek-ai/dsh-client-ui-changes`).
-- Resolution: symlink `/home/zhoupeng/.dsh/profiles/node_modules/@deepseek-ai/dsh-client-ui-changes`
+  (id `ui-changes`, name `@zar-desktop/ui-changes`).
+- Resolution: symlink `/home/zhoupeng/.dsh/profiles/node_modules/@zar-desktop/ui-changes`
   → this package (profile `node_modules` is the installation fallback).
 - Verified live: the `/plugins/events` boot graph contains the
-  `@deepseek-ai/dsh-client-ui-changes` entry (application phase) and its bundle
+  `@zar-desktop/ui-changes` entry (application phase) and its bundle
   route serves `window.__ModuleLoader__.load({ id, factory }) -> { apply, inject }`.
 
 Refresh the GUI browser tab to activate the tab (the boot graph is re-read on
@@ -70,7 +70,7 @@ watcher without restarting the server).
 
 ```
 packages/client/ui-changes/
-  package.json            # @deepseek-ai/dsh-client-ui-changes (drop-in)
+  package.json            # @zar-desktop/ui-changes (drop-in)
   tsconfig.json           # standalone build config (jsx react-jsx; see note)
   tsdown.config.ts        # clientBundle preset (harness-relative import)
   lib/                    # BUILT artifacts (tsdown output)

@@ -2,7 +2,7 @@
  * Changes view builder: folds the Changes-owned mutations into one per-file
  * net difference per path, publishing the cumulative `changes` snapshot with
  * stable references across transactions.
- * @module @deepseek-ai/dsh-client-ui-changes/client
+ * @module @zar-desktop/ui-changes/client
  */
 import type {
   ConversationTimelineSnapshot, ConversationViewBuilder, ConversationViewDefinition,

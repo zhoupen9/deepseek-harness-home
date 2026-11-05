@@ -10,13 +10,13 @@ ui-changes precedent.
    typescript at `/home/zhoupeng/.dsh`; preset files under `packages/client/`
    + `scripts/`).
 2. Symlinked the package into the profile install fallback:
-   `profiles/node_modules/@deepseek-ai/dsh-client-ui-git` →
+   `profiles/node_modules/@zar-desktop/ui-git` →
    `packages/client/ui-git`.
 3. Inserted the loader entry into `profiles/web/cordis.patch.yml`:
    ```yaml
    - insert:
        - id: ui-git
-         name: '@deepseek-ai/dsh-client-ui-git'
+         name: '@zar-desktop/ui-git'
    ```
    The web profile's `patchReload: live` recomposes the running loader — no
    server restart.
@@ -50,4 +50,4 @@ remotes assembly + Host Loader entry).
 ## Rollback
 
 Remove the `ui-git` insert row from `profiles/web/cordis.patch.yml` and
-delete `profiles/node_modules/@deepseek-ai/dsh-client-ui-git`.
+delete `profiles/node_modules/@zar-desktop/ui-git`.

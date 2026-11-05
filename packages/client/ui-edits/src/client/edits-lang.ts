@@ -4,7 +4,7 @@
  * are the spec keys ./edits-highlight.ts resolves (ts->typescript, py->python,
  * sh->shell, ...). Unknown or non-code extensions yield undefined and the
  * diff renders plain monospace - never an error.
- * @module @deepseek-ai/dsh-client-ui-edits/client
+ * @module @zar-desktop/ui-edits/client
  */
 
 /** Extension (without dot, lower-cased) -> language hint. */

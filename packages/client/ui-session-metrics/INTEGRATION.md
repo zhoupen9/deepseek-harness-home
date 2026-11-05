@@ -73,7 +73,7 @@ process header's run-duration label (TurnProcessNodeView).
    ```yaml
    - insert:
        - id: ui-session-metrics
-         name: '@deepseek-ai/dsh-client-ui-session-metrics'
+         name: '@zar-desktop/ui-session-metrics'
    ```
    The web profile's `patchReload: live` recomposes the running loader — no
    server restart. A page refresh loads the new client bundle.
@@ -113,10 +113,10 @@ re-synchronizing stays a deliberate step. Re-run it after every harness merge.
 ## Verification
 
 - Boot graph (`GET /plugins/events`) carries the row
-  `@deepseek-ai/dsh-client-ui-session-metrics` with inject
+  `@zar-desktop/ui-session-metrics` with inject
   `["slots","locale"]`.
 - Bundle route `/plugins/…client.js&rev=…` → HTTP 200 with the
-  `window.__ModuleLoader__.load({ id: "@deepseek-ai/dsh-client-ui-session-metrics", …})`
+  `window.__ModuleLoader__.load({ id: "@zar-desktop/ui-session-metrics", …})`
   handoff; the factory requires only baseline module-table rows (react,
   react/jsx-runtime, react-dom, `@deepseek-ai/dsh-client-ui-primitives`).
 - Behavior: the bottom pills, their dialogs, and the composer context ring are
@@ -136,7 +136,7 @@ re-synchronizing stays a deliberate step. Re-run it after every harness merge.
 
 Remove the `ui-session-metrics` insert row from `profiles/web/cordis.patch.yml`
 and drop the dependency with
-`dsh plugin --profile web remove @deepseek-ai/dsh-client-ui-session-metrics`.
+`dsh plugin --profile web remove @zar-desktop/ui-session-metrics`.
 The shipped StatsPills row and its dialogs, the composer context meter, and
 the header are restored exactly: the shadowed `stats` cell re-emerges, the
 injected stylesheet leaves with the plugin, and the header capsule disappears.

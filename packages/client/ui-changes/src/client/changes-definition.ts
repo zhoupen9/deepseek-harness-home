@@ -3,7 +3,7 @@
  * settled by its result (contextual-diff hunks in `tool/result.meta`, or a
  * write-create/identical overwrite whose whole-file content comes from the
  * call args), and projected as one `changes` view node per applied mutation.
- * @module @deepseek-ai/dsh-client-ui-changes/client
+ * @module @zar-desktop/ui-changes/client
  */
 import type { DiffHunk } from '@deepseek-ai/dsh-client-ui-primitives'
 import type {

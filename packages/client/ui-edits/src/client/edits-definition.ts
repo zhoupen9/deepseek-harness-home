@@ -3,7 +3,7 @@
  * settled by its result carrying `FsDiffMeta` in `tool/result.meta`, or by
  * a nested PTC-mode sub-dispatch whose file mutation is reconstructed from the
  * call arguments, and projected as one `edits` view node per applied mutation.
- * @module @deepseek-ai/dsh-client-ui-edits/client
+ * @module @zar-desktop/ui-edits/client
  */
 import type { DiffHunk } from '@deepseek-ai/dsh-client-ui-primitives'
 import type {
