@@ -25,7 +25,9 @@ It holds the per-profile configuration and a set of **client plugins** for the w
     │       └── zar-desktop/     # profile bundle owning the six plugin rows
     ├── scripts/
     │   ├── client-build-environment.ts   # client bundle build-env defines
-    │   └── client-plugins.mjs            # pnpm setup / build / verify
+    │   ├── client-plugins.mjs            # pnpm setup / build / verify
+    │   ├── restore.sh                    # bootstrap ~/.dsh on a new machine
+    │   └── update.sh                     # pull + repair an existing checkout
     ├── tsconfig.base.json / tsconfig.base.client.json
     ├── package.json / pnpm-lock.yaml     # root build toolchain
     └── LICENSE
@@ -76,14 +78,23 @@ The root `package.json` installs the build toolchain the harness `clientBundle` 
 **After every `git pull`, run:**
 
 ```sh
-bash "$HOME/.dsh/scripts/update.sh"
+bash "$HOME/.dsh/scripts/update.sh"   # --ref, --remote, --target, --no-build, --build, --force, --dry-run
 ```
 
-It fast-forwards from the remote, then repairs what a pull can break and says whether the change needs a tab reload or an app restart. It backs up (never deletes) anything the checkout would overwrite, tolerates machine-generated churn in lockfiles and built `lib/`, refuses to run over real local modifications unless `--force`, and exits non-zero when the post-pull `pnpm verify` fails. The manual equivalent is:
+[scripts/update.sh](scripts/update.sh) fast-forwards from the remote, then repairs what a pull can break and says whether the change needs a tab reload or an app restart. It backs up (never deletes) anything the checkout would overwrite, tolerates machine-generated churn in lockfiles and built `lib/`, refuses to run over real local modifications unless `--force`, and exits non-zero when the post-pull `pnpm verify` fails. The manual equivalent is:
 
 ```sh
 cd "$HOME/.dsh" && pnpm setup
 ```
+
+The script does not have to live in the checkout: it addresses the target through `git -C "$TARGET"` and `$DSH_HOME`/`~/.dsh`, so a downloaded copy updates the same repo. That is only needed when the in-repo copy predates a fix — an update refreshes it — and pinning a commit is safer than trusting a branch:
+
+```sh
+curl -fsSL https://raw.githubusercontent.com/zhoupen9/deepseek-harness-home/<sha>/scripts/update.sh -o /tmp/update.sh
+bash /tmp/update.sh            # --ref, --remote, --target, --no-build, --build, --force, --dry-run
+```
+
+Download it to a file instead of piping into `bash`: the update itself works either way, but `--help` reads the script's own path and prints nothing when fed through a pipe. This script only *updates* an existing checkout — a target without `.git` is refused, and [scripts/restore.sh](scripts/restore.sh) is what bootstraps one.
 
 `pnpm setup` repairs what a pull can invalidate, then proves the result:
 
@@ -163,7 +174,7 @@ The manual `dsh plugin --profile … add link:<dir>` command is not part of a re
 
 ### Restoring on a new machine
 
-`scripts/restore.sh` automates this whole section — and it is non-destructive: it never cleans or deletes anything in the home directory, it copies any file the checkout would overwrite into `.restore-backup-<UTC>/`, and it compares the local-state paths before and after, failing if any changed. It needs only `git`, so it can be fetched and run before the repo exists:
+[scripts/restore.sh](scripts/restore.sh) automates this whole section — and it is non-destructive: it never cleans or deletes anything in the home directory, it copies any file the checkout would overwrite into `.restore-backup-<UTC>/`, and it compares the local-state paths before and after, failing if any changed. It needs only `git`, so it can be fetched and run before the repo exists:
 
 ```sh
 curl -fsSL https://raw.githubusercontent.com/zhoupen9/deepseek-harness-home/main/scripts/restore.sh -o /tmp/restore.sh
@@ -179,5 +190,7 @@ Prerequisites: the **same DSH release family** (the `bundles` lists name bundles
 Every `link:` dependency in `profiles/*/package.json` is **relative** (`link:../../packages/…`), so the clone works at any path. An absolute `link:` is not portable and fails quietly: pnpm accepts it, exits 0, and leaves a dangling symlink, after which the six rows resolve to nothing — the tabs and header pills simply disappear with no error. `dsh plugin … add link:<dir>` records an absolute path, so prefer `pnpm install` from the tracked manifest.
 
 Nothing from the old machine comes back: `sessions/`, `storages/`, `attachments/`, `settings.yaml`, and credentials are all gitignored.
+
+Once the machine is restored, this section is done — subsequent updates are [scripts/update.sh](scripts/update.sh) ([Building](#building)), not a second restore.
 
 **Version drift.** Patch entries that override a shipped row by `id` become inert when a release renames that row — the loader warns and skips, so the setting silently stops applying while everything else still works (the `llm-deepseek` entry was exactly this: the adapter had been renamed to `@deepseek-ai/dsh-llm-deepseek-api-key`). Watch startup warnings after a DSH upgrade; `pnpm verify` checks artifacts, links, and bundle selection, not patch targets.
