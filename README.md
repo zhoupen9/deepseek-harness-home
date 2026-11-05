@@ -24,7 +24,8 @@ It holds the per-profile configuration and a set of **client plugins** for the w
     │   └── bundles/
     │       └── zar-desktop/     # profile bundle owning the six plugin rows
     ├── scripts/
-    │   └── client-build-environment.ts   # client bundle build-env defines
+    │   ├── client-build-environment.ts   # client bundle build-env defines
+    │   └── client-plugins.mjs            # pnpm setup / build / verify
     ├── tsconfig.base.json / tsconfig.base.client.json
     ├── package.json / pnpm-lock.yaml     # root build toolchain
     └── LICENSE
@@ -72,7 +73,31 @@ Each package has a `README.md` (behaviour and live status) and an `INTEGRATION.m
 
 The root `package.json` installs the build toolchain the harness `clientBundle` preset needs: `tsdown`, `lightningcss`, `typescript`, and `vitest`. Plugin bundles are produced by that shared preset (`packages/client/tsdown.client.ts`) and emit a closure-factory `lib/client.js` that calls `window.__ModuleLoader__.load({id, factory})` and resolves externals through the injected module table.
 
-Rebuild a plugin after editing its source:
+**After every `git pull`, run:**
+
+```sh
+cd "$HOME/.dsh" && pnpm setup
+```
+
+`pnpm setup` repairs what a pull can invalidate, then proves the result:
+
+1. installs the root toolchain (`node_modules/` is gitignored),
+2. re-runs `pnpm install` in `profiles/desktop` and `profiles/web`, which recreates the `@zar-desktop/*` symlinks under the gitignored `profiles/*/node_modules/`,
+3. rebuilds all six plugins from `src/`,
+4. verifies each `lib/client.js` declares the package's current name, both profiles' links resolve, and the desktop profile selects the `zar-desktop` bundle.
+
+A pull that renames a package (as the move to the `@zar-desktop` scope did) leaves the old symlink names in place until step 2 runs, so the bundle's six rows resolve to nothing and the tabs silently disappear — **that**, not a missing build, is what makes them look broken after a pull. The compiled `lib/` is tracked, so when `src/` has not changed no build is needed; when it has, `pnpm setup` regenerates it.
+
+The pieces are also available separately:
+
+```sh
+pnpm verify   # read-only: artifacts, profile links, bundle selection
+pnpm build    # rebuild the six plugins only
+```
+
+`pnpm verify` is the cheap check: it compares the `id` inside each `lib/client.js` with the package name, so a rename that missed the built output (the identity strings — `id:`, CSS tag ids, invariant registration key — are compiled into `lib/*.js`) is reported instead of shipping a bundle the loader cannot match. Commit the regenerated `lib/` afterwards.
+
+While iterating on one plugin, build just that one:
 
 ```sh
 cd "$HOME/.dsh/packages/client/ui-edits"   # or ui-changes / ui-git / ui-chat-tab-icons / ui-session-metrics / ui-todo-pill
@@ -85,8 +110,6 @@ Run its tests:
 cd "$HOME/.dsh/packages/client/ui-edits"
 "$HOME/.dsh/node_modules/.bin/vitest" run
 ```
-
-The built `lib/*.js` carries the package's own identity strings (`id:`, CSS tag ids, invariant registration key), so renaming a package means editing those alongside `package.json` — or rebuilding, which regenerates them from `src/`.
 
 After a rebuild, refresh the GUI tab — the boot graph is re-read on page load.
 
@@ -115,20 +138,13 @@ After a rebuild, refresh the GUI tab — the boot graph is re-read on page load.
 git clone https://github.com/zhoupen9/deepseek-harness-home.git "$HOME/.dsh"
 ```
 
-1. **Install the build toolchain** (restores the gitignored root `node_modules/`):
+1. **Install the toolchain, re-link both profiles, and rebuild** — one command:
 
    ```sh
-   cd "$HOME/.dsh" && pnpm install
+   cd "$HOME/.dsh" && pnpm setup
    ```
 
-2. **Re-link the client plugins.** The links live under `profiles/*/node_modules/` (gitignored). The tracked `profiles/*/package.json` already carries them, so reinstalling a profile's deps recreates the symlinks:
-
-   ```sh
-   cd "$HOME/.dsh/profiles/desktop" && pnpm install
-   cd "$HOME/.dsh/profiles/web"     && pnpm install
-   ```
-
-   Registering a package explicitly against the local source tree works too:
+   It restores the gitignored root `node_modules/`, recreates the profile-local `link:` symlinks under `profiles/*/node_modules/`, and rebuilds the six plugins (see [Building](#building)). Registering a package explicitly against the local source tree works too:
 
    ```sh
    dsh plugin --profile desktop add link:"$HOME/.dsh/packages/client/ui-edits"
@@ -139,6 +155,6 @@ git clone https://github.com/zhoupen9/deepseek-harness-home.git "$HOME/.dsh"
    dsh plugin --profile desktop add link:"$HOME/.dsh/packages/client/ui-todo-pill"
    ```
 
-3. **Select the `zar-desktop` bundle** in the desktop profile. `pnpm install` only creates the symlink; the bundle has to be installed through the plugin manager with `$HOME/.dsh/packages/bundles/zar-desktop` as the target, which also writes it into `dsh.profile.bundles`. The web profile needs this step only if you also switch it to the bundle.
+2. **Select the `zar-desktop` bundle** in the desktop profile. `pnpm install` only creates the symlink; the bundle has to be installed through the plugin manager with `$HOME/.dsh/packages/bundles/zar-desktop` as the target, which also writes it into `dsh.profile.bundles`. The web profile needs this step only if you also switch it to the bundle.
 
-4. **Recreate credentials** (`~/.dsh/.credentials.yaml`) with your `DEEPSEEK_API_KEY`.
+3. **Recreate credentials** (`~/.dsh/.credentials.yaml`) with your `DEEPSEEK_API_KEY`.

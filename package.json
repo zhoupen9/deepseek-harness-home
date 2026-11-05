@@ -2,6 +2,11 @@
   "name": "dsh-session-workspace-toolchain",
   "private": true,
   "version": "0.0.0",
+  "scripts": {
+    "setup": "node scripts/client-plugins.mjs setup",
+    "build": "node scripts/client-plugins.mjs build",
+    "verify": "node scripts/client-plugins.mjs verify"
+  },
   "devDependencies": {
     "lightningcss": "^1.33.0",
     "tsdown": "^0.22.14",

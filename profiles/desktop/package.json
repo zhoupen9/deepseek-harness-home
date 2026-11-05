@@ -2,7 +2,7 @@
   "name": "dsh-profile-web",
   "private": true,
   "dependencies": {
-    "@anysearch/anysearch-dsh": "^0.1.8",
+    "@anysearch/anysearch-dsh": "0.1.8",
     "@zar-desktop/ui-changes": "link:/home/zhoupeng/.dsh/packages/client/ui-changes",
     "@zar-desktop/ui-chat-tab-icons": "link:/home/zhoupeng/.dsh/packages/client/ui-chat-tab-icons",
     "@zar-desktop/ui-edits": "link:/home/zhoupeng/.dsh/packages/client/ui-edits",
@@ -16,10 +16,10 @@
       "bundles": [
         "@deepseek-ai/dsh-base",
         "@deepseek-ai/dsh-web-app",
-        "@anysearch/anysearch-dsh",
         "@deepseek-ai/dsh-experimental-tool-worktree",
         "@deepseek-ai/dsh-experimental-forge-bundle",
-        "zar-desktop"
+        "zar-desktop",
+        "@anysearch/anysearch-dsh"
       ],
       "patchReload": "live"
     }
