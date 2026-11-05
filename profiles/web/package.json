@@ -3,12 +3,12 @@
   "private": true,
   "dependencies": {
     "@anysearch/anysearch-dsh": "^0.1.6",
-    "@zar-desktop/ui-changes": "link:/home/zhoupeng/.dsh/packages/client/ui-changes",
-    "@zar-desktop/ui-chat-tab-icons": "link:/home/zhoupeng/.dsh/packages/client/ui-chat-tab-icons",
-    "@zar-desktop/ui-edits": "link:/home/zhoupeng/.dsh/packages/client/ui-edits",
-    "@zar-desktop/ui-git": "link:/home/zhoupeng/.dsh/packages/client/ui-git",
-    "@zar-desktop/ui-session-metrics": "link:/home/zhoupeng/.dsh/packages/client/ui-session-metrics",
-    "@zar-desktop/ui-todo-pill": "link:/home/zhoupeng/.dsh/packages/client/ui-todo-pill"
+    "@zar-desktop/ui-changes": "link:../../packages/client/ui-changes",
+    "@zar-desktop/ui-chat-tab-icons": "link:../../packages/client/ui-chat-tab-icons",
+    "@zar-desktop/ui-edits": "link:../../packages/client/ui-edits",
+    "@zar-desktop/ui-git": "link:../../packages/client/ui-git",
+    "@zar-desktop/ui-session-metrics": "link:../../packages/client/ui-session-metrics",
+    "@zar-desktop/ui-todo-pill": "link:../../packages/client/ui-todo-pill"
   },
   "dsh": {
     "profile": {

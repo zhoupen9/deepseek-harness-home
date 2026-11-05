@@ -9,7 +9,7 @@
  *                 resolving nothing until the links are recreated.
  * `pnpm build`  — rebuild the six plugins only (regenerates `lib/` from `src/`).
  * `pnpm verify` — read-only checks: built identity strings, profile links, and
- *                 that the desktop profile selects the `zar-desktop` bundle.
+ *                 that the desktop profile selects the `@zhp-dev/zar-desktop` bundle.
  *
  * No dependencies besides Node: this has to run before `node_modules` exists.
  */
@@ -148,8 +148,8 @@ function verify() {
   const desktop = join(ROOT, 'profiles', 'desktop', 'package.json')
   if (existsSync(desktop)) {
     const bundles = readJson(desktop).dsh?.profile?.bundles ?? []
-    if (bundles.includes('zar-desktop')) ok('desktop profile selects the zar-desktop bundle')
-    else fail('desktop profile does not list "zar-desktop" in dsh.profile.bundles')
+    if (bundles.includes('@zhp-dev/zar-desktop')) ok('desktop profile selects the @zhp-dev/zar-desktop bundle')
+    else fail('desktop profile does not list "@zhp-dev/zar-desktop" in dsh.profile.bundles')
   }
 }
 

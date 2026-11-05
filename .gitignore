@@ -25,3 +25,6 @@ attachments/
 **/ui-file-mentions/ui-file-mentions
 **/ui-files/ui-files
 **/font-inter-monaspace/font-inter-monaspace
+
+# Local restore backups (scripts/restore.sh); user-owned, never committed
+.restore-backup-*/

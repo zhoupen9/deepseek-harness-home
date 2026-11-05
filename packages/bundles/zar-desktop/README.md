@@ -1,4 +1,4 @@
-# zar-desktop
+# @zhp-dev/zar-desktop
 
 A DSH profile bundle that groups this machine's six locally developed desktop UI
 plugins behind a single selectable bundle, so a profile does not have to carry six

@@ -1,4 +1,4 @@
-# The zar-desktop bundle patch: the six locally developed desktop UI plugins
+# The @zhp-dev/zar-desktop bundle patch: the six locally developed desktop UI plugins
 # of this machine, inserted as ONE layer over the shipped bundles.
 #
 # This bundle OWNS these row ids. The profile patch (profiles/<name>/cordis.patch.yml)

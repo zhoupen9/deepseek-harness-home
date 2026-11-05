@@ -12,22 +12,22 @@ importers:
         specifier: ^0.1.6
         version: 0.1.6
       '@zar-desktop/ui-changes':
-        specifier: link:/home/zhoupeng/.dsh/packages/client/ui-changes
+        specifier: link:../../packages/client/ui-changes
         version: link:../../packages/client/ui-changes
       '@zar-desktop/ui-chat-tab-icons':
-        specifier: link:/home/zhoupeng/.dsh/packages/client/ui-chat-tab-icons
+        specifier: link:../../packages/client/ui-chat-tab-icons
         version: link:../../packages/client/ui-chat-tab-icons
       '@zar-desktop/ui-edits':
-        specifier: link:/home/zhoupeng/.dsh/packages/client/ui-edits
+        specifier: link:../../packages/client/ui-edits
         version: link:../../packages/client/ui-edits
       '@zar-desktop/ui-git':
-        specifier: link:/home/zhoupeng/.dsh/packages/client/ui-git
+        specifier: link:../../packages/client/ui-git
         version: link:../../packages/client/ui-git
       '@zar-desktop/ui-session-metrics':
-        specifier: link:/home/zhoupeng/.dsh/packages/client/ui-session-metrics
+        specifier: link:../../packages/client/ui-session-metrics
         version: link:../../packages/client/ui-session-metrics
       '@zar-desktop/ui-todo-pill':
-        specifier: link:/home/zhoupeng/.dsh/packages/client/ui-todo-pill
+        specifier: link:../../packages/client/ui-todo-pill
         version: link:../../packages/client/ui-todo-pill
 
 packages:

@@ -34,7 +34,7 @@ It holds the per-profile configuration and a set of **client plugins** for the w
 
 | Profile | Bundles | Notes |
 | --- | --- | --- |
-| `desktop` | `@deepseek-ai/dsh-base`, `@deepseek-ai/dsh-web-app`, `@anysearch/anysearch-dsh`, `@deepseek-ai/dsh-experimental-tool-worktree`, `@deepseek-ai/dsh-experimental-forge-bundle`, `zar-desktop` | desktop app profile; the six client plugins arrive through the `zar-desktop` bundle, so its `cordis.patch.yml` inserts only a `podman` MCP server (`@deepseek-ai/dsh-mcp-client`) |
+| `desktop` | `@deepseek-ai/dsh-base`, `@deepseek-ai/dsh-web-app`, `@anysearch/anysearch-dsh`, `@deepseek-ai/dsh-experimental-tool-worktree`, `@deepseek-ai/dsh-experimental-forge-bundle`, `@zhp-dev/zar-desktop` | desktop app profile; the six client plugins arrive through the `@zhp-dev/zar-desktop` bundle, so its `cordis.patch.yml` inserts only a `podman` MCP server (`@deepseek-ai/dsh-mcp-client`) |
 | `web` | `@deepseek-ai/dsh-base`, `@deepseek-ai/dsh-web-app`, `@anysearch/anysearch-dsh` | web GUI profile; `cordis.patch.yml` inserts the six client plugins itself plus the same `podman` MCP server |
 
 `cordis.yml` is the profile root (an empty entry list). `cordis.patch.yml` is the patch layer applied on top of every bundle layer — edit `cordis.patch.yml`, never `cordis.yml`. `package.json` sets `dsh.profile.patchReload: "live"`, so patch changes are picked up without restarting the server.
@@ -46,7 +46,7 @@ Both profiles carry a `link:` dependency on each `packages/client/<dir>`, which 
 The plugins are pure-frontend (pure-consumer) client plugins: each is a self-contained npm package with source in `src/`, compiled output in `lib/`, and tests in `tests/`. Two things make one load in a profile:
 
 1. a `link:` dependency in `profiles/<profile>/package.json` pointing at `packages/client/<dir>`, which pnpm materialises as a symlink at `profiles/<profile>/node_modules/@zar-desktop/<pkg-name>` → `packages/client/<dir>`, and
-2. a row that loads the package by `id` + `name` — inserted either by the `zar-desktop` bundle (desktop profile) or by the profile's own `cordis.patch.yml` (web profile).
+2. a row that loads the package by `id` + `name` — inserted either by the `@zhp-dev/zar-desktop` bundle (desktop profile) or by the profile's own `cordis.patch.yml` (web profile).
 
 Resolution reads only the running profile's `node_modules`; the legacy `profiles/node_modules` fallback was removed on 2026-09-18, and a link placed there silently fails to resolve.
 
@@ -61,19 +61,25 @@ Resolution reads only the running profile's `node_modules`; the legacy `profiles
 
 Each package has a `README.md` (behaviour and live status) and an `INTEGRATION.md` (wiring/removal notes).
 
-## The `zar-desktop` bundle
+## The `@zhp-dev/zar-desktop` bundle
 
 [`packages/bundles/zar-desktop`](packages/bundles/zar-desktop) is a profile bundle: a package whose `package.json` declares `dsh.bundle.patch`, pointing at a `cordis.patch.yml` that inserts the six plugin rows. The desktop profile selects it in `dsh.profile.bundles`, so one row in that list enables or disables all six plugins.
 
 - **Ownership.** The bundle owns the six row ids (`ui-edits`, `ui-changes`, …). A profile that selects it must **not** also insert those ids in its own patch: two layers inserting the same id make the loader throw `entry <id> already exists in the target tree` and the profile stops composing. That is why the desktop patch inserts only `mcp-podman`.
 - **No dependencies.** The bundle declares no `dependencies`, no `peerDependencies`, and no `engines.dsh`. It does not install the plugins; it names them as bare specifiers that resolve from the profile's own `link:` dependencies. Declaring `@deepseek-ai/dsh-*` peers would make the installer reject the bundle as `incompatible-version`, because the plugins are `0.1.x-alpha` while the dsh runtime is `0.2.x`.
-- **Installing it** is a plugin-manager operation, not a pnpm one: pass the absolute package directory to `install_bundle` (Settings → Plugins, or the agent's plugin manager). That adds the `link:` dependency, appends `zar-desktop` to `dsh.profile.bundles`, and reloads live. Hand-editing the profile `package.json` or running pnpm by hand does **not** select the bundle.
+- **Installing it** is a plugin-manager operation, not a pnpm one: pass the absolute package directory to `install_bundle` (Settings → Plugins, or the agent's plugin manager). That adds the `link:` dependency, appends `@zhp-dev/zar-desktop` to `dsh.profile.bundles`, and reloads live. Hand-editing the profile `package.json` or running pnpm by hand does **not** select the bundle.
 
 ## Building
 
 The root `package.json` installs the build toolchain the harness `clientBundle` preset needs: `tsdown`, `lightningcss`, `typescript`, and `vitest`. Plugin bundles are produced by that shared preset (`packages/client/tsdown.client.ts`) and emit a closure-factory `lib/client.js` that calls `window.__ModuleLoader__.load({id, factory})` and resolves externals through the injected module table.
 
 **After every `git pull`, run:**
+
+```sh
+bash "$HOME/.dsh/scripts/update.sh"
+```
+
+It fast-forwards from the remote, then repairs what a pull can break and says whether the change needs a tab reload or an app restart. It backs up (never deletes) anything the checkout would overwrite, tolerates machine-generated churn in lockfiles and built `lib/`, refuses to run over real local modifications unless `--force`, and exits non-zero when the post-pull `pnpm verify` fails. The manual equivalent is:
 
 ```sh
 cd "$HOME/.dsh" && pnpm setup
@@ -84,7 +90,7 @@ cd "$HOME/.dsh" && pnpm setup
 1. installs the root toolchain (`node_modules/` is gitignored),
 2. re-runs `pnpm install` in `profiles/desktop` and `profiles/web`, which recreates the `@zar-desktop/*` symlinks under the gitignored `profiles/*/node_modules/`,
 3. rebuilds all six plugins from `src/`,
-4. verifies each `lib/client.js` declares the package's current name, both profiles' links resolve, and the desktop profile selects the `zar-desktop` bundle.
+4. verifies each `lib/client.js` declares the package's current name, both profiles' links resolve, and the desktop profile selects the `@zhp-dev/zar-desktop` bundle.
 
 A pull that renames a package (as the move to the `@zar-desktop` scope did) leaves the old symlink names in place until step 2 runs, so the bundle's six rows resolve to nothing and the tabs silently disappear — **that**, not a missing build, is what makes them look broken after a pull. The compiled `lib/` is tracked, so when `src/` has not changed no build is needed; when it has, `pnpm setup` regenerates it.
 
@@ -94,6 +100,8 @@ The pieces are also available separately:
 pnpm verify   # read-only: artifacts, profile links, bundle selection
 pnpm build    # rebuild the six plugins only
 ```
+
+Built `lib/client.js` also embeds CSS-module class hashes derived from the **absolute source path**, so a rebuild at a different home path produces different bytes even for unchanged sources. That is expected, not a conflict — `pnpm verify` checks ids and links, not bytes.
 
 `pnpm verify` is the cheap check: it compares the `id` inside each `lib/client.js` with the package name, so a rename that missed the built output (the identity strings — `id:`, CSS tag ids, invariant registration key — are compiled into `lib/*.js`) is reported instead of shipping a bundle the loader cannot match. Commit the regenerated `lib/` afterwards.
 
@@ -136,25 +144,40 @@ After a rebuild, refresh the GUI tab — the boot graph is re-read on page load.
 
 ```sh
 git clone https://github.com/zhoupen9/deepseek-harness-home.git "$HOME/.dsh"
+cd "$HOME/.dsh" && pnpm setup
 ```
 
-1. **Install the toolchain, re-link both profiles, and rebuild** — one command:
+Then recreate `~/.dsh/.credentials.yaml` with your `DEEPSEEK_API_KEY`. That is the whole restore.
 
-   ```sh
-   cd "$HOME/.dsh" && pnpm setup
-   ```
+`pnpm setup` restores what git ignores — the root toolchain, both profiles' `node_modules/` with their `link:` symlinks — rebuilds the six plugins, and verifies the result (see [Building](#building)).
 
-   It restores the gitignored root `node_modules/`, recreates the profile-local `link:` symlinks under `profiles/*/node_modules/`, and rebuilds the six plugins (see [Building](#building)). Registering a package explicitly against the local source tree works too:
+### The bundle is not installed during a restore
 
-   ```sh
-   dsh plugin --profile desktop add link:"$HOME/.dsh/packages/client/ui-edits"
-   dsh plugin --profile desktop add link:"$HOME/.dsh/packages/client/ui-changes"
-   dsh plugin --profile desktop add link:"$HOME/.dsh/packages/client/ui-git"
-   dsh plugin --profile desktop add link:"$HOME/.dsh/packages/client/ui-session-metrics"
-   dsh plugin --profile desktop add link:"$HOME/.dsh/packages/client/ui-chat-tab-icons"
-   dsh plugin --profile desktop add link:"$HOME/.dsh/packages/client/ui-todo-pill"
-   ```
+`@zhp-dev/zar-desktop` needs no install step, because its selection is tracked data rather than an action:
 
-2. **Select the `zar-desktop` bundle** in the desktop profile. `pnpm install` only creates the symlink; the bundle has to be installed through the plugin manager with `$HOME/.dsh/packages/bundles/zar-desktop` as the target, which also writes it into `dsh.profile.bundles`. The web profile needs this step only if you also switch it to the bundle.
+- `profiles/desktop/package.json` already lists it in `dsh.profile.bundles` **and** as a `link:` dependency, both committed. The profile's `pnpm install` is what materialises `profiles/desktop/node_modules/@zhp-dev/zar-desktop`; once that link exists, the loader resolves the bundle and the six rows it inserts.
+- Running the plugin manager's `install_bundle` against a restored profile does not help: it rejects a package that is already a dependency (`already-installed`), and it exists to *add* the bundle to a profile that does not list it, or to re-point it after its directory moves.
+- There is nothing to compile for the bundle — it is a patch, two locale files, an icon, and an `export {}` module, all tracked. The rebuild in `pnpm setup` is for the six client plugins, and even that is a refresh: their `lib/` is committed, so a clone runs without compiling.
 
-3. **Recreate credentials** (`~/.dsh/.credentials.yaml`) with your `DEEPSEEK_API_KEY`.
+The manual `dsh plugin --profile … add link:<dir>` command is not part of a restore either, since it would only re-add dependency entries the tracked manifest already carries. It is the tool for *changing* a profile — adding a new plugin or bundle, or moving one to another directory; [The `@zhp-dev/zar-desktop` bundle](#the-zhp-devzar-desktop-bundle) covers what installing it into another profile involves.
+
+### Restoring on a new machine
+
+`scripts/restore.sh` automates this whole section — and it is non-destructive: it never cleans or deletes anything in the home directory, it copies any file the checkout would overwrite into `.restore-backup-<UTC>/`, and it compares the local-state paths before and after, failing if any changed. It needs only `git`, so it can be fetched and run before the repo exists:
+
+```sh
+curl -fsSL https://raw.githubusercontent.com/zhoupen9/deepseek-harness-home/main/scripts/restore.sh -o /tmp/restore.sh
+bash /tmp/restore.sh            # --repo, --ref, --target, --no-build, --force, --dry-run
+```
+
+Prerequisites: the **same DSH release family** (the `bundles` lists name bundles the installation ships, not npm packages), **Node ≥ 22.19** (`@anysearch/anysearch-dsh` declares `engines.node`), **`pnpm` ≥ 9**, and registry access — `pnpm setup` fetches the root toolchain and the anysearch package.
+
+1. **Get the repo to be `~/.dsh`.** If the app has already started once, `~/.dsh` exists (`profiles/`, `sessions/`, …) and `git clone … ~/.dsh` refuses a non-empty directory: move it aside, clone, then copy back only what you want to keep from `sessions/`, `storages/`, `attachments/`, and `.credentials.yaml`.
+2. **`cd ~/.dsh && pnpm setup`** — installs everything, rebuilds the six plugins, and verifies ([Building](#building)).
+3. **Credentials.** `.credentials.yaml` (or signing in in-app) for DeepSeek; `ANYSEARCH_API_KEY` for the anysearch web provider; `ZAI_CODING_CN_API_KEY` for the `zai-coding-cn` provider. The `podman` MCP row runs `npx -y podman-mcp-server@latest`, so Podman plus network is needed for the `mcp__podman__*` tools.
+
+Every `link:` dependency in `profiles/*/package.json` is **relative** (`link:../../packages/…`), so the clone works at any path. An absolute `link:` is not portable and fails quietly: pnpm accepts it, exits 0, and leaves a dangling symlink, after which the six rows resolve to nothing — the tabs and header pills simply disappear with no error. `dsh plugin … add link:<dir>` records an absolute path, so prefer `pnpm install` from the tracked manifest.
+
+Nothing from the old machine comes back: `sessions/`, `storages/`, `attachments/`, `settings.yaml`, and credentials are all gitignored.
+
+**Version drift.** Patch entries that override a shipped row by `id` become inert when a release renames that row — the loader warns and skips, so the setting silently stops applying while everything else still works (the `llm-deepseek` entry was exactly this: the adapter had been renamed to `@deepseek-ai/dsh-llm-deepseek-api-key`). Watch startup warnings after a DSH upgrade; `pnpm verify` checks artifacts, links, and bundle selection, not patch targets.
