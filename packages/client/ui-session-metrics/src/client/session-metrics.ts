@@ -237,7 +237,7 @@ export function contextRingDash(percent: number): string {
 }
 
 /** Performance-and-usage detail levels; mirrors the Chat target's own setting. */
-export type PerformanceUsageMode = 'compact' | 'detailed'
+export type PerformanceUsageMode = 'compact' | 'detailed' | 'hidden'
 
 /** Detail level a session presents without an explicit Chat preference. */
 export const DEFAULT_PERFORMANCE_USAGE: PerformanceUsageMode = 'detailed'

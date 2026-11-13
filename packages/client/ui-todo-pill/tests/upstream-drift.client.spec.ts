@@ -239,7 +239,7 @@ describe('baseline module exports the plugin bundle reaches for', () => {
 
   it('keeps the ui-primitives names this plugin imports', () => {
     const index = read(PRIMITIVES_INDEX)
-    for (const name of ['StateDot', 'Tooltip', 'useAnchoredPosition', 'useDismissOnOutsidePointer']) {
+    for (const name of ['StateDot', 'Tooltip', 'useDismissOnOutsidePointer']) {
       expect(index).toMatch(new RegExp('export\\s*\\{[^}]*\\b' + name + '\\b'))
     }
     expect(read(PRIMITIVES_ICONS)).toContain('IconChecklistOutlineRegular')

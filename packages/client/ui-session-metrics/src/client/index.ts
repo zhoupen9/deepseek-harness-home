@@ -1,25 +1,23 @@
 /**
- * Browser Session-metrics plugin: a pure consumer with no service. It moves
- * the chat statistics out of the bottom-of-chat strip and the context meter
- * out of the composer, into the left edge of the Session Header's
- * right-aligned utilities row.
+ * Browser Session-metrics plugin: a pure consumer with no service. It adds a
+ * chat-statistics capsule to the left edge of the Session Header's
+ * right-aligned utilities row, mirroring the figures that the Chat target's
+ * accepted `performanceUsage` level presents elsewhere.
  *
- * Two slot registrations plus one injected stylesheet, all removed on plugin
- * unload:
+ * One slot registration, removed on plugin unload:
  * - `conversation.session.header.utilities` (id `session-metrics`,
  *   order -11): the compact capsule. -11 puts it left of the shipped
  *   `open-in-app` split button (order -10) and of the order-0
  *   `session-log-download` capsule, i.e. it swaps with the open-in-app
  *   button to become the row's leftmost entry.
- * - `conversation.composer.dock` (id `stats`, priority -1): shadows the
- *   cell of ui-chat's shipped StatsLine (same id at priority 0 — the slot
- *   ledger only clashes same-id entries at equal priority, and the lowest
- *   priority renders), replacing the bottom-of-chat metrics strip with an
- *   empty occupant. Disabling or removing this plugin restores the shipped
- *   strip automatically.
- * - a stylesheet hiding ui-conversation's shipped composer context meter.
- *   The composer renders that meter directly, so it owns no slot cell to
- *   shadow by id and priority; the header capsule now carries its reading.
+ *
+ * The capsule is additive. ui-chat's bottom-of-chat stats pills and
+ * ui-conversation's composer context meter are left untouched, because the
+ * Chat target's `performanceUsage` preference already decides whether they
+ * render (they show for `compact` and `detailed`, and disappear for `hidden`);
+ * shadowing their cells or hiding them with an injected stylesheet overrode
+ * that decision at every level. The one thing the capsule takes from the same
+ * preference is its own visibility, so `hidden` hides it too.
  */
 import type { Context } from '@deepseek-ai/cordis'
 import { createSnapshotStore, type ObservableSnapshot } from '@deepseek-ai/dsh-client-store'
@@ -31,37 +29,12 @@ import type {} from '@deepseek-ai/dsh-client-ui-conversation/client'
 import type {} from '@deepseek-ai/dsh-client-ui-renderer/client'
 import type {} from '@deepseek-ai/dsh-client-ui-session/client'
 import type {} from '@deepseek-ai/dsh-client-ui-settings/client'
-import { SessionMetricsSuppressed, SessionMetricsTrigger } from './SessionMetrics.tsx'
+import { SessionMetricsTrigger } from './SessionMetrics.tsx'
 import { en, NS, zh } from './locales.ts'
 import { DEFAULT_PERFORMANCE_USAGE, type PerformanceUsageMode } from './session-metrics.ts'
 
 /** Required services: the slot ledger, the locale face, and the configuration forms. */
 export const inject = ['slots', 'locale', 'configForms']
-
-/**
- * Hides the shipped composer context meter. It is named by the static facts
- * its markup exposes — a `span` whose direct child is the meter button,
- * whose own direct child is the 14px progress ring — because it carries no
- * stable class, id, or data attribute of its own. Both ring spellings are
- * listed: an SVG attribute name is matched case-sensitively by a CSS
- * selector, while the `width`/`height` pair is not.
- */
-const HIDE_COMPOSER_CONTEXT_METER = [
-  "span:has(> button[aria-haspopup='dialog'] > svg[viewBox='0 0 14 14'] > circle)",
-  "span:has(> button[aria-haspopup='dialog'] > svg[width='14'][height='14'] > circle)",
-].join(',\n') + ' { display: none !important; }'
-
-/**
- * Inject the composer-meter suppression stylesheet into the page.
- * @returns disposer removing the stylesheet when the plugin unloads.
- */
-function hideComposerContextMeter(): () => void {
-  const style = document.createElement('style')
-  style.dataset.sessionMetrics = 'composer-context-meter'
-  style.textContent = HIDE_COMPOSER_CONTEXT_METER
-  document.head.append(style)
-  return () => { style.remove() }
-}
 
 /** Namespace owning the Chat target's durable settings section. */
 const CHAT_SETTINGS_NAMESPACE = 'ui-chat'
@@ -95,14 +68,12 @@ function performanceUsageSource(ctx: Context): ObservableSnapshot<PerformanceUsa
 }
 
 /**
- * Client plugin body: register the header capsule, shadow the shipped stats
- * strip, and hide the shipped composer context meter. Every effect is removed
- * on plugin unload, which restores the shipped surfaces.
+ * Client plugin body: register the header capsule and install the
+ * dictionaries. Both are removed on plugin unload.
  * @param ctx - client root context.
  */
 export function apply(ctx: Context): void {
   ctx.effect(() => ctx.locale.register(NS, { zh, en }), 'ui-session-metrics: dictionaries')
-  ctx.effect(hideComposerContextMeter, 'ui-session-metrics: composer context meter')
   const performanceUsage = performanceUsageSource(ctx)
   ctx.slots.inject('conversation.session.header.utilities', () => ctx.slots.register({
     name: 'conversation.session.header.utilities',
@@ -116,14 +87,4 @@ export function apply(ctx: Context): void {
     // mirrors, delivered as the component's usePerformanceUsage seat.
     inject: () => ({ hooks: { performanceUsage } }),
   }, SessionMetricsTrigger))
-  ctx.slots.inject('conversation.composer.dock', () => ctx.slots.register({
-    name: 'conversation.composer.dock',
-    id: 'stats',
-    // Shadows ui-chat's StatsLine from a lower priority: same-id entries in
-    // a list slot clash only at equal priority, so a distinct (lower)
-    // priority replaces the shipped bottom-of-chat metrics strip — `order`
-    // only sequences distinct cells and cannot shadow a same-id cell.
-    priority: -1,
-    locale: NS,
-  }, SessionMetricsSuppressed))
 }

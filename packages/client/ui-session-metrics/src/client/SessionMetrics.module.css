@@ -82,7 +82,22 @@
    use, so the panel keeps their fixed positioning, viewport clamp, and
    layering above modal overlays (z 1000). */
 .panel {
+  /* Placement is CSS anchor positioning against the capsule's per-instance
+     anchor-name: one 6px gap below the trigger, right edges aligned so the
+     panel opens leftward. The utilities row is right-aligned, so aligning the
+     right edges is what keeps the panel inside the window; a left-aligned
+     panel would start at the capsule's left edge and push past the right
+     margin. */
   position: fixed;
+  position-area: none;
+  top: calc(anchor(bottom) + 6px);
+  right: max(12px, anchor(right));
+  /* Anchor-relative sizing (`calc(100dvh - anchor(bottom))`) is not part of
+     the anchor() surface this browser exposes outside inset properties, so the
+     window cap keeps a fixed allowance for the header row, the gap, and the
+     bottom margin; the panel scrolls inside it. */
+  max-height: calc(100dvh - 96px);
+  overflow-y: auto;
   z-index: 1100;
   box-sizing: border-box;
   /* Size to the widest row so a long model route stays on one line, within a

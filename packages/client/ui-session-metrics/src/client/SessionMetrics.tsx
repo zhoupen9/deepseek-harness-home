@@ -11,27 +11,28 @@
  * in one place instead of three separate popups.
  *
  * The panel wears the shipped stat-dialog skin and row set exactly, and takes
- * its placement from the same `ui-primitives` seat the shipped dialogs use
- * (`useAnchoredPosition`). It mirrors rather than imports them: a feature
- * plugin may not import another feature plugin's values, so the labels,
- * formatting, and surface are reimplemented here (numeric rules live in
+ * its placement from CSS anchor positioning: the capsule declares a
+ * per-instance `anchor-name` and the portaled panel resolves it (the same
+ * mechanism the shipped menu uses, and the replacement for the removed
+ * `useAnchoredPosition` primitive). It mirrors rather than imports them: a
+ * feature plugin may not import another feature plugin's values, so the
+ * labels, formatting, and surface are reimplemented here (numeric rules live in
  * session-metrics.ts, copy in locales.ts).
  *
- * The sibling `SessionMetricsSuppressed` occupant replaces the shipped
- * bottom-of-chat stats pills (ui-chat's StatsPills entry, id `stats`) by
- * registering the same cell id at a lower priority (the slot ledger keeps
- * same-id entries at distinct priorities, lowest renders) and rendering
- * nothing: those pills and the dialogs they opened now live in this header
- * capsule. The shipped composer context meter owns no slot cell to shadow, so
- * the plugin's apply hides it with an injected stylesheet (see index.ts).
+ * The capsule is additive: it leaves ui-chat's bottom-of-chat stats pills and
+ * ui-conversation's composer context meter exactly as the accepted level
+ * renders them, because both shipped surfaces are already governed by the
+ * Chat target's `performanceUsage` preference (they show for `compact` and
+ * `detailed`, and disappear for `hidden`). This plugin owns no shadow cell and
+ * injects no stylesheet; the one thing it takes from the setting is its own
+ * visibility, so `hidden` hides the capsule too.
  */
-import { Fragment, memo, useCallback, useEffect, useMemo, useRef, useState, type CSSProperties, type ReactNode } from 'react'
+import { Fragment, memo, useCallback, useEffect, useId, useMemo, useRef, useState, type CSSProperties, type ReactNode } from 'react'
 import { createPortal } from 'react-dom'
 import {
   IconCompactOutlineRegular,
   IconDatabaseOutlineRegular,
   IconGaugeOutlineRegular,
-  useAnchoredPosition,
 } from '@deepseek-ai/dsh-client-ui-primitives'
 import type { UseProjection } from '@deepseek-ai/dsh-api-session-controller/client'
 import type { ContextBreakdownProjection, ContextPressureProjection, TokenUsageProjection } from '@deepseek-ai/dsh-token-meter/client'
@@ -71,17 +72,14 @@ export interface SessionMetricsProps {
 /** Milliseconds of grace before the panel closes after leaving the trigger. */
 const CLOSE_GRACE_MS = 180
 
-/** Distance between the trigger's bottom edge and the panel. */
-const PANEL_GAP = 6
-
-/** Viewport margin the placement clamp keeps. */
-const PANEL_MARGIN = 12
-
 /**
- * Unplaced panel style: hidden but laid out, so the placement hook measures
- * real dimensions on its first pass (the shipped dialogs' own seat).
+ * Anchor-positioning styles the React 18 style types predate: the trigger's
+ * `anchor-name` and the panel's `position-anchor`. The panel is portaled to
+ * `document.body`, so the name is the only link between the two; the 6px gap
+ * and 12px viewport margin live in the stylesheet beside the placement.
  */
-const MEASURE_STYLE: CSSProperties = { visibility: 'hidden', left: 0, top: 0 }
+const anchorNameStyle = (anchor: string): CSSProperties => ({ anchorName: anchor } as CSSProperties)
+const positionAnchorStyle = (anchor: string): CSSProperties => ({ positionAnchor: anchor } as CSSProperties)
 
 /**
  * Live context ring: the shipped meter's 14px ring, its arc drawn from the
@@ -139,14 +137,9 @@ export const SessionMetricsTrigger = memo(function SessionMetricsTrigger({
   const triggerRef = useRef<HTMLButtonElement | null>(null)
   const panelRef = useRef<HTMLDivElement | null>(null)
   const closeTimerRef = useRef<number | undefined>(undefined)
-  const pos = useAnchoredPosition({
-    open,
-    anchorRef: triggerRef,
-    panelRef,
-    side: 'bottom',
-    gap: PANEL_GAP,
-    margin: PANEL_MARGIN,
-  })
+  // One anchor name per mounted capsule: the ids React hands out carry colons,
+  // which an anchor name may not.
+  const anchor = '--dsh-session-metrics-' + useId().replaceAll(':', '')
 
   const clearCloseTimer = useCallback(() => {
     if (closeTimerRef.current !== undefined) {
@@ -176,6 +169,9 @@ export const SessionMetricsTrigger = memo(function SessionMetricsTrigger({
   const compactReadings = compact ? compactFacts(usage, stats) : null
   const speedText = compactReadings?.speed ?? undefined
   const cacheHitText = compactReadings?.cacheHitPercent ?? undefined
+  // `hidden` removes every performance-and-usage reading the shipped surfaces
+  // present, so the capsule that mirrors them goes with it.
+  if (mode === 'hidden') return null
   if (compact) {
     if (speedText === undefined && cacheHitText === undefined && occupancy === null) return null
   } else if (facts === null && occupancy === null && !stepped) {
@@ -260,7 +256,7 @@ export const SessionMetricsTrigger = memo(function SessionMetricsTrigger({
         className={css.panel}
         role="dialog"
         aria-label={t('aria.panel')}
-        style={pos ?? MEASURE_STYLE}
+        style={positionAnchorStyle(anchor)}
         onMouseEnter={keepOpen}
         onMouseLeave={() => setOpen(false)}
       >
@@ -285,6 +281,7 @@ export const SessionMetricsTrigger = memo(function SessionMetricsTrigger({
           ref={triggerRef}
           type="button"
           className={css.trigger}
+          style={anchorNameStyle(anchor)}
           aria-label={ariaLabel}
           aria-haspopup="dialog"
           aria-expanded={open}
@@ -489,12 +486,4 @@ function SessionMetricsDetails({
   )
 }
 
-/**
- * Replacement occupant of the shipped bottom-of-chat stats pills: this entry
- * reuses the `stats` cell of `conversation.composer.dock` at a lower
- * priority, so ui-chat's StatsPills (priority 0) are shadowed and the strip
- * disappears — those figures moved into the Session Header capsule above.
- */
-export const SessionMetricsSuppressed = memo(function SessionMetricsSuppressed(): null {
-  return null
-})
+

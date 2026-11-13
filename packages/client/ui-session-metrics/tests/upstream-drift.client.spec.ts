@@ -337,7 +337,14 @@ describe('mirrored skin still matches upstream', () => {
     upstreamSelector?: string
     ignored?: readonly string[]
   }> = [
-    { plugin: '.panel', upstream: STAT_DIALOG_CSS, selector: '.panel' },
+    // The merged panel is a portaled popover: placement and inner scrolling
+    // belong to the plugin (CSS anchor positioning), not to the dialog skin.
+    {
+      plugin: '.panel',
+      upstream: STAT_DIALOG_CSS,
+      selector: '.panel',
+      ignored: ['position', 'position-area', 'top', 'right', 'max-height', 'overflow-y', 'z-index'],
+    },
     { plugin: '.title', upstream: STAT_DIALOG_CSS, selector: '.title' },
     { plugin: '.titleLabel', upstream: STAT_DIALOG_CSS, selector: '.titleLabel' },
     { plugin: '.titleRule', upstream: STAT_DIALOG_CSS, selector: '.titleRule' },
@@ -382,12 +389,14 @@ describe('mirrored skin still matches upstream', () => {
 })
 
 describe('mirrored slot and setting contracts still hold', () => {
-  it('still declares both slots the plugin registers into', () => {
+  it('still declares the slot the plugin registers into', () => {
     const slots = read(CONVERSATION_SLOTS)
     expect(slots).toContain("'conversation.session.header.utilities'")
-    expect(slots).toContain("'conversation.composer.dock'")
-    const apply = read(CHAT_APPLY)
-    expect(apply).toContain("name: 'conversation.composer.dock', id: 'stats'")
+    // ui-chat still owns the composer stats cell the setting governs…
+    expect(read(CHAT_APPLY)).toContain("name: 'conversation.composer.dock'")
+    // …and this additive capsule stays out of it: shadowing that cell is what
+    // hid the shipped pills regardless of the configured level.
+    expect(readOwn('src/client/index.ts')).not.toContain('conversation.composer.dock')
   })
 
   it('still exposes the performance-usage level the capsule mirrors', () => {
@@ -395,7 +404,7 @@ describe('mirrored slot and setting contracts still hold', () => {
     const modes = /PERFORMANCE_USAGE_MODES\s*=\s*\[([^\]]*)\]/.exec(settings)
     expect(modes).not.toBeNull()
     const shipped = (modes?.[1] ?? '').split(',').map(part => part.trim().replace(/['"]/g, '')).filter(part => part !== '')
-    expect(shipped).toEqual(['compact', 'detailed'])
+    expect(shipped).toEqual(['compact', 'detailed', 'hidden'])
     expect(settings).toContain("CHAT_SETTINGS_NAMESPACE = 'ui-chat'")
     expect(settings).toContain("DEFAULT_PERFORMANCE_USAGE: PerformanceUsageMode = 'detailed'")
   })

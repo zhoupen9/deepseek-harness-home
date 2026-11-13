@@ -123,7 +123,7 @@ window.__ModuleLoader__.load({
 		}
 		//#endregion
 		//#region \0dsh-css:/home/zhoupeng/.dsh/packages/client/ui-todo-pill/src/client/TodoPill.module.css.mjs
-		const css = ".ulirOG_root{align-items:center;min-width:0;display:inline-flex}.ulirOG_trigger{box-sizing:border-box;border:.5px solid var(--dsw-alias-border-l4);min-width:0;max-width:240px;height:26px;color:var(--dsw-alias-label-secondary);font-family:var(--dsw-font-family);white-space:nowrap;cursor:pointer;background:0 0;border-radius:13px;align-items:center;gap:6px;padding:5px 10px;font-size:11px;font-weight:400;line-height:16px;display:inline-flex}@media (hover:hover){.ulirOG_trigger:hover{background:var(--dsw-alias-interactive-bg-hover);color:var(--dsw-alias-label-primary)}}.ulirOG_trigger:active{background:var(--dsw-alias-interactive-bg-hover-solid)}.ulirOG_trigger:focus-visible{outline:var(--dsw-focus-ring-width) solid var(--dsw-focus-ring-color,var(--dsw-alias-state-business-primary));outline-offset:2px}.ulirOG_icon{width:14px;height:14px;color:var(--dsw-alias-label-caption);flex:none}.ulirOG_full{text-overflow:ellipsis;font-variant-numeric:tabular-nums;min-width:0;overflow:hidden}.ulirOG_compact{font-variant-numeric:tabular-nums;display:none}@container (width<=760px){.ulirOG_full{display:none}.ulirOG_compact{display:inline}}@container (width<=600px){.ulirOG_compact{display:none}}.ulirOG_panel{z-index:1100;box-sizing:border-box;width:max-content;min-width:min(280px,100vw - 24px);max-width:min(420px,100vw - 24px);max-height:var(--dsh-anchored-max-height,none);--dsw-elevation-stroke-color:var(--dsw-alias-border-l1);border-radius:var(--dsw-radius-lg);background:var(--dsw-specific-menu);backdrop-filter:var(--dsw-menu-backdrop-filter);box-shadow:var(--dsw-elevation-panel);color:var(--dsw-alias-label-secondary);cursor:default;--dsh-scrollbar-thumb:var(--dsw-alias-scrollbar-bg-l2);--dsh-scrollbar-thumb-hover:var(--dsw-alias-scrollbar-hover-l2);border:0;flex-direction:column;padding:16px;font-size:12px;line-height:18px;display:flex;position:fixed}.ulirOG_head{color:var(--dsw-alias-label-primary);flex:none;justify-content:space-between;gap:16px;font-weight:500;display:flex}.ulirOG_headTitle{align-items:center;gap:6px;min-width:0;display:inline-flex}.ulirOG_panelIcon{flex:none;width:14px;height:14px}.ulirOG_headValue{color:var(--dsw-alias-label-tertiary);font-variant-numeric:tabular-nums;flex:none;font-weight:400}.ulirOG_rule{border-top:.5px solid var(--dsw-alias-border-l2);flex:none;margin:8px 0 10px}.ulirOG_list{flex-direction:column;gap:8px;min-height:0;margin:0;padding:0;list-style:none;display:flex;overflow-y:auto}.ulirOG_item{min-width:0;color:var(--dsw-alias-label-secondary);align-items:flex-start;gap:10px;font-size:13px;line-height:20px;display:flex}.ulirOG_glyph{flex:none;place-items:center;width:16px;height:16px;margin-top:2px;display:grid}.ulirOG_content{overflow-wrap:anywhere;min-width:0}";
+		const css = ".ulirOG_root{align-items:center;min-width:0;display:inline-flex}.ulirOG_trigger{box-sizing:border-box;border:.5px solid var(--dsw-alias-border-l4);min-width:0;max-width:240px;height:26px;color:var(--dsw-alias-label-secondary);font-family:var(--dsw-font-family);white-space:nowrap;cursor:pointer;background:0 0;border-radius:13px;align-items:center;gap:6px;padding:5px 10px;font-size:11px;font-weight:400;line-height:16px;display:inline-flex}@media (hover:hover){.ulirOG_trigger:hover{background:var(--dsw-alias-interactive-bg-hover);color:var(--dsw-alias-label-primary)}}.ulirOG_trigger:active{background:var(--dsw-alias-interactive-bg-hover-solid)}.ulirOG_trigger:focus-visible{outline:var(--dsw-focus-ring-width) solid var(--dsw-focus-ring-color,var(--dsw-alias-state-business-primary));outline-offset:2px}.ulirOG_icon{width:14px;height:14px;color:var(--dsw-alias-label-caption);flex:none}.ulirOG_full{text-overflow:ellipsis;font-variant-numeric:tabular-nums;min-width:0;overflow:hidden}.ulirOG_compact{font-variant-numeric:tabular-nums;display:none}@container (width<=760px){.ulirOG_full{display:none}.ulirOG_compact{display:inline}}@container (width<=600px){.ulirOG_compact{display:none}}.ulirOG_panel{position-area:none;top:calc(anchor(bottom) + 6px);right:max(12px, anchor(right));z-index:1100;box-sizing:border-box;--dsw-elevation-stroke-color:var(--dsw-alias-border-l1);border-radius:var(--dsw-radius-lg);background:var(--dsw-specific-menu);width:max-content;min-width:min(280px,100vw - 24px);max-width:min(420px,100vw - 24px);max-height:calc(100dvh - 96px);backdrop-filter:var(--dsw-menu-backdrop-filter);box-shadow:var(--dsw-elevation-panel);color:var(--dsw-alias-label-secondary);cursor:default;--dsh-scrollbar-thumb:var(--dsw-alias-scrollbar-bg-l2);--dsh-scrollbar-thumb-hover:var(--dsw-alias-scrollbar-hover-l2);border:0;flex-direction:column;padding:16px;font-size:12px;line-height:18px;display:flex;position:fixed}.ulirOG_head{color:var(--dsw-alias-label-primary);flex:none;justify-content:space-between;gap:16px;font-weight:500;display:flex}.ulirOG_headTitle{align-items:center;gap:6px;min-width:0;display:inline-flex}.ulirOG_panelIcon{flex:none;width:14px;height:14px}.ulirOG_headValue{color:var(--dsw-alias-label-tertiary);font-variant-numeric:tabular-nums;flex:none;font-weight:400}.ulirOG_rule{border-top:.5px solid var(--dsw-alias-border-l2);flex:none;margin:8px 0 10px}.ulirOG_list{flex-direction:column;gap:8px;min-height:0;margin:0;padding:0;list-style:none;display:flex;overflow-y:auto}.ulirOG_item{min-width:0;color:var(--dsw-alias-label-secondary);align-items:flex-start;gap:10px;font-size:13px;line-height:20px;display:flex}.ulirOG_glyph{flex:none;place-items:center;width:16px;height:16px;margin-top:2px;display:grid}.ulirOG_content{overflow-wrap:anywhere;min-width:0}";
 		const tagId = "@zar-desktop/ui-todo-pill/TodoPill.module.css";
 		if (typeof document !== "undefined" && document.querySelector("style[data-plugin-css=" + JSON.stringify(tagId) + "]") === null) {
 			const tag = document.createElement("style");
@@ -157,24 +157,24 @@ window.__ModuleLoader__.load({
 		* The wide pill is the header's leftmost utility (order -12), one step left of
 		* the session-metrics capsule, and shows the shipped To-dos card's progress
 		* summary. Clicking it opens one row per todo, each with the shared status dot,
-		* in a portaled panel placed by the same ui-primitives seat the shipped dialogs
-		* use. The sibling TodoPillSuppressed occupant reuses the composer dock's todo
-		* cell at a lower priority, so the shipped card above the input disappears
-		* while this plugin is mounted.
+		* in a portaled panel placed by CSS anchor positioning: the trigger declares a
+		* per-instance `anchor-name` and the panel resolves it (the same mechanism the
+		* shipped menu uses, and the replacement for the removed
+		* `useAnchoredPosition` primitive). The sibling TodoPillSuppressed occupant
+		* reuses the composer dock's todo cell at a lower priority, so the shipped card
+		* above the input disappears while this plugin is mounted.
 		*
 		* The panel mirrors rather than imports the shipped card's surface: a feature
 		* plugin may not import another feature plugin's stylesheet, so the menu
 		* surface, elevation, and scrollbar colors are copied into the module CSS.
 		*/
 		/**
-		* Unplaced panel style: hidden but laid out, so placement measures the real
-		* dimensions before paint (the shipped dialogs' own seat).
+		* Anchor-positioning styles the React 18 style types predate: the trigger's
+		* `anchor-name` and the panel's `position-anchor` (the panel is portaled to
+		* `document.body`, so the name is the only link between the two).
 		*/
-		const MEASURE_STYLE = {
-			visibility: "hidden",
-			left: 0,
-			top: 0
-		};
+		const anchorNameStyle = (anchor) => ({ anchorName: anchor });
+		const positionAnchorStyle = (anchor) => ({ positionAnchor: anchor });
 		/** The header To-dos pill; renders nothing without todos. */
 		const TodoPill = (0, react.memo)(function TodoPill({ useProjection, sessionId, t }) {
 			const projected = useProjection("todos");
@@ -190,14 +190,7 @@ window.__ModuleLoader__.load({
 			const rootRef = (0, react.useRef)(null);
 			const triggerRef = (0, react.useRef)(null);
 			const panelRef = (0, react.useRef)(null);
-			const position = (0, _deepseek_ai_dsh_client_ui_primitives.useAnchoredPosition)({
-				open: shown,
-				anchorRef: triggerRef,
-				panelRef,
-				side: "bottom",
-				gap: 6,
-				margin: 12
-			});
+			const anchor = "--dsh-todo-pill-" + (0, react.useId)().replaceAll(":", "");
 			(0, _deepseek_ai_dsh_client_ui_primitives.useDismissOnOutsidePointer)(rootRef, shown, setOpen, panelRef);
 			(0, react.useEffect)(() => {
 				if (!shown) return;
@@ -224,6 +217,7 @@ window.__ModuleLoader__.load({
 						ref: triggerRef,
 						type: "button",
 						className: TodoPill_module_css_default.trigger,
+						style: anchorNameStyle(anchor),
 						"aria-label": ariaText(todos, t),
 						"aria-haspopup": "dialog",
 						"aria-expanded": open,
@@ -247,7 +241,7 @@ window.__ModuleLoader__.load({
 					className: TodoPill_module_css_default.panel,
 					role: "dialog",
 					"aria-label": t("title"),
-					style: position ?? MEASURE_STYLE,
+					style: positionAnchorStyle(anchor),
 					children: [
 						/* @__PURE__ */ (0, react_jsx_runtime.jsxs)("div", {
 							className: TodoPill_module_css_default.head,

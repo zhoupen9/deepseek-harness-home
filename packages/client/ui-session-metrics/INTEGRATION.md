@@ -18,30 +18,22 @@ everything lives in /home/zhoupeng/.dsh).
   on hover or focus, and the compact level shows the strip's two plain readings
   (decode throughput, cache-hit share) and opens nothing, because the shipped
   compact strip opens no dialog either.
-- **Replaced**: the bottom-of-chat stats pills — ui-chat's StatsPills row
-  (slot `conversation.composer.dock`, entry id `stats`, priority 0), whose
-  two pills click-open the shipped session-statistics and token-usage dialogs.
-  This plugin registers the same cell id at priority -1 (same-id cells clash
-  only at equal priority; lowest priority renders) with an empty occupant, so
-  the row disappears while the plugin is mounted in both detail levels; the
-  compact level's own readings move to the capsule, so nothing it showed is
-  lost. Both dialogs' content is
-  served by the header capsule's single merged panel, in their own skin
-  (ui-chat's `stat-dialog.module.css` surface and row grid, copied because a
-  feature plugin may not import another feature plugin's stylesheet) and with
-  their own rows, conditions, and copy.
-- **Replaced**: the composer context meter — ui-conversation's ContextMeter
-  (ring + percentage below the card), and with it the meter's own panel. The
-  composer renders that meter directly rather than through a slot, so it owns
-  no cell to shadow by id and priority. The plugin's apply passes
-  `ctx.effect` a stylesheet that hides it (`document.head` gains a
-  `data-session-metrics="composer-context-meter"` style element; unloading the
-  plugin removes it). Its reading — the occupancy percentage, the
-  `~used / window` figures, the composition bar, and the heuristic
-  system/tools/messages legend — is served by the merged panel's context
-  section. The hide is defensive on purpose: if ui-conversation ever renders
-  that meter differently the selector stops matching and the shipped meter
-  simply returns.
+- **Not replaced — left alone**: the bottom-of-chat stats pills (ui-chat's
+  StatsPills row, slot `conversation.composer.dock`, entry id `stats`) and the
+  composer context meter (ui-conversation's ContextMeter). Both shipped
+  surfaces already follow the accepted `Performance & usage` level:
+  ui-conversation's `ComposerPreferences.visible` is false only for `hidden`,
+  so *Detailed* and *Compact* keep rendering them. An earlier revision of this
+  plugin shadowed the `stats` cell at priority -1 and hid the meter with an
+  injected stylesheet, which suppressed both at every level; that is removed.
+  The plugin now owns no composer cell and injects no stylesheet, so the
+  setting alone decides whether they appear.
+- **With respect to the accepted level**: the capsule itself renders for
+  *Detailed* and *Compact* and renders nothing for *Hidden*, mirroring the
+  surfaces it summarizes. The merged panel's sections still carry the shipped
+  dialogs' content in their own skin (ui-chat's `stat-dialog.module.css`
+  surface and row grid, copied because a feature plugin may not import another
+  feature plugin's stylesheet) and with their own rows, conditions, and copy.
 
 Token counts in the panel's Token usage section render in the shared compact
 form (`12.2K`, `7.1M`) instead of the shipped dialog's grouped exact digits, so
@@ -137,6 +129,6 @@ re-synchronizing stays a deliberate step. Re-run it after every harness merge.
 Remove the `ui-session-metrics` insert row from `profiles/web/cordis.patch.yml`
 and drop the dependency with
 `dsh plugin --profile web remove @zar-desktop/ui-session-metrics`.
-The shipped StatsPills row and its dialogs, the composer context meter, and
-the header are restored exactly: the shadowed `stats` cell re-emerges, the
-injected stylesheet leaves with the plugin, and the header capsule disappears.
+The header capsule disappears; the shipped StatsPills row, its dialogs, and the
+composer context meter keep rendering exactly as the performance-usage setting
+dictates, because this plugin never suppressed them.

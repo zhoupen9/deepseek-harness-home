@@ -201,7 +201,7 @@ window.__ModuleLoader__.load({
 		}
 		//#endregion
 		//#region \0dsh-css:/home/zhoupeng/.dsh/packages/client/ui-session-metrics/src/client/SessionMetrics.module.css.mjs
-		const css = "._33_2oW_root{align-items:center;display:inline-flex}._33_2oW_trigger{color:var(--dsw-alias-label-secondary);cursor:default;border:.5px solid var(--dsw-alias-border-l4);box-sizing:border-box;height:26px;font-family:var(--dsw-font-family);white-space:nowrap;font-variant-numeric:tabular-nums;background:0 0;border-radius:13px;align-items:center;gap:6px;margin-bottom:0;padding:5px 10px;font-size:11px;font-weight:400;line-height:16px;display:inline-flex}._33_2oW_trigger:hover{background:var(--dsw-alias-interactive-bg-hover);color:var(--dsw-alias-label-primary)}._33_2oW_trigger:active{background:var(--dsw-alias-interactive-bg-hover-solid)}._33_2oW_sep{color:var(--dsw-alias-label-caption);flex:none}._33_2oW_segment{align-items:center;gap:4px;display:inline-flex}._33_2oW_icon{width:14px;height:14px;color:var(--dsw-alias-label-caption);flex:none}._33_2oW_value{font-variant-numeric:tabular-nums}._33_2oW_ringTrack{fill:none;stroke:var(--dsw-alias-border-l3);stroke-width:2px}._33_2oW_ringFill{fill:none;stroke:var(--dsw-alias-label-tertiary);stroke-width:2px;stroke-linecap:round}._33_2oW_panel{z-index:1100;box-sizing:border-box;background:var(--dsw-specific-menu);width:max-content;min-width:min(300px,100vw - 24px);max-width:min(440px,100vw - 24px);backdrop-filter:var(--dsw-menu-backdrop-filter);--dsw-elevation-stroke-color:var(--dsw-alias-border-l1);box-shadow:var(--dsw-elevation-prominent);color:var(--dsw-alias-label-secondary);cursor:default;border:0;border-radius:12px;padding:16px;font-size:12px;line-height:18px;position:fixed}._33_2oW_title{color:var(--dsw-alias-label-primary);justify-content:space-between;gap:16px;margin-bottom:8px;font-weight:500;display:flex}._33_2oW_titleRule{border-top:.5px solid var(--dsw-alias-border-l2);margin-bottom:10px}._33_2oW_titleValue{font-variant-numeric:tabular-nums}._33_2oW_titleLabel{align-items:center;gap:6px;min-width:0;display:inline-flex}._33_2oW_titleLabel svg{flex:none;width:14px;height:14px}._33_2oW_details{color:var(--dsw-alias-label-tertiary);grid-template-columns:minmax(76px,auto) minmax(0,1fr);gap:6px 16px;margin:0;display:grid}._33_2oW_details dt,._33_2oW_details dd{min-width:0;margin:0}._33_2oW_details dd{color:var(--dsw-alias-label-secondary);font-variant-numeric:tabular-nums;text-align:right}._33_2oW_section+._33_2oW_section{margin-top:14px}._33_2oW_bar{corner-shape:round;background:var(--dsw-alias-interactive-bg-hover);border-radius:999px;gap:1px;height:4px;margin:0 0 10px;display:flex;overflow:hidden}._33_2oW_barSegment{background:var(--meter-tint,var(--dsw-alias-label-tertiary));border-radius:1px;flex:none;min-width:2px;height:100%}._33_2oW_swatch{background:var(--meter-tint);vertical-align:baseline;border-radius:2px;width:8px;height:8px;margin-right:6px;display:inline-block}._33_2oW_colorSystem{--meter-tint:var(--dsw-static-neutral-bluish-400)}._33_2oW_colorTools{--meter-tint:#a78bfa}._33_2oW_colorMessages{--meter-tint:var(--dsw-static-blue-450)}";
+		const css = "._33_2oW_root{align-items:center;display:inline-flex}._33_2oW_trigger{color:var(--dsw-alias-label-secondary);cursor:default;border:.5px solid var(--dsw-alias-border-l4);box-sizing:border-box;height:26px;font-family:var(--dsw-font-family);white-space:nowrap;font-variant-numeric:tabular-nums;background:0 0;border-radius:13px;align-items:center;gap:6px;margin-bottom:0;padding:5px 10px;font-size:11px;font-weight:400;line-height:16px;display:inline-flex}._33_2oW_trigger:hover{background:var(--dsw-alias-interactive-bg-hover);color:var(--dsw-alias-label-primary)}._33_2oW_trigger:active{background:var(--dsw-alias-interactive-bg-hover-solid)}._33_2oW_sep{color:var(--dsw-alias-label-caption);flex:none}._33_2oW_segment{align-items:center;gap:4px;display:inline-flex}._33_2oW_icon{width:14px;height:14px;color:var(--dsw-alias-label-caption);flex:none}._33_2oW_value{font-variant-numeric:tabular-nums}._33_2oW_ringTrack{fill:none;stroke:var(--dsw-alias-border-l3);stroke-width:2px}._33_2oW_ringFill{fill:none;stroke:var(--dsw-alias-label-tertiary);stroke-width:2px;stroke-linecap:round}._33_2oW_panel{position-area:none;top:calc(anchor(bottom) + 6px);right:max(12px, anchor(right));z-index:1100;box-sizing:border-box;background:var(--dsw-specific-menu);width:max-content;min-width:min(300px,100vw - 24px);max-width:min(440px,100vw - 24px);max-height:calc(100dvh - 96px);backdrop-filter:var(--dsw-menu-backdrop-filter);--dsw-elevation-stroke-color:var(--dsw-alias-border-l1);box-shadow:var(--dsw-elevation-prominent);color:var(--dsw-alias-label-secondary);cursor:default;border:0;border-radius:12px;padding:16px;font-size:12px;line-height:18px;position:fixed;overflow-y:auto}._33_2oW_title{color:var(--dsw-alias-label-primary);justify-content:space-between;gap:16px;margin-bottom:8px;font-weight:500;display:flex}._33_2oW_titleRule{border-top:.5px solid var(--dsw-alias-border-l2);margin-bottom:10px}._33_2oW_titleValue{font-variant-numeric:tabular-nums}._33_2oW_titleLabel{align-items:center;gap:6px;min-width:0;display:inline-flex}._33_2oW_titleLabel svg{flex:none;width:14px;height:14px}._33_2oW_details{color:var(--dsw-alias-label-tertiary);grid-template-columns:minmax(76px,auto) minmax(0,1fr);gap:6px 16px;margin:0;display:grid}._33_2oW_details dt,._33_2oW_details dd{min-width:0;margin:0}._33_2oW_details dd{color:var(--dsw-alias-label-secondary);font-variant-numeric:tabular-nums;text-align:right}._33_2oW_section+._33_2oW_section{margin-top:14px}._33_2oW_bar{corner-shape:round;background:var(--dsw-alias-interactive-bg-hover);border-radius:999px;gap:1px;height:4px;margin:0 0 10px;display:flex;overflow:hidden}._33_2oW_barSegment{background:var(--meter-tint,var(--dsw-alias-label-tertiary));border-radius:1px;flex:none;min-width:2px;height:100%}._33_2oW_swatch{background:var(--meter-tint);vertical-align:baseline;border-radius:2px;width:8px;height:8px;margin-right:6px;display:inline-block}._33_2oW_colorSystem{--meter-tint:var(--dsw-static-neutral-bluish-400)}._33_2oW_colorTools{--meter-tint:#a78bfa}._33_2oW_colorMessages{--meter-tint:var(--dsw-static-blue-450)}";
 		const tagId = "@zar-desktop/ui-session-metrics/SessionMetrics.module.css";
 		if (typeof document !== "undefined" && document.querySelector("style[data-plugin-css=" + JSON.stringify(tagId) + "]") === null) {
 			const tag = document.createElement("style");
@@ -248,35 +248,32 @@ window.__ModuleLoader__.load({
 		* in one place instead of three separate popups.
 		*
 		* The panel wears the shipped stat-dialog skin and row set exactly, and takes
-		* its placement from the same `ui-primitives` seat the shipped dialogs use
-		* (`useAnchoredPosition`). It mirrors rather than imports them: a feature
-		* plugin may not import another feature plugin's values, so the labels,
-		* formatting, and surface are reimplemented here (numeric rules live in
+		* its placement from CSS anchor positioning: the capsule declares a
+		* per-instance `anchor-name` and the portaled panel resolves it (the same
+		* mechanism the shipped menu uses, and the replacement for the removed
+		* `useAnchoredPosition` primitive). It mirrors rather than imports them: a
+		* feature plugin may not import another feature plugin's values, so the
+		* labels, formatting, and surface are reimplemented here (numeric rules live in
 		* session-metrics.ts, copy in locales.ts).
 		*
-		* The sibling `SessionMetricsSuppressed` occupant replaces the shipped
-		* bottom-of-chat stats pills (ui-chat's StatsPills entry, id `stats`) by
-		* registering the same cell id at a lower priority (the slot ledger keeps
-		* same-id entries at distinct priorities, lowest renders) and rendering
-		* nothing: those pills and the dialogs they opened now live in this header
-		* capsule. The shipped composer context meter owns no slot cell to shadow, so
-		* the plugin's apply hides it with an injected stylesheet (see index.ts).
+		* The capsule is additive: it leaves ui-chat's bottom-of-chat stats pills and
+		* ui-conversation's composer context meter exactly as the accepted level
+		* renders them, because both shipped surfaces are already governed by the
+		* Chat target's `performanceUsage` preference (they show for `compact` and
+		* `detailed`, and disappear for `hidden`). This plugin owns no shadow cell and
+		* injects no stylesheet; the one thing it takes from the setting is its own
+		* visibility, so `hidden` hides the capsule too.
 		*/
 		/** Milliseconds of grace before the panel closes after leaving the trigger. */
 		const CLOSE_GRACE_MS = 180;
-		/** Distance between the trigger's bottom edge and the panel. */
-		const PANEL_GAP = 6;
-		/** Viewport margin the placement clamp keeps. */
-		const PANEL_MARGIN = 12;
 		/**
-		* Unplaced panel style: hidden but laid out, so the placement hook measures
-		* real dimensions on its first pass (the shipped dialogs' own seat).
+		* Anchor-positioning styles the React 18 style types predate: the trigger's
+		* `anchor-name` and the panel's `position-anchor`. The panel is portaled to
+		* `document.body`, so the name is the only link between the two; the 6px gap
+		* and 12px viewport margin live in the stylesheet beside the placement.
 		*/
-		const MEASURE_STYLE = {
-			visibility: "hidden",
-			left: 0,
-			top: 0
-		};
+		const anchorNameStyle = (anchor) => ({ anchorName: anchor });
+		const positionAnchorStyle = (anchor) => ({ positionAnchor: anchor });
 		/**
 		* Live context ring: the shipped meter's 14px ring, its arc drawn from the
 		* occupancy reading. The capsule carries the percentage as the arc itself
@@ -315,7 +312,8 @@ window.__ModuleLoader__.load({
 		* billable usage, nor a context sample with a known capacity.
 		*/
 		const SessionMetricsTrigger = (0, react.memo)(function SessionMetricsTrigger({ useProjection, usePerformanceUsage, t }) {
-			const compact = usePerformanceUsage((value) => value) === "compact";
+			const mode = usePerformanceUsage((value) => value);
+			const compact = mode === "compact";
 			const usage = useProjection("tokenUsage");
 			const stats = useProjection("sessionStats");
 			const pressure = useProjection("contextPressure");
@@ -331,14 +329,7 @@ window.__ModuleLoader__.load({
 			const triggerRef = (0, react.useRef)(null);
 			const panelRef = (0, react.useRef)(null);
 			const closeTimerRef = (0, react.useRef)(void 0);
-			const pos = (0, _deepseek_ai_dsh_client_ui_primitives.useAnchoredPosition)({
-				open,
-				anchorRef: triggerRef,
-				panelRef,
-				side: "bottom",
-				gap: PANEL_GAP,
-				margin: PANEL_MARGIN
-			});
+			const anchor = "--dsh-session-metrics-" + (0, react.useId)().replaceAll(":", "");
 			const clearCloseTimer = (0, react.useCallback)(() => {
 				if (closeTimerRef.current !== void 0) {
 					window.clearTimeout(closeTimerRef.current);
@@ -360,6 +351,7 @@ window.__ModuleLoader__.load({
 			const compactReadings = compact ? compactFacts(usage, stats) : null;
 			const speedText = compactReadings?.speed ?? void 0;
 			const cacheHitText = compactReadings?.cacheHitPercent ?? void 0;
+			if (mode === "hidden") return null;
 			if (compact) {
 				if (speedText === void 0 && cacheHitText === void 0 && occupancy === null) return null;
 			} else if (facts === null && occupancy === null && !stepped) return null;
@@ -415,7 +407,7 @@ window.__ModuleLoader__.load({
 				className: SessionMetrics_module_css_default.panel,
 				role: "dialog",
 				"aria-label": t("aria.panel"),
-				style: pos ?? MEASURE_STYLE,
+				style: positionAnchorStyle(anchor),
 				onMouseEnter: keepOpen,
 				onMouseLeave: () => setOpen(false),
 				children: /* @__PURE__ */ (0, react_jsx_runtime.jsx)(SessionMetricsDetails, {
@@ -437,6 +429,7 @@ window.__ModuleLoader__.load({
 					ref: triggerRef,
 					type: "button",
 					className: SessionMetrics_module_css_default.trigger,
+					style: anchorNameStyle(anchor),
 					"aria-label": ariaLabel,
 					"aria-haspopup": "dialog",
 					"aria-expanded": open,
@@ -594,15 +587,6 @@ window.__ModuleLoader__.load({
 				})
 			] });
 		}
-		/**
-		* Replacement occupant of the shipped bottom-of-chat stats pills: this entry
-		* reuses the `stats` cell of `conversation.composer.dock` at a lower
-		* priority, so ui-chat's StatsPills (priority 0) are shadowed and the strip
-		* disappears — those figures moved into the Session Header capsule above.
-		*/
-		const SessionMetricsSuppressed = (0, react.memo)(function SessionMetricsSuppressed() {
-			return null;
-		});
 		//#endregion
 		//#region src/client/locales.ts
 		/** Session-metrics namespace dictionaries for the chat-header metrics surface.
@@ -688,28 +672,6 @@ window.__ModuleLoader__.load({
 			"locale",
 			"configForms"
 		];
-		/**
-		* Hides the shipped composer context meter. It is named by the static facts
-		* its markup exposes — a `span` whose direct child is the meter button,
-		* whose own direct child is the 14px progress ring — because it carries no
-		* stable class, id, or data attribute of its own. Both ring spellings are
-		* listed: an SVG attribute name is matched case-sensitively by a CSS
-		* selector, while the `width`/`height` pair is not.
-		*/
-		const HIDE_COMPOSER_CONTEXT_METER = ["span:has(> button[aria-haspopup='dialog'] > svg[viewBox='0 0 14 14'] > circle)", "span:has(> button[aria-haspopup='dialog'] > svg[width='14'][height='14'] > circle)"].join(",\n") + " { display: none !important; }";
-		/**
-		* Inject the composer-meter suppression stylesheet into the page.
-		* @returns disposer removing the stylesheet when the plugin unloads.
-		*/
-		function hideComposerContextMeter() {
-			const style = document.createElement("style");
-			style.dataset.sessionMetrics = "composer-context-meter";
-			style.textContent = HIDE_COMPOSER_CONTEXT_METER;
-			document.head.append(style);
-			return () => {
-				style.remove();
-			};
-		}
 		/** Namespace owning the Chat target's durable settings section. */
 		const CHAT_SETTINGS_NAMESPACE = "ui-chat";
 		/**
@@ -734,9 +696,8 @@ window.__ModuleLoader__.load({
 			return mode;
 		}
 		/**
-		* Client plugin body: register the header capsule, shadow the shipped stats
-		* strip, and hide the shipped composer context meter. Every effect is removed
-		* on plugin unload, which restores the shipped surfaces.
+		* Client plugin body: register the header capsule and install the
+		* dictionaries. Both are removed on plugin unload.
 		* @param ctx - client root context.
 		*/
 		function apply(ctx) {
@@ -744,7 +705,6 @@ window.__ModuleLoader__.load({
 				zh,
 				en
 			}), "ui-session-metrics: dictionaries");
-			ctx.effect(hideComposerContextMeter, "ui-session-metrics: composer context meter");
 			const performanceUsage = performanceUsageSource(ctx);
 			ctx.slots.inject("conversation.session.header.utilities", () => ctx.slots.register({
 				name: "conversation.session.header.utilities",
@@ -753,12 +713,6 @@ window.__ModuleLoader__.load({
 				locale: NS,
 				inject: () => ({ hooks: { performanceUsage } })
 			}, SessionMetricsTrigger));
-			ctx.slots.inject("conversation.composer.dock", () => ctx.slots.register({
-				name: "conversation.composer.dock",
-				id: "stats",
-				priority: -1,
-				locale: NS
-			}, SessionMetricsSuppressed));
 		}
 		//#endregion
 		exports.apply = apply;

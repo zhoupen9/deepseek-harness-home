@@ -88,9 +88,22 @@
 }
 
 /* The moved To-dos card: shipped menu surface, panel elevation, and the l2
-   scrollbar colors the card's scrolling list used. */
+   scrollbar colors the card's scrolling list used. Placement is CSS anchor
+   positioning against the trigger's per-instance anchor-name: one 6px gap
+   below the pill, right edges aligned so the panel opens leftward. The
+   utilities row is right-aligned, so aligning the right edges is what keeps a
+   wide list inside the window; a left-aligned panel would start at the pill's
+   left edge and push past the right margin. */
 .panel {
   position: fixed;
+  position-area: none;
+  top: calc(anchor(bottom) + 6px);
+  right: max(12px, anchor(right));
+  /* Anchor-relative sizing (`calc(100dvh - anchor(bottom))`) is not part of
+     the anchor() surface this browser exposes outside inset properties, so the
+     window cap keeps a fixed allowance for the header row, the gap, and the
+     bottom margin; the list scrolls inside it. */
+  max-height: calc(100dvh - 96px);
   z-index: 1100;
   display: flex;
   flex-direction: column;
@@ -98,7 +111,6 @@
   width: max-content;
   min-width: min(280px, calc(100vw - 24px));
   max-width: min(420px, calc(100vw - 24px));
-  max-height: var(--dsh-anchored-max-height, none);
   padding: 16px;
   border: 0;
   --dsw-elevation-stroke-color: var(--dsw-alias-border-l1);

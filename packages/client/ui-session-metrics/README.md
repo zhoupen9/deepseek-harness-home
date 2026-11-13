@@ -1,12 +1,14 @@
 # @zar-desktop/ui-session-metrics — chat-header session metrics
 
-A pure-frontend client plugin for DeepSeek Harness's web GUI. It **replaces
-the bottom-of-chat statistics pills** (ui-chat's StatsPills: the gauge and
-database pills under the composer, whose click-open dialogs are the shipped
-session-statistics and token-usage dialogs) and the **composer context-usage
-meter** (ui-conversation's ContextMeter, the ring below the card) with a
-compact metrics capsule in the **Session Header** and one merged popup behind
-it. The capsule anchors the left edge of the right-aligned utility cluster
+A pure-frontend client plugin for DeepSeek Harness's web GUI. It adds a
+compact metrics capsule to the **Session Header**, with one merged popup
+carrying the sections the shipped session-statistics, token-usage, and
+context-usage surfaces present. The capsule is **additive**: the shipped
+bottom-of-chat statistics pills (ui-chat's StatsPills) and the composer
+context-usage meter (ui-conversation's ContextMeter) stay exactly as the
+accepted `Performance & usage` level renders them — visible for *Detailed* and
+*Compact*, gone for *Hidden*. The capsule anchors the left edge of the
+right-aligned utility cluster
 (order -11 — it takes the slot the shipped "Open In…" split button used to
 occupy, so the row reads metrics · Open In… · Session log) and shows three
 icon-prefixed numbers — input tokens, output tokens and context occupancy —
@@ -17,9 +19,9 @@ shipped stat-dialog skin.
 Everything is presentation: the plugin reads only the session-standard
 projection seats (`useProjection('tokenUsage')`,
 `useProjection('sessionStats')`, `useProjection('contextPressure')` and
-`useProjection('contextBreakdown')`) and renders two slot entries, one
-stylesheet, and the panel. It owns no service, publishes no session events, and
-keeps no cross-session state.
+`useProjection('contextBreakdown')`) and renders one slot entry and the panel.
+It owns no service, publishes no session events, keeps no cross-session state,
+shadows no shipped cell, and injects no stylesheet.
 
 ## What it looks like / how it behaves
 
@@ -37,9 +39,9 @@ keeps no cross-session state.
   meter's own radius and dash geometry, so the capsule carries that reading without printing a
   number beside it (the capsule's spoken label, and in the detailed level the panel, still state
   it). The capsule renders as soon as the session has a step, billable usage, or a context sample
-  with a known capacity — the union of the shipped gates, which is exactly what this plugin now
-  hides — and the figures ride the durable whole-log projections, so paging and compaction never
-  skew them.
+  with a known capacity — the union of the shipped gates — while the *Hidden* level hides it
+  outright, the way it hides the shipped surfaces it mirrors. The figures ride the durable
+  whole-log projections, so paging and compaction never skew them.
 - **Merged panel** (detailed level only; opens on hover or keyboard focus; the shipped stat-dialog surface —
   menu background, 12px radius, prominent elevation, 16px padding, a section
   heading with its icon and headline value, a rule, then the shipped
@@ -56,38 +58,31 @@ keeps no cross-session state.
   - *Context usage* (ring icon): the occupancy percentage as the headline, the
     shipped composition bar, then `~used / window` and the heuristic system
     prompt / tool definitions / messages legend.
-- The bottom-of-chat pills are **shadowed, not patched**: this plugin reuses
-  the shipped `stats` cell of `conversation.composer.dock` at priority -1
-  (ui-chat's StatsPills register that cell at priority 0; same-id cells only
-  clash at equal priority, and the lowest priority renders) and renders an
-  empty occupant. Removing or disabling this plugin lets the shipped pills and
-  their dialogs come back unchanged.
-- The composer context meter is **hidden by an injected stylesheet**: the
-  composer renders that meter directly rather than through a slot, so it owns
-  no cell to shadow. The plugin appends a `<style>` naming the meter by the
-  static facts its markup exposes (a `span` whose direct child is the meter
-  button, whose own direct child is the 14px progress ring) and removes it on
-  unload. This is the only coupling to shipped markup in the plugin: if
-  ui-conversation ever renders that meter differently the stylesheet simply
-  stops matching and the meter reappears; a slot for the meter would remove
-  the need for it altogether.
+- The shipped surfaces are **left alone**: the bottom-of-chat pills (ui-chat's
+  StatsPills cell `stats` of `conversation.composer.dock`) and the composer
+  context meter (ui-conversation's ContextMeter) already follow the accepted
+  `Performance & usage` level — ui-conversation's `ComposerPreferences` shows
+  them for every level except *Hidden*. This plugin therefore owns no shadow
+  cell and injects no stylesheet; shadowing that cell or hiding that meter is
+  what used to suppress them at every level. Disabling this plugin removes the
+  capsule and changes nothing else.
 
 ## How it is wired
 
 | Surface | Entry id | Order | Priority | Purpose |
 | --- | --- | --- | --- | --- |
 | `conversation.session.header.utilities` | `session-metrics` | -11 | 0 | the capsule, leftmost of the row (left of `open-in-app`, order -10, and `session-log-download`, order 0) |
-| `conversation.composer.dock` | `stats` | — | -1 | shadows ui-chat StatsPills (priority 0) → pills and their dialogs removed |
-| `document.head` (injected stylesheet) | — | — | — | hides ui-conversation's composer context meter |
 
-Both registrations use `ctx.slots.inject`, so they wait for the declaring
-conversation entries and are removed with the plugin fiber. The
-composer-meter stylesheet is a `ctx.effect` over `document.head` and leaves
-with the same fiber. The panel is not a registration: it is the capsule's own
-portaled dialog, placed through `ui-primitives`' `useAnchoredPosition` (the
-seat the shipped dialogs use) and wearing a copy of ui-chat's
-`stat-dialog.module.css` skin, because a feature plugin may not import
-another feature plugin's stylesheet.
+The registration uses `ctx.slots.inject`, so it waits for the declaring
+conversation entry and is removed with the plugin fiber. Nothing else is
+registered or injected: the shipped composer strip and context meter are the
+setting's business, not this plugin's. The panel is not a registration: it is
+the capsule's own portaled dialog, placed by CSS anchor positioning (the
+capsule declares a per-instance `anchor-name`; the panel resolves it with
+`position-anchor`, sits one 6px gap below the capsule, and aligns its right
+edge to the capsule's so a wide panel opens leftward inside the window) and
+wearing a copy of ui-chat's `stat-dialog.module.css` skin, because a feature
+plugin may not import another feature plugin's stylesheet.
 
 ## Source layout
 
@@ -102,10 +97,10 @@ another feature plugin's stylesheet.
                                   #   harness checkout emits these from src)
       src/index.ts                # host loader entry (no host behavior)
       src/invariant.ts            # invariant companion (no runtime invariant)
-      src/client/index.ts         # plugin body: slot registrations + meter stylesheet
+      src/client/index.ts         # plugin body: the capsule registration
       src/client/locales.ts       # zh/en namespace 'session-metrics'
       src/client/session-metrics.ts       # pure folds & display formatting
-      src/client/SessionMetrics.tsx       # capsule + merged panel + suppressor
+      src/client/SessionMetrics.tsx       # capsule + merged panel
       src/client/SessionMetrics.module.css
       tests/session-metrics.client.spec.ts
       INTEGRATION.md              # wiring/removal notes

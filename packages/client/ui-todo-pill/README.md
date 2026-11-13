@@ -44,10 +44,11 @@ no service, publishes no session events, and keeps no cross-session state.
 
 Both registrations use `ctx.slots.inject`, so they wait for the declaring
 conversation entries and are removed with the plugin fiber. The panel is not a
-registration: it is the pill's own portaled dialog placed through
-`ui-primitives`' `useAnchoredPosition` and wearing a copy of the shipped card's
-menu surface (a feature plugin may not import another feature plugin's
-stylesheet).
+registration: it is the pill's own portaled dialog placed by CSS anchor
+positioning (the trigger declares a per-instance `anchor-name`, the panel
+resolves it with `position-anchor`, and `@position-try` fallbacks flip it above
+or fill the window) and wearing a copy of the shipped card's menu surface (a
+feature plugin may not import another feature plugin's stylesheet).
 
 ## Source layout
 

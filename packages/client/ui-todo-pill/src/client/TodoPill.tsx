@@ -4,23 +4,24 @@
  * The wide pill is the header's leftmost utility (order -12), one step left of
  * the session-metrics capsule, and shows the shipped To-dos card's progress
  * summary. Clicking it opens one row per todo, each with the shared status dot,
- * in a portaled panel placed by the same ui-primitives seat the shipped dialogs
- * use. The sibling TodoPillSuppressed occupant reuses the composer dock's todo
- * cell at a lower priority, so the shipped card above the input disappears
- * while this plugin is mounted.
+ * in a portaled panel placed by CSS anchor positioning: the trigger declares a
+ * per-instance `anchor-name` and the panel resolves it (the same mechanism the
+ * shipped menu uses, and the replacement for the removed
+ * `useAnchoredPosition` primitive). The sibling TodoPillSuppressed occupant
+ * reuses the composer dock's todo cell at a lower priority, so the shipped card
+ * above the input disappears while this plugin is mounted.
  *
  * The panel mirrors rather than imports the shipped card's surface: a feature
  * plugin may not import another feature plugin's stylesheet, so the menu
  * surface, elevation, and scrollbar colors are copied into the module CSS.
  */
-import { memo, useEffect, useRef, useState } from 'react'
+import { memo, useEffect, useId, useRef, useState } from 'react'
 import type { CSSProperties } from 'react'
 import { createPortal } from 'react-dom'
 import {
   IconChecklistOutlineRegular,
   StateDot,
   Tooltip,
-  useAnchoredPosition,
   useDismissOnOutsidePointer,
 } from '@deepseek-ai/dsh-client-ui-primitives'
 import type { UseProjection } from '@deepseek-ai/dsh-api-session-controller/client'
@@ -42,10 +43,12 @@ export interface TodoPillProps {
 }
 
 /**
- * Unplaced panel style: hidden but laid out, so placement measures the real
- * dimensions before paint (the shipped dialogs' own seat).
+ * Anchor-positioning styles the React 18 style types predate: the trigger's
+ * `anchor-name` and the panel's `position-anchor` (the panel is portaled to
+ * `document.body`, so the name is the only link between the two).
  */
-const MEASURE_STYLE: CSSProperties = { visibility: 'hidden', left: 0, top: 0 }
+const anchorNameStyle = (anchor: string): CSSProperties => ({ anchorName: anchor } as CSSProperties)
+const positionAnchorStyle = (anchor: string): CSSProperties => ({ positionAnchor: anchor } as CSSProperties)
 
 /** The header To-dos pill; renders nothing without todos. */
 export const TodoPill = memo(function TodoPill({ useProjection, sessionId, t }: TodoPillProps) {
@@ -67,14 +70,10 @@ export const TodoPill = memo(function TodoPill({ useProjection, sessionId, t }: 
   const rootRef = useRef<HTMLDivElement | null>(null)
   const triggerRef = useRef<HTMLButtonElement | null>(null)
   const panelRef = useRef<HTMLDivElement | null>(null)
-  const position = useAnchoredPosition({
-    open: shown,
-    anchorRef: triggerRef,
-    panelRef,
-    side: 'bottom',
-    gap: 6,
-    margin: 12,
-  })
+  // One anchor name per mounted pill, so two headers never resolve each
+  // other's panel; the ids React hands out carry colons, which an anchor name
+  // may not.
+  const anchor = '--dsh-todo-pill-' + useId().replaceAll(':', '')
   useDismissOnOutsidePointer(rootRef, shown, setOpen, panelRef)
   useEffect(() => {
     if (!shown) return
@@ -93,6 +92,7 @@ export const TodoPill = memo(function TodoPill({ useProjection, sessionId, t }: 
           ref={triggerRef}
           type="button"
           className={css.trigger}
+          style={anchorNameStyle(anchor)}
           aria-label={ariaText(todos, t)}
           aria-haspopup="dialog"
           aria-expanded={open}
@@ -109,7 +109,7 @@ export const TodoPill = memo(function TodoPill({ useProjection, sessionId, t }: 
           className={css.panel}
           role="dialog"
           aria-label={t('title')}
-          style={position ?? MEASURE_STYLE}
+          style={positionAnchorStyle(anchor)}
         >
           <div className={css.head}>
             <span className={css.headTitle}>
