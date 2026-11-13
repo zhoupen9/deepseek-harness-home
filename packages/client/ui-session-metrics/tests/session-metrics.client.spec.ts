@@ -16,7 +16,6 @@ import { en, zh, type SessionMetricsKey } from '../src/client/locales.ts'
 import {
   billedInputTokens,
   cacheHitPercentText,
-  compactFacts,
   CONTEXT_RING_CIRCUMFERENCE,
   contextOccupancy,
   contextRingDash,
@@ -122,31 +121,6 @@ describe('cacheHitPercentText / tokenFacts', () => {
     expect(hasUsage(tokenFacts(usage()))).toBe(false)
     expect(hasUsage(tokenFacts(usage({ cacheWriteTokens: 5 })))).toBe(true)
     expect(hasUsage(tokenFacts(usage({ outputTokens: 1 })))).toBe(true)
-  })
-})
-
-describe('compactFacts', () => {
-  it('reports the shipped compact readings for a timed, cached session', () => {
-    expect(compactFacts(
-      usage({ uncachedInputTokens: 30, cacheReadTokens: 60, cacheWriteTokens: 10 }),
-      stats({ decodeMs: 2_000, decodeTokens: 100 }),
-    )).toEqual({ speed: '50', cacheHitPercent: '60' })
-  })
-
-  it('drops the throughput reading without a decode-timed step', () => {
-    const facts = compactFacts(usage({ cacheReadTokens: 60 }), stats({ decodeTokens: 100 }))
-    expect(facts.speed).toBeNull()
-    expect(facts.cacheHitPercent).toBe('100')
-  })
-
-  it('drops the cache share without billed input', () => {
-    const facts = compactFacts(usage(), stats({ decodeMs: 1_000, decodeTokens: 10 }))
-    expect(facts.speed).toBe('10')
-    expect(facts.cacheHitPercent).toBeNull()
-  })
-
-  it('reads both readings as absent while neither projection is served', () => {
-    expect(compactFacts(undefined, undefined)).toEqual({ speed: null, cacheHitPercent: null })
   })
 })
 

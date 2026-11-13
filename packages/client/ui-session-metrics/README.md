@@ -3,11 +3,11 @@
 A pure-frontend client plugin for DeepSeek Harness's web GUI. It adds a
 compact metrics capsule to the **Session Header**, with one merged popup
 carrying the sections the shipped session-statistics, token-usage, and
-context-usage surfaces present. The capsule is **additive**: the shipped
-bottom-of-chat statistics pills (ui-chat's StatsPills) and the composer
-context-usage meter (ui-conversation's ContextMeter) stay exactly as the
-accepted `Performance & usage` level renders them — visible for *Detailed* and
-*Compact*, gone for *Hidden*. The capsule anchors the left edge of the
+context-usage surfaces present. The capsule is **additive** and always shows
+the detailed reading set: the shipped bottom-of-chat statistics pills
+(ui-chat's StatsPills) and the composer context-usage meter (ui-conversation's
+ContextMeter) stay exactly as their own composition renders them, and this
+plugin reads no `Performance & usage` preference. The capsule anchors the left edge of the
 right-aligned utility cluster
 (order -11 — it takes the slot the shipped "Open In…" split button used to
 occupy, so the row reads metrics · Open In… · Session log) and shows three
@@ -25,24 +25,19 @@ shadows no shipped cell, and injects no stylesheet.
 
 ## What it looks like / how it behaves
 
-- **Capsule** (Session Header title row, left edge of the right-aligned utility cluster): the shipped
-  metric icons carrying the reading set the shipped composer strip presents for the accepted
-  `Performance & usage` level (the Chat target's `performanceUsage` setting, mirrored live):
-  - *Detailed* (the default): the token-usage database cylinder with the input and output counts,
-    then the context ring — `[database] 12.2K · 517 · [ring]`. The reading order inside the token
-    group is fixed (input, then output) and the panel always spells the metric names out.
-  - *Compact*: the two plain readings the shipped compact strip shows — decode throughput under the
-    gauge icon, then the cache-hit share under the database cylinder — plus the context ring. This
-    level opens no panel, because the shipped compact strip opens no dialog either: the capsule is
-    a plain reading (`role="group"`), not a button.
-  The ring is live in both levels: its arc is the occupancy percentage, drawn with the shipped
-  meter's own radius and dash geometry, so the capsule carries that reading without printing a
-  number beside it (the capsule's spoken label, and in the detailed level the panel, still state
-  it). The capsule renders as soon as the session has a step, billable usage, or a context sample
-  with a known capacity — the union of the shipped gates — while the *Hidden* level hides it
-  outright, the way it hides the shipped surfaces it mirrors. The figures ride the durable
-  whole-log projections, so paging and compaction never skew them.
-- **Merged panel** (detailed level only; opens on hover or keyboard focus; the shipped stat-dialog surface —
+- **Capsule** (Session Header title row, left edge of the right-aligned utility cluster): the
+  token-usage database cylinder with the input and output counts, then the context ring —
+  `[database] 12.2K · 517 · [ring]`. The reading order inside the token group is fixed (input,
+  then output), the panel always spells the metric names out, and the capsule is always the same
+  detailed presentation: it does not follow the `Performance & usage` setting and has no compact
+  or hidden variant.
+  The ring's arc is the occupancy percentage, drawn with the shipped meter's own radius and dash
+  geometry, so the capsule carries that reading without printing a number beside it (the capsule's
+  spoken label and the panel still state it). The capsule renders as soon as the session has a
+  step, billable usage, or a context sample with a known capacity — the union of the shipped
+  gates. The figures ride the durable whole-log projections, so paging and compaction never skew
+  them.
+- **Merged panel** (opens on hover or keyboard focus; the shipped stat-dialog surface —
   menu background, 12px radius, prominent elevation, 16px padding, a section
   heading with its icon and headline value, a rule, then the shipped
   two-column row grid):
@@ -62,7 +57,8 @@ shadows no shipped cell, and injects no stylesheet.
   StatsPills cell `stats` of `conversation.composer.dock`) and the composer
   context meter (ui-conversation's ContextMeter) already follow the accepted
   `Performance & usage` level — ui-conversation's `ComposerPreferences` shows
-  them for every level except *Hidden*. This plugin therefore owns no shadow
+  them for every level except *Hidden*. This plugin reads no such preference,
+  so the capsule never changes with it. This plugin therefore owns no shadow
   cell and injects no stylesheet; shadowing that cell or hiding that meter is
   what used to suppress them at every level. Disabling this plugin removes the
   capsule and changes nothing else.

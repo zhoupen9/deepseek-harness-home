@@ -3,7 +3,7 @@
 # overrides, disables, and insert lists; `!!js` expressions allowed).
 # `@deepseek-ai/dsh-hmr` watches this file and package.json, so edits recompose
 # the running profile live; a newly added dependency still needs `pnpm install`.
-# Registered client plugins. The six local UI plugins listed below are supplied
+# Registered client plugins. The seven local UI plugins listed below are supplied
 # by the `@zhp-dev/zar-desktop` bundle (packages/bundles/zar-desktop), which owns
 # their row ids — this file must not insert them:
 # - per-turn "Edits" view (@zar-desktop/ui-edits)
@@ -14,11 +14,13 @@
 # - view-tab icons (@zar-desktop/ui-chat-tab-icons; Chat/Trajectory/Edits/Changes/Git)
 # - chat-header To-dos pill (@zar-desktop/ui-todo-pill; replaces the composer's
 #   To-dos card and shadows its dock cell — see its INTEGRATION.md)
+# - background image and opacity (@zar-desktop/ui-background; the schema-only host
+#   half owns the ui-background settings namespace — see its INTEGRATION.md)
 # - podman container MCP server (@deepseek-ai/dsh-mcp-client; tools under mcp__podman__*)
 # They stay `link:` dependencies of this profile (pnpm links under
 # profiles/web/node_modules), so reinstall them after a harness upgrade with:
 #   dsh plugin --profile web add link:<package dir>
-# Disabling or removing the `@zhp-dev/zar-desktop` bundle removes all six at once;
+# Disabling or removing the `@zhp-dev/zar-desktop` bundle removes all seven at once;
 # never re-add them as `insert` rows here, because two layers inserting the same
 # id make the loader throw "entry <id> already exists in the target tree".
 # The legacy profiles/node_modules shared fallback and the empty

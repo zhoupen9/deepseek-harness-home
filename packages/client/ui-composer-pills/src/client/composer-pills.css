@@ -1,0 +1,18 @@
+/* Suppression sheet, mounted only while the option hides the builtin pills.
+ *
+ * The shipped pills are slot cells of `conversation.composer.dock`, shadowed by
+ * id at a lower priority, so they never render and need no CSS. What remains is
+ * the context meter ui-conversation renders directly beside that slot: it is
+ * the dock's only direct `span` child, while the slot anchor is a
+ * `div[data-slot="conversation.composer.dock"]` (display: contents). */
+
+[data-composer-dock] > span {
+  display: none !important;
+}
+
+/* The dock keeps a 4px top padding and a minimum height, so the strip would
+ * leave a blank band behind. Collapse it only while no cell is left to render:
+ * a plugin that registers its own composer-dock cell keeps the strip open. */
+[data-composer-dock]:not(:has(> [data-slot] > *)) {
+  display: none !important;
+}

@@ -11,7 +11,6 @@
  * up to 100%, compact durations, and the occupancy percentage the shipped
  * meter computes.
  */
-import type { SessionStatsProjection } from '@deepseek-ai/dsh-session-stats/client'
 import type { ContextPressureProjection, TokenUsageProjection } from '@deepseek-ai/dsh-token-meter/client'
 import type { SessionMetricsTranslate } from './locales.ts'
 
@@ -234,41 +233,5 @@ export const CONTEXT_RING_CIRCUMFERENCE = 2 * Math.PI * CONTEXT_RING_RADIUS
 export function contextRingDash(percent: number): string {
   const bounded = Math.min(100, Math.max(0, percent))
   return String(CONTEXT_RING_CIRCUMFERENCE * bounded / 100) + ' ' + String(CONTEXT_RING_CIRCUMFERENCE)
-}
-
-/** Performance-and-usage detail levels; mirrors the Chat target's own setting. */
-export type PerformanceUsageMode = 'compact' | 'detailed' | 'hidden'
-
-/** Detail level a session presents without an explicit Chat preference. */
-export const DEFAULT_PERFORMANCE_USAGE: PerformanceUsageMode = 'detailed'
-
-/** Compact-level readings the shipped composer strip presents as plain values. */
-export interface CompactUsageFacts {
-  /** Decode throughput digits without the unit; null until a decode step is timed. */
-  readonly speed: string | null
-  /** Cache-hit share text without the percent sign; null without billed input. */
-  readonly cacheHitPercent: string | null
-}
-
-/**
- * Derive the compact readings the shipped composer strip presents for its
- * compact detail level — decode throughput and the cache-hit share — under the
- * shipped conditions: throughput needs a decode-timed step, and the share needs
- * billed input.
- * @param usage - the session's token-usage projection value, when served.
- * @param stats - the session's whole-log statistics projection value, when served.
- * @returns the two readings; each is null while its own source cannot answer.
- */
-export function compactFacts(
-  usage: TokenUsageProjection | undefined,
-  stats: SessionStatsProjection | undefined,
-): CompactUsageFacts {
-  const facts = usage === undefined ? null : tokenFacts(usage)
-  return {
-    speed: stats !== undefined && stats.decodeMs > 0
-      ? formatThroughput(stats.decodeTokens / (stats.decodeMs / 1000))
-      : null,
-    cacheHitPercent: facts !== null && hasUsage(facts) ? facts.cacheHitPercent : null,
-  }
 }
 

@@ -10,14 +10,11 @@ everything lives in /home/zhoupeng/.dsh).
   Header utility cluster (slot `conversation.session.header.utilities`,
   entry id `session-metrics`, order -11): it swaps with the shipped
   "Open In…" split button (order -10) so the row reads metrics · Open In… ·
-  Session log (order 0). The capsule mirrors the reading set the shipped
-  composer strip presents for the accepted `Performance & usage` level (the
-  Chat target's `performanceUsage` setting, read through the configuration-form
-  service and delivered to the component as a registrant-private hook): the
-  detailed level shows the input/output token counts and opens the merged panel
-  on hover or focus, and the compact level shows the strip's two plain readings
-  (decode throughput, cache-hit share) and opens nothing, because the shipped
-  compact strip opens no dialog either.
+  Session log (order 0). The capsule always presents the detailed reading set —
+  input/output token counts plus the context ring — and always opens the merged
+  panel on hover or focus. It reads no preference: the Chat target's
+  `Performance & usage` setting has no effect on it, and there is no compact or
+  hidden variant.
 - **Not replaced — left alone**: the bottom-of-chat stats pills (ui-chat's
   StatsPills row, slot `conversation.composer.dock`, entry id `stats`) and the
   composer context meter (ui-conversation's ContextMeter). Both shipped
@@ -28,9 +25,10 @@ everything lives in /home/zhoupeng/.dsh).
   injected stylesheet, which suppressed both at every level; that is removed.
   The plugin now owns no composer cell and injects no stylesheet, so the
   setting alone decides whether they appear.
-- **With respect to the accepted level**: the capsule itself renders for
-  *Detailed* and *Compact* and renders nothing for *Hidden*, mirroring the
-  surfaces it summarizes. The merged panel's sections still carry the shipped
+- **Independent of the setting**: the capsule ignores `Performance & usage`
+  entirely, so the shipped pills can be hidden (or kept) by the composition or
+  by a dedicated option without this capsule changing shape. The merged panel's
+  sections still carry the shipped
   dialogs' content in their own skin (ui-chat's `stat-dialog.module.css`
   surface and row grid, copied because a feature plugin may not import another
   feature plugin's stylesheet) and with their own rows, conditions, and copy.

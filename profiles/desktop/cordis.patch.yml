@@ -1,7 +1,7 @@
 # Your patch layer for this dsh profile, applied after every bundle layer:
 # a top-level YAML array of loader patch entries (id-targeted config
 # overrides, disables, and insert lists; `!!js` expressions allowed).
-# Registered client plugins. The six local UI plugins listed below are supplied
+# Registered client plugins. The seven local UI plugins listed below are supplied
 # by the `@zhp-dev/zar-desktop` bundle (packages/bundles/zar-desktop), which owns their
 # row ids — this file must not insert them:
 # - per-turn "Edits" view (@zar-desktop/ui-edits)
@@ -12,10 +12,12 @@
 # - view-tab icons (@zar-desktop/ui-chat-tab-icons; Chat/Trajectory/Edits/Changes/Git)
 # - chat-header To-dos pill (@zar-desktop/ui-todo-pill; replaces the composer's
 #   To-dos card and shadows its dock cell — see its INTEGRATION.md)
+# - background image and opacity (@zar-desktop/ui-background; the schema-only host
+#   half owns the ui-background settings namespace — see its INTEGRATION.md)
 # They stay `link:` dependencies of this profile (pnpm links under
 # profiles/desktop/node_modules), so reinstall them after a harness upgrade with:
 #   dsh plugin --profile desktop add link:<package dir>
-# Disabling or removing the `@zhp-dev/zar-desktop` bundle removes all six at once; never
+# Disabling or removing the `@zhp-dev/zar-desktop` bundle removes all seven at once; never
 # re-add them as `insert` rows here, because two layers inserting the same id
 # make the loader throw "entry <id> already exists in the target tree".
 # The removed profiles/node_modules shared fallback and the empty
@@ -82,7 +84,7 @@
   name: "@deepseek-ai/dsh-client-ui-chat"
   config:
     transcriptView: standard
-    performanceUsage: hidden
+    performanceUsage: detailed
 - id: ui-settings
   name: "@deepseek-ai/dsh-client-ui-settings"
   config:
@@ -97,3 +99,13 @@
     provider: deepseek-official
     model: deepseek-flash
     reasoningEffort: max
+- id: ui-background
+  name: "@zar-desktop/ui-background"
+  config:
+    enabled: true
+    image: /home/zhoupeng/Pictures/Wallpapers/F29_wallpaper_beta.png
+    opacity: 0.25
+- id: ui-composer-pills
+  name: "@zar-desktop/ui-composer-pills"
+  config:
+    hideBuiltinPills: true

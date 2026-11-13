@@ -11,12 +11,18 @@ importers:
       '@anysearch/anysearch-dsh':
         specifier: 0.1.8
         version: 0.1.8
+      '@zar-desktop/ui-background':
+        specifier: link:../../packages/client/ui-background
+        version: link:../../packages/client/ui-background
       '@zar-desktop/ui-changes':
         specifier: link:../../packages/client/ui-changes
         version: link:../../packages/client/ui-changes
       '@zar-desktop/ui-chat-tab-icons':
         specifier: link:../../packages/client/ui-chat-tab-icons
         version: link:../../packages/client/ui-chat-tab-icons
+      '@zar-desktop/ui-composer-pills':
+        specifier: link:../../packages/client/ui-composer-pills
+        version: link:../../packages/client/ui-composer-pills
       '@zar-desktop/ui-edits':
         specifier: link:../../packages/client/ui-edits
         version: link:../../packages/client/ui-edits

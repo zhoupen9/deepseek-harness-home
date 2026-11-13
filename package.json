@@ -8,6 +8,7 @@
     "verify": "node scripts/client-plugins.mjs verify"
   },
   "devDependencies": {
+    "@deepseek-ai/schemastery": "^3.19.0",
     "lightningcss": "^1.33.0",
     "tsdown": "^0.22.14",
     "typescript": "^7.0.2",

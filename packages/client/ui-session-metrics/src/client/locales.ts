@@ -31,8 +31,6 @@ export const zh = {
   'panel.contextTools': "工具定义",
   'panel.contextMessages': "对话消息",
   'value.tokensPerSecond': "{throughput} tok/s",
-  // Mirrors ui-chat's `stats.cacheHit` pill copy byte for byte.
-  'value.cacheHit': "缓存命中 {percent}%",
   'aria.input': "输入 {input} tokens",
   'aria.output': "输出 {output} tokens",
   'aria.context': "上下文已用 {percent}",
@@ -79,8 +77,6 @@ export const en: Record<SessionMetricsKey, string> = {
   'panel.contextTools': "Tool definitions",
   'panel.contextMessages': "Messages",
   'value.tokensPerSecond': "{throughput} tok/s",
-  // Mirrors ui-chat's `stats.cacheHit` pill copy byte for byte.
-  'value.cacheHit': "Cache hit {percent}%",
   'aria.input': "Input {input} tokens",
   'aria.output': "Output {output} tokens",
   'aria.context': "{percent} of context used",

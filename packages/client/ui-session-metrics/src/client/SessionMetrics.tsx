@@ -20,12 +20,11 @@
  * session-metrics.ts, copy in locales.ts).
  *
  * The capsule is additive: it leaves ui-chat's bottom-of-chat stats pills and
- * ui-conversation's composer context meter exactly as the accepted level
- * renders them, because both shipped surfaces are already governed by the
- * Chat target's `performanceUsage` preference (they show for `compact` and
- * `detailed`, and disappear for `hidden`). This plugin owns no shadow cell and
- * injects no stylesheet; the one thing it takes from the setting is its own
- * visibility, so `hidden` hides the capsule too.
+ * ui-conversation's composer context meter to the Chat target's own setting.
+ * It reads no preference and owns no shadow cell: the capsule always presents
+ * the detailed reading set and always opens its merged panel, so whether the
+ * shipped composer pills render is entirely a composition decision, never
+ * something this capsule mirrors.
  */
 import { Fragment, memo, useCallback, useEffect, useId, useMemo, useRef, useState, type CSSProperties, type ReactNode } from 'react'
 import { createPortal } from 'react-dom'
@@ -39,11 +38,9 @@ import type { ContextBreakdownProjection, ContextPressureProjection, TokenUsageP
 import type { SessionStatsProjection } from '@deepseek-ai/dsh-session-stats/client'
 import type { SessionMetricsTranslate } from './locales.ts'
 import {
-  type PerformanceUsageMode,
   type SessionTokenFacts,
   CONTEXT_RING_RADIUS,
   cacheHitPercentText,
-  compactFacts,
   contextOccupancy,
   contextRingDash,
   formatCompactTokens,
@@ -55,16 +52,10 @@ import {
 } from './session-metrics.ts'
 import css from './SessionMetrics.module.css'
 
-/** Selector hook over the live performance-and-usage detail level. */
-export type UsePerformanceUsageMode =
-  <Selected>(selector: (mode: PerformanceUsageMode) => Selected) => Selected
-
-/** Props: the projection and detail-level read seats plus the locale seat. */
+/** Props: the projection read seat plus the locale seat. */
 export interface SessionMetricsProps {
   /** Key-addressed session projection reader (session-standard seat). */
   useProjection: UseProjection
-  /** Live accepted detail level, mirroring the shipped composer strip's mode. */
-  usePerformanceUsage: UsePerformanceUsageMode
   /** The owning header row's locale seat. */
   t: SessionMetricsTranslate
 }
@@ -106,19 +97,18 @@ function ContextRing({ percent }: { percent: number }) {
 }
 
 /**
- * Render the compact metrics capsule plus, while hovered or focused, its
- * portaled merged-details panel.
+ * Render the metrics capsule plus, while hovered or focused, its portaled
+ * merged-details panel. The capsule always presents the detailed reading set
+ * (token counts and the context ring) and always opens the panel; it does not
+ * read the Chat target's `performanceUsage` preference.
  * @param props - runtime seats.
  * @returns the capsule, or null while the session has neither a step, nor
  * billable usage, nor a context sample with a known capacity.
  */
 export const SessionMetricsTrigger = memo(function SessionMetricsTrigger({
   useProjection,
-  usePerformanceUsage,
   t,
 }: SessionMetricsProps) {
-  const mode = usePerformanceUsage(value => value)
-  const compact = mode === 'compact'
   const usage = useProjection('tokenUsage')
   const stats = useProjection('sessionStats')
   const pressure = useProjection('contextPressure')
@@ -128,9 +118,9 @@ export const SessionMetricsTrigger = memo(function SessionMetricsTrigger({
     const derived = tokenFacts(usage)
     return hasUsage(derived) ? derived : null
   }, [usage])
-  // The shipped surfaces render on these same conditions — the meter whenever
-  // a capacity and a sample are known, the stats pills whenever a step exists —
-  // and this plugin hides both, so the capsule appears on their union.
+  // The capsule appears on the union of the conditions under which the shipped
+  // surfaces present a reading: the meter whenever a capacity and a sample are
+  // known, the stats pills whenever a step exists.
   const occupancy = useMemo(() => contextOccupancy(pressure), [pressure])
   const stepped = stats !== undefined && stats.steps > 0
   const [open, setOpen] = useState(false)
@@ -162,21 +152,7 @@ export const SessionMetricsTrigger = memo(function SessionMetricsTrigger({
   // Drop any pending close on unmount.
   useEffect(() => clearCloseTimer, [clearCloseTimer])
 
-  // The shipped strip presents different readings per detail level: compact is
-  // throughput and cache share as plain values, detailed is counts and totals
-  // behind its two dialogs. The capsule mirrors the level whose figures it
-  // replaces, including that level's own visibility conditions.
-  const compactReadings = compact ? compactFacts(usage, stats) : null
-  const speedText = compactReadings?.speed ?? undefined
-  const cacheHitText = compactReadings?.cacheHitPercent ?? undefined
-  // `hidden` removes every performance-and-usage reading the shipped surfaces
-  // present, so the capsule that mirrors them goes with it.
-  if (mode === 'hidden') return null
-  if (compact) {
-    if (speedText === undefined && cacheHitText === undefined && occupancy === null) return null
-  } else if (facts === null && occupancy === null && !stepped) {
-    return null
-  }
+  if (facts === null && occupancy === null && !stepped) return null
 
   const inputText = facts === null ? undefined : formatCompactTokens(facts.billedInputTokens, t)
   const outputText = facts === null ? undefined : formatCompactTokens(facts.outputTokens, t)
@@ -205,25 +181,11 @@ export const SessionMetricsTrigger = memo(function SessionMetricsTrigger({
       </span>,
     )
   }
-  if (compact) {
-    // Compact presents the two shipped plain readings under their own icons.
-    if (speedText !== undefined) {
-      pushSegment('speed', <IconGaugeOutlineRegular className={css.icon} />, [
-        t('value.tokensPerSecond', { throughput: speedText }),
-      ])
-    }
-    if (cacheHitText !== undefined) {
-      pushSegment('cacheHit', <IconDatabaseOutlineRegular className={css.icon} />, [
-        t('value.cacheHit', { percent: cacheHitText }),
-      ])
-    }
-  } else {
-    const tokenValues: string[] = []
-    if (inputText !== undefined) tokenValues.push(inputText)
-    if (outputText !== undefined) tokenValues.push(outputText)
-    if (tokenValues.length > 0) {
-      pushSegment('tokens', <IconDatabaseOutlineRegular className={css.icon} />, tokenValues)
-    }
+  const tokenValues: string[] = []
+  if (inputText !== undefined) tokenValues.push(inputText)
+  if (outputText !== undefined) tokenValues.push(outputText)
+  if (tokenValues.length > 0) {
+    pushSegment('tokens', <IconDatabaseOutlineRegular className={css.icon} />, tokenValues)
   }
   if (occupancy !== null) {
     pushSegment('context', <ContextRing percent={occupancy.percent} />, [])
@@ -231,25 +193,18 @@ export const SessionMetricsTrigger = memo(function SessionMetricsTrigger({
 
   // Spoken summary keeps the metric words (the icons alone cannot).
   const ariaParts: string[] = []
-  if (compact) {
-    if (speedText !== undefined) ariaParts.push(t('value.tokensPerSecond', { throughput: speedText }))
-    if (cacheHitText !== undefined) ariaParts.push(t('value.cacheHit', { percent: cacheHitText }))
-  } else {
-    if (inputText !== undefined) {
-      ariaParts.push(t('aria.input', { input: inputText }))
-    }
-    if (outputText !== undefined) {
-      ariaParts.push(t('aria.output', { output: outputText }))
-    }
+  if (inputText !== undefined) {
+    ariaParts.push(t('aria.input', { input: inputText }))
+  }
+  if (outputText !== undefined) {
+    ariaParts.push(t('aria.output', { output: outputText }))
   }
   if (occupancy !== null && contextText !== undefined) {
     ariaParts.push(t('aria.context', { percent: contextText }))
   }
   const ariaLabel = t('aria.metrics', { items: ariaParts.join(' · ') })
 
-  // Compact offers no detail surface in the shipped UI, so the capsule stays a
-  // plain reading there instead of opening the merged panel.
-  const panel = open && !compact ? (
+  const panel = open ? (
     createPortal(
       <div
         ref={panelRef}
@@ -274,28 +229,24 @@ export const SessionMetricsTrigger = memo(function SessionMetricsTrigger({
 
   return (
     <div className={css.root}>
-      {compact ? (
-        <span className={css.trigger} role="group" aria-label={ariaLabel}>{segments}</span>
-      ) : (
-        <button
-          ref={triggerRef}
-          type="button"
-          className={css.trigger}
-          style={anchorNameStyle(anchor)}
-          aria-label={ariaLabel}
-          aria-haspopup="dialog"
-          aria-expanded={open}
-          onMouseEnter={keepOpen}
-          onMouseLeave={scheduleClose}
-          onFocus={keepOpen}
-          onBlur={scheduleClose}
-          onKeyDown={(event) => {
-            if (event.key === 'Escape') setOpen(false)
-          }}
-        >
-          {segments}
-        </button>
-      )}
+      <button
+        ref={triggerRef}
+        type="button"
+        className={css.trigger}
+        style={anchorNameStyle(anchor)}
+        aria-label={ariaLabel}
+        aria-haspopup="dialog"
+        aria-expanded={open}
+        onMouseEnter={keepOpen}
+        onMouseLeave={scheduleClose}
+        onFocus={keepOpen}
+        onBlur={scheduleClose}
+        onKeyDown={(event) => {
+          if (event.key === 'Escape') setOpen(false)
+        }}
+      >
+        {segments}
+      </button>
       {panel}
     </div>
   )

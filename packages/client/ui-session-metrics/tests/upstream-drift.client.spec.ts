@@ -70,7 +70,6 @@ const readOwn = (relative: string): string => readFileSync(new URL('../' + relat
 const STAT_DIALOG_CSS = 'packages/client/ui-chat/src/client/chat/stat-dialog.module.css'
 const CONTEXT_METER_CSS = 'packages/client/ui-conversation/src/client/skeleton/ContextMeter.module.css'
 const STATS_PILLS = 'packages/client/ui-chat/src/client/chat/StatsPills.tsx'
-const CHAT_SETTINGS = 'packages/client/ui-chat/src/chat-settings.ts'
 const CHAT_APPLY = 'packages/client/ui-chat/src/client/apply.ts'
 const CONVERSATION_SLOTS = 'packages/client/ui-conversation/src/client/contract/slots.ts'
 const BUNDLE = 'lib/client.js'
@@ -229,7 +228,6 @@ describe('mirrored copy still matches upstream', () => {
     { plugin: 'panel.toolTime', source: 'chat', upstream: 'stats.dialog.toolTime' },
     { plugin: 'panel.ttft', source: 'chat', upstream: 'stats.dialog.ttft' },
     { plugin: 'panel.speed', source: 'chat', upstream: 'stats.dialog.speed' },
-    { plugin: 'value.cacheHit', source: 'chat', upstream: 'stats.cacheHit' },
     { plugin: 'value.tokensPerSecond', source: 'chat', upstream: 'message.tokensPerSecond' },
     { plugin: 'panel.cacheHit', source: 'chat', upstream: 'message.turnUsage.cacheHit' },
     { plugin: 'panel.input', source: 'chat', upstream: 'message.turnUsage.input' },
@@ -399,13 +397,4 @@ describe('mirrored slot and setting contracts still hold', () => {
     expect(readOwn('src/client/index.ts')).not.toContain('conversation.composer.dock')
   })
 
-  it('still exposes the performance-usage level the capsule mirrors', () => {
-    const settings = read(CHAT_SETTINGS)
-    const modes = /PERFORMANCE_USAGE_MODES\s*=\s*\[([^\]]*)\]/.exec(settings)
-    expect(modes).not.toBeNull()
-    const shipped = (modes?.[1] ?? '').split(',').map(part => part.trim().replace(/['"]/g, '')).filter(part => part !== '')
-    expect(shipped).toEqual(['compact', 'detailed', 'hidden'])
-    expect(settings).toContain("CHAT_SETTINGS_NAMESPACE = 'ui-chat'")
-    expect(settings).toContain("DEFAULT_PERFORMANCE_USAGE: PerformanceUsageMode = 'detailed'")
-  })
 })

@@ -1,0 +1,16 @@
+/* The fixed image layer sits behind every app surface while the presenter's
+ * body attribute is set. The presenter writes both variables inline; the
+ * surface tokens that would cover the layer are cleared through the theme
+ * override, so this sheet owns only the layer itself. */
+body[data-dsh-background]::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  background-image: var(--dsh-background-image);
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+  opacity: var(--dsh-background-opacity, 0.5);
+  pointer-events: none;
+}

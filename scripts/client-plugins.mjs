@@ -2,12 +2,12 @@
 /**
  * Client-plugin maintenance for this home repo.
  *
- * `pnpm setup`  — install the build toolchain and both profiles, build the six
+ * `pnpm setup`  — install the build toolchain and both profiles, build the eight
  *                 client plugins, then verify the result. Run this after every
  *                 `git pull`: the profile `node_modules` links are gitignored, so
  *                 a pull that renames or adds a package leaves the profile
  *                 resolving nothing until the links are recreated.
- * `pnpm build`  — rebuild the six plugins only (regenerates `lib/` from `src/`).
+ * `pnpm build`  — rebuild the eight plugins only (regenerates `lib/` from `src/`).
  * `pnpm verify` — read-only checks: built identity strings, profile links, and
  *                 that both profiles select the `@zhp-dev/zar-desktop` bundle.
  *
@@ -31,6 +31,8 @@ const PLUGINS = [
   'ui-session-metrics',
   'ui-chat-tab-icons',
   'ui-todo-pill',
+  'ui-background',
+  'ui-composer-pills',
 ]
 
 const ok = (message) => console.log(`  \u2713 ${message}`)
@@ -67,13 +69,17 @@ function eachPlugin(task) {
 /** Install the root toolchain and recreate each profile's `link:` symlinks. */
 function install() {
   console.log('\nInstalling dependencies')
-  const rootStatus = run(PNPM, ['install'], ROOT)
+  // Keep the store that built the existing node_modules; a copy on a new machine
+  // has none and falls back to pnpm's configured store.
+  const localStore = join(ROOT, '.xdg', 'pnpm', 'store')
+  const store = existsSync(localStore) ? ['--store-dir', localStore] : []
+  const rootStatus = run(PNPM, ['install', ...store], ROOT)
   if (rootStatus !== 0) throw new Error(`pnpm install failed in ${ROOT}`)
   ok('root toolchain (tsdown, typescript, vitest)')
   for (const profile of PROFILES) {
     const dir = join(ROOT, 'profiles', profile)
     if (!existsSync(join(dir, 'package.json'))) continue
-    const status = run(PNPM, ['install'], dir)
+    const status = run(PNPM, ['install', ...store], dir)
     if (status !== 0) throw new Error(`pnpm install failed in ${dir}`)
     ok(`profiles/${profile}: links recreated`)
   }

@@ -2,7 +2,7 @@
   "name": "@zhp-dev/zar-desktop",
   "version": "0.1.0",
   "private": true,
-  "description": "Groups the locally developed desktop UI plugins: per-turn Edits, cumulative Changes, the Git history graph, chat-header session metrics, view-tab icons, and the To-dos pill.",
+  "description": "Groups the locally developed desktop UI plugins: per-turn Edits, cumulative Changes, the Git history graph, chat-header session metrics, view-tab icons, the To-dos pill, and the background-image setting.",
   "type": "module",
   "main": "index.js",
   "exports": {

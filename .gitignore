@@ -28,3 +28,6 @@ attachments/
 
 # Local restore backups (scripts/restore.sh); user-owned, never committed
 .restore-backup-*/
+
+# pnpm store cache used by this home's toolchain
+.xdg/
