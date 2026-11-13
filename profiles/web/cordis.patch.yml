@@ -64,36 +64,20 @@
 - id: llm-pi-ai
   name: "@deepseek-ai/dsh-llm-pi-ai"
   config:
-    providers:
-      deepseek:
-        baseURL: https://napi.nroad.com.cn/v1
-        models:
-          - id: deepseek-v4-flash
-            name: DeepSeek V4 Flash
-            contextWindow: 1000000
-            maxTokens: 384000
-            input:
-              - text
-          - id: deepseek-v4-flash-vision-exp
-            name: DeepSeek V4 Flash Vision Exp
-            contextWindow: 1000000
-            maxTokens: 384000
-            input:
-              - text
-              - image
-          - id: deepseek-v4-pro
-            name: DeepSeek V4 Pro
-            contextWindow: 1000000
-            maxTokens: 384000
-            input:
-              - text
-        apiKeyEnv: DEEPSEEK_API_KEY
+    providers: {}
 - id: ui-chat
   name: "@deepseek-ai/dsh-client-ui-chat"
   config:
     performanceUsage: detailed
+- id: llm-deepseek
+  name: "@deepseek-ai/dsh-llm-deepseek-api-key"
+  config:
+    baseURL: https://napi.nroad.com.cn/v1
+    models:
+      - id: deepseek-flash
 - id: agent-default-model
   name: "@deepseek-ai/dsh-agent-default-model"
   config:
-    provider: deepseek
-    model: deepseek-v4-flash
+    provider: deepseek-official
+    model: deepseek-flash
+    reasoningEffort: max
