@@ -29,6 +29,9 @@ importers:
       '@zar-desktop/ui-git':
         specifier: link:../../packages/client/ui-git
         version: link:../../packages/client/ui-git
+      '@zar-desktop/ui-palette':
+        specifier: link:../../packages/client/ui-palette
+        version: link:../../packages/client/ui-palette
       '@zar-desktop/ui-session-metrics':
         specifier: link:../../packages/client/ui-session-metrics
         version: link:../../packages/client/ui-session-metrics

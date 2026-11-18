@@ -7,18 +7,27 @@ export const BACKGROUND_SETTINGS_NAMESPACE = 'ui-background'
 export const BACKGROUND_ENABLED_FIELD = 'enabled'
 /** Settings field carrying the image source. */
 export const BACKGROUND_IMAGE_FIELD = 'image'
-/** Settings field carrying the layer opacity. */
+/** Settings field carrying the shared opacity both palettes fall back to. */
 export const BACKGROUND_OPACITY_FIELD = 'opacity'
+/** Settings field carrying the light-palette opacity. */
+export const BACKGROUND_OPACITY_LIGHT_FIELD = 'opacityLight'
+/** Settings field carrying the dark-palette opacity. */
+export const BACKGROUND_OPACITY_DARK_FIELD = 'opacityDark'
 
-/** Body attribute that paints the background layer. */
+/** Body attribute that paints the background layers. */
 export const BACKGROUND_ATTRIBUTE = 'data-dsh-background'
 /** Body variable carrying the resolved CSS `url(...)` value. */
 export const BACKGROUND_IMAGE_VARIABLE = '--dsh-background-image'
-/** Body variable carrying the layer opacity. */
-export const BACKGROUND_OPACITY_VARIABLE = '--dsh-background-opacity'
+/** Body variable carrying the light-palette layer opacity. */
+export const BACKGROUND_OPACITY_LIGHT_VARIABLE = '--dsh-background-opacity-light'
+/** Body variable carrying the dark-palette layer opacity. */
+export const BACKGROUND_OPACITY_DARK_VARIABLE = '--dsh-background-opacity-dark'
 
 /** Plugin identity used for the injected style tag and the theme override layer. */
 export const BACKGROUND_PLUGIN_ID = '@zar-desktop/ui-background'
+
+/** Palette modes a layer strength is stored for. */
+export type PaletteMode = 'light' | 'dark'
 
 /** Browser-side view of the durable setting. */
 export interface BackgroundSettings {
@@ -26,8 +35,12 @@ export interface BackgroundSettings {
   readonly enabled: boolean
   /** Image source: an http(s) URL, a data image URI, an absolute file path, or '' for none. */
   readonly image: string
-  /** Image-layer opacity from 0 through 1. */
+  /** Shared layer opacity; a palette uses it until it carries its own. */
   readonly opacity: number
+  /** Light-palette layer opacity; absent follows {@link BackgroundSettings.opacity}. */
+  readonly opacityLight?: number
+  /** Dark-palette layer opacity; absent follows {@link BackgroundSettings.opacity}. */
+  readonly opacityDark?: number
 }
 
 /** Values the namespace resolves to when the user has not overridden anything. */
@@ -36,6 +49,16 @@ export const DEFAULT_BACKGROUND_SETTINGS: BackgroundSettings = Object.freeze({
   image: '',
   opacity: 0.5,
 })
+
+/** Settings field carrying one palette's layer opacity. */
+export function opacityField(mode: PaletteMode): string {
+  return mode === 'light' ? BACKGROUND_OPACITY_LIGHT_FIELD : BACKGROUND_OPACITY_DARK_FIELD
+}
+
+/** Body variable carrying one palette's layer opacity. */
+export function opacityVariable(mode: PaletteMode): string {
+  return mode === 'light' ? BACKGROUND_OPACITY_LIGHT_VARIABLE : BACKGROUND_OPACITY_DARK_VARIABLE
+}
 
 const DATA_IMAGE = /^data:image\/[a-z0-9.+-]+[;,]/i
 const WINDOWS_ABSOLUTE = /^[A-Za-z]:[/\\]/
@@ -92,6 +115,17 @@ export function backgroundImageUrl(value: string, base: string): string | undefi
  */
 export function clampOpacity(value: number): number {
   return Number.isFinite(value) ? Math.min(1, Math.max(0, value)) : DEFAULT_BACKGROUND_SETTINGS.opacity
+}
+
+/**
+ * Resolve the layer opacity for one palette: its own value, else the shared one.
+ * @param settings - accepted values from the `ui-background` namespace.
+ * @param mode - palette the document is using.
+ * @returns a finite opacity from 0 through 1.
+ */
+export function paletteOpacity(settings: BackgroundSettings, mode: PaletteMode): number {
+  const own = mode === 'light' ? settings.opacityLight : settings.opacityDark
+  return clampOpacity(own ?? settings.opacity)
 }
 
 /**

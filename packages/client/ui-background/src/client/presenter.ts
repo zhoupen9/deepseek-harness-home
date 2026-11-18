@@ -1,10 +1,10 @@
-/** DOM applier for the background layer and the surface transparency that reveals it. */
+/** DOM applier for the image layer, its per-palette opacity, and the surface transparency that reveals it. */
 import type { Context } from '@deepseek-ai/cordis'
 import type { ThemeTokenOverrides } from '@deepseek-ai/dsh-client-ui-theme/client'
 import type {} from '@deepseek-ai/dsh-client-ui-theme/client'
 import {
-  BACKGROUND_ATTRIBUTE, BACKGROUND_IMAGE_VARIABLE, BACKGROUND_OPACITY_VARIABLE, BACKGROUND_PLUGIN_ID,
-  backgroundImageUrl, clampOpacity, type BackgroundSettings,
+  BACKGROUND_ATTRIBUTE, BACKGROUND_IMAGE_VARIABLE, BACKGROUND_PLUGIN_ID, backgroundImageUrl,
+  opacityVariable, paletteOpacity, type BackgroundSettings,
 } from './settings.ts'
 
 /** Surfaces cleared while the image is painted; menus and raised panels keep their own fills. */
@@ -13,7 +13,7 @@ const TRANSPARENT_SURFACES: ThemeTokenOverrides = {
   '--dsw-specific-sidebar-fill': { light: 'transparent', dark: 'transparent' },
 }
 
-/** Writes the background layer and the theme override that lets it show; one instance per plugin fiber. */
+/** Writes the image layer, both palette opacities, and the theme override that lets them show. */
 export class BackgroundPresenter {
   private override: (() => void) | undefined
   private painted = false
@@ -36,7 +36,9 @@ export class BackgroundPresenter {
     const body = document.body
     body.setAttribute(BACKGROUND_ATTRIBUTE, '')
     body.style.setProperty(BACKGROUND_IMAGE_VARIABLE, `url(${JSON.stringify(url)})`)
-    body.style.setProperty(BACKGROUND_OPACITY_VARIABLE, String(clampOpacity(settings.opacity)))
+    for (const mode of ['light', 'dark'] as const) {
+      body.style.setProperty(opacityVariable(mode), String(paletteOpacity(settings, mode)))
+    }
     if (!this.painted) {
       this.override = this.ctx.theme.overrideTokens(BACKGROUND_PLUGIN_ID, TRANSPARENT_SURFACES)
       this.painted = true
@@ -54,7 +56,7 @@ export class BackgroundPresenter {
     if (typeof document !== 'undefined' && document.body !== null) {
       document.body.removeAttribute(BACKGROUND_ATTRIBUTE)
       document.body.style.removeProperty(BACKGROUND_IMAGE_VARIABLE)
-      document.body.style.removeProperty(BACKGROUND_OPACITY_VARIABLE)
+      for (const mode of ['light', 'dark'] as const) document.body.style.removeProperty(opacityVariable(mode))
     }
     this.override?.()
     this.override = undefined

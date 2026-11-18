@@ -6,13 +6,15 @@ nothing under `/usr/lib/deepseek-harness` is touched, and everything lives in
 
 ## What it adds
 
-- **Host half** (`lib/index.js`): `Config` with `enabled`, `image`, and
-  `opacity`, all volatile; `apply()` is empty. The Loader row id
-  `ui-background` is therefore the settings namespace the client reads.
+- **Host half** (`lib/index.js`): `Config` with `enabled`, `image`, `opacity`,
+  `opacityLight`, and `opacityDark`, all volatile; `apply()` is empty. The
+  Loader row id `ui-background` is therefore the settings namespace the client
+  reads.
 - **Client half** (`lib/client.js`): a `settings.general.item` row (id
-  `background`, order 12) and the `body::before` layer. Values are adopted
-  through `ctx.configForms.get('ui-background')`; the layer paints with
-  `ctx.theme.overrideTokens` clearing `--dsw-alias-bg-base` and
+  `background`, order 12) and the two `body` layers — the palette base
+  (`::before`) and the image with its per-palette opacity (`::after`). Values
+  are adopted through `ctx.configForms.get('ui-background')`; the layers paint
+  with `ctx.theme.overrideTokens` clearing `--dsw-alias-bg-base` and
   `--dsw-specific-sidebar-fill`.
 - **Local paths** use the shipped authenticated `/api/file` route, so the
   plugin needs no host route and no file-picking bridge.
@@ -24,7 +26,10 @@ nothing under `/usr/lib/deepseek-harness` is touched, and everything lives in
 | Bundle row | `- id: ui-background` / `name: '@zar-desktop/ui-background'` |
 | Profiles | `link:` dependency in `profiles/web` and `profiles/desktop` |
 | Slot | `settings.general.item`, id `background`, order 12 |
-| Namespace | `ui-background` (`enabled`, `image`, `opacity`) |
+| Namespace | `ui-background` (`enabled`, `image`, `opacity`, `opacityLight`, `opacityDark`) |
+
+`opacity` stays the shared fallback: a palette without its own field follows
+it, so a profile that only sets `opacity` keeps its current look.
 
 ## Steps taken
 
@@ -57,21 +62,28 @@ profile recompose (a page refresh after the loader sees the row).
   `@deepseek-ai/dsh-client-store`, and `@deepseek-ai/dsh-client-ui-primitives`.
 - Settings → General shows the **Background image** row below Appearance; a
   URL or absolute path plus the switch paints the image behind the app; the
-  slider changes the layer opacity; switching off restores the shipped look.
-- `Config` rejects opacity values outside 0–1 at the settings boundary.
+  two sliders set the light- and dark-palette layer opacity; switching off
+  restores the shipped look.
+- `Config` rejects opacity values outside 0–1 at the settings boundary,
+  including the per-palette fields.
 
 ## Rollback
 
 Remove the `ui-background` row from the bundle patch, remove the `link:`
 dependency from both profiles, and delete the package directory. The
-namespace, the settings row, the layer, and the theme override disappear with
-the row; nothing else references them.
+namespace, the settings row, both layers, and the theme override disappear
+with the row; nothing else references them.
 
 ## Notes
 
 - `dsh-app://app/`-based Desktop pages resolve local paths through the same
   `/api/file` route the shipped Markdown path images use.
-- The image opacity blends against the page canvas (white/light, black/dark),
-  so a mid-range value balances the photo against the text.
+- The image blends against the palette base layer (`--dsh-palette-bg-base-light`
+  / `-dark` from `@zar-desktop/ui-palette`, else the shipped statics), so each palette can keep
+  its own strength: the light palette keeps near-black text on a light
+  backdrop while the dark palette keeps the photo strong.
+- The base layer exists because the cleared surfaces would otherwise expose
+  the window/canvas behind the page, which does not follow the palette (a
+  Linux Electron window keeps the color it was created with).
 - The General row and the settings API edit the same namespace and share
   revisions through the settings service.

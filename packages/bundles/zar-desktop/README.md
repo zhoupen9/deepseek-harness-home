@@ -1,7 +1,7 @@
 # @zhp-dev/zar-desktop
 
-A DSH profile bundle that groups this machine's eight locally developed desktop UI
-plugins behind a single selectable bundle, so a profile does not have to carry eight
+A DSH profile bundle that groups this machine's nine locally developed desktop UI
+plugins behind a single selectable bundle, so a profile does not have to carry nine
 hand-written `insert` rows in its own `cordis.patch.yml`.
 
 | Row id | Package | What it adds |
@@ -12,12 +12,13 @@ hand-written `insert` rows in its own `cordis.patch.yml`.
 | `ui-session-metrics` | `@zar-desktop/ui-session-metrics` | Chat-header metrics pill (tokens · context) |
 | `ui-chat-tab-icons` | `@zar-desktop/ui-chat-tab-icons` | Icons on the Chat/Trajectory/Edits/Changes/Git tabs |
 | `ui-todo-pill` | `@zar-desktop/ui-todo-pill` | Chat-header To-dos pill |
-| `ui-background` | `@zar-desktop/ui-background` | Settings → General background image, opacity, and its `ui-background` namespace |
+| `ui-background` | `@zar-desktop/ui-background` | Settings → General background image with a per-palette opacity, and its `ui-background` namespace |
+| `ui-palette` | `@zar-desktop/ui-palette` | Settings → General palette colors for light and dark mode, and its `ui-palette` namespace |
 | `ui-composer-pills` | `@zar-desktop/ui-composer-pills` | Settings → General switch that hides ui-chat's composer pills and ui-conversation's context meter, through its `ui-composer-pills` namespace |
 
 ## What this package is not
 
-It does not vendor, rebuild, or reinstall those eight packages. They remain
+It does not vendor, rebuild, or reinstall those nine packages. They remain
 `link:` dependencies of each profile that uses them:
 
 ```json
@@ -26,7 +27,7 @@ It does not vendor, rebuild, or reinstall those eight packages. They remain
 
 The bundle's patch names them as bare specifiers, which resolve from the
 profile's own `node_modules`. That is why `package.json` here declares no
-`dependencies`, no `peerDependencies`, and no `engines.dsh`: the eight plugins are
+`dependencies`, no `peerDependencies`, and no `engines.dsh`: the nine plugins are
 `0.1.x-alpha` while the dsh runtime is `0.2.x`, and a `@deepseek-ai/dsh-*` peer
 entry would make the installer reject the bundle as `incompatible-version`.
 
@@ -42,12 +43,12 @@ reloads a changed bundle stack live: a `dsh web` server reads the list at boot,
 so restart it afterwards.
 
 Before installing into a profile whose `cordis.patch.yml` still inserts any of
-the eight row ids, delete those rows: two layers inserting the same id make the
+the nine row ids, delete those rows: two layers inserting the same id make the
 loader throw `entry <id> already exists in the target tree`, and the profile
 stops composing.
 
 ## Upgrade notes
 
-After a dsh upgrade, rebuild the eight plugins in `packages/client/*` and refresh
+After a dsh upgrade, rebuild the nine plugins in `packages/client/*` and refresh
 their `link:` entries; this bundle needs no change unless a row id or package
 name changes.

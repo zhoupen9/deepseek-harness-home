@@ -10,7 +10,8 @@ export const zh = {
   'enabled': '启用背景图片',
   'image': '图片',
   'imagePlaceholder': 'https://… 或 /图片/路径.jpg',
-  'opacity': '不透明度',
+  'opacity.light': '浅色不透明度',
+  'opacity.dark': '深色不透明度',
   'invalid': '请填写 https 链接、data 图片 URI 或本地绝对路径。',
 } as const
 
@@ -31,6 +32,7 @@ export const en: Record<BackgroundKey, string> = {
   'enabled': 'Enable background image',
   'image': 'Image',
   'imagePlaceholder': 'https://… or /path/to/image.jpg',
-  'opacity': 'Opacity',
+  'opacity.light': 'Light opacity',
+  'opacity.dark': 'Dark opacity',
   'invalid': 'Enter an https URL, a data image URI, or an absolute file path.',
 }

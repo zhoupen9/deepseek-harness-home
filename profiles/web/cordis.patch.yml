@@ -83,3 +83,7 @@
     provider: deepseek-official
     model: deepseek-flash
     reasoningEffort: max
+- id: ui-composer-pills
+  name: "@zar-desktop/ui-composer-pills"
+  config:
+    hideBuiltinPills: true

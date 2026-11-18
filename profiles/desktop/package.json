@@ -4,6 +4,7 @@
   "dependencies": {
     "@anysearch/anysearch-dsh": "0.1.8",
     "@zar-desktop/ui-background": "link:../../packages/client/ui-background",
+    "@zar-desktop/ui-palette": "link:../../packages/client/ui-palette",
     "@zar-desktop/ui-composer-pills": "link:../../packages/client/ui-composer-pills",
     "@zar-desktop/ui-changes": "link:../../packages/client/ui-changes",
     "@zar-desktop/ui-chat-tab-icons": "link:../../packages/client/ui-chat-tab-icons",

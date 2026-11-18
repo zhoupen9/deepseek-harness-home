@@ -1,6 +1,7 @@
 /* Background row: title and description with the master switch, then the
- * image field and opacity slider. Same cell rhythm and separator as the
- * Appearance rows; the General column strips the final separator. */
+ * image field and one opacity slider per palette. Same cell rhythm and
+ * separator as the Appearance rows; the General column strips the final
+ * separator. */
 
 .row {
   display: flex;
@@ -54,13 +55,21 @@
   width: 100%;
 }
 
+.opacityFields {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
 .opacityRow {
   display: flex;
   align-items: center;
   gap: 8px;
 }
 
+/* Both mode labels share one width so the two sliders start on the same axis. */
 .opacityLabel {
+  min-width: 72px;
   font-size: 12px;
   line-height: 18px;
   color: var(--dsw-alias-label-secondary);

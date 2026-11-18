@@ -56,7 +56,7 @@
   config:
     variantFont: Adwaita Sans
     monoFont: Monaspace Neon
-    preference: system
+    preference: light
     fontSize: 13
     codeFontSize: 13
     terminalFontSize: 12
@@ -103,9 +103,37 @@
   name: "@zar-desktop/ui-background"
   config:
     enabled: true
-    image: /home/zhoupeng/Pictures/Wallpapers/F29_wallpaper_beta.png
-    opacity: 0.25
+    image: /home/zhoupeng/Pictures/Wallpapers/4k/pexels-pok-rie-982263.jpg
+    opacity: 0.16
+    opacityLight: 0.06
 - id: ui-composer-pills
   name: "@zar-desktop/ui-composer-pills"
   config:
     hideBuiltinPills: true
+- id: ui-palette
+  name: "@zar-desktop/ui-palette"
+  config:
+    backgroundLight: "#f0eee7"
+    surfaceLight: "#faf7f1"
+    menuLight: "#fdfaf4"
+    sidebarLight: "#e9e6df"
+    inputLight: "#fbf8f2"
+    cardLight: "#f6f3ec"
+    dialogLight: "#fbf9f2"
+    navLight: "#f0ebde"
+    moduleLight: "#f4f0e6"
+    bubbleLight: "#f2ebd9"
+    accentLight: "#2a2620"
+    borderLight: "#dcd7cc"
+    backgroundDark: "#1c1c20"
+    surfaceDark: "#2a2a2f"
+    menuDark: "#333339"
+    sidebarDark: "#141416"
+    inputDark: "#2e2e34"
+    cardDark: "#242428"
+    dialogDark: "#303036"
+    navDark: "#3a3a42"
+    moduleDark: "#38383f"
+    bubbleDark: "#2c2c33"
+    accentDark: "#ebebee"
+    borderDark: "#3a3a41"

@@ -1,8 +1,29 @@
-/* The fixed image layer sits behind every app surface while the presenter's
- * body attribute is set. The presenter writes both variables inline; the
- * surface tokens that would cover the layer are cleared through the theme
- * override, so this sheet owns only the layer itself. */
-body[data-dsh-background]::before {
+/* The cleared base surfaces would otherwise expose the window or canvas behind
+ * the page, and that backdrop does not follow the palette: a Linux Electron
+ * window keeps the color it was created with, so the light palette would paint
+ * near-black text over a dark backdrop. This layer paints the palette base
+ * under the image; the palette plugin hands its page background over through
+ * the variables below, and the shipped aliases stand in when it has none.
+ * macOS keeps its transparent page so the shipped sidebar vibrancy stays
+ * visible. */
+html:not([data-platform='darwin']) body[data-dsh-background]::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: -2;
+  background-color: var(--dsh-palette-bg-base-light, var(--dsw-static-neutral-bluish-00));
+  pointer-events: none;
+}
+
+html:not([data-platform='darwin']) body[data-dsh-background][data-ds-dark-theme]::before {
+  background-color: var(--dsh-palette-bg-base-dark, var(--dsw-static-neutral-bluish-950));
+}
+
+/* The fixed image layer sits above the palette base and behind every app
+ * surface while the presenter's body attribute is set. The presenter writes
+ * the image and both palette opacities inline; the palette attribute selects
+ * which strength applies. */
+body[data-dsh-background]::after {
   content: '';
   position: fixed;
   inset: 0;
@@ -11,6 +32,10 @@ body[data-dsh-background]::before {
   background-position: center;
   background-repeat: no-repeat;
   background-size: cover;
-  opacity: var(--dsh-background-opacity, 0.5);
+  opacity: var(--dsh-background-opacity-light, 0.5);
   pointer-events: none;
+}
+
+body[data-dsh-background][data-ds-dark-theme]::after {
+  opacity: var(--dsh-background-opacity-dark, 0.5);
 }

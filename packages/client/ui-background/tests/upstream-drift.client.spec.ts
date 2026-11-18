@@ -48,6 +48,11 @@ describe.runIf(HARNESS !== undefined)('harness surfaces this plugin relies on', 
     const tokens = read('packages/client/ui-theme/src/styles/design-platform.css')
     expect(tokens).toContain('--dsw-alias-bg-base:')
     expect(tokens).toContain('--dsw-specific-sidebar-fill:')
+    // The base layer under the image paints these two palette aliases, and the
+    // palette attribute that selects the dark variant.
+    expect(tokens).toContain('--dsw-alias-bg-base: var(--dsw-static-neutral-bluish-00)')
+    expect(tokens).toContain('--dsw-alias-bg-base: var(--dsw-static-neutral-bluish-950)')
+    expect(tokens).toContain('body[data-ds-dark-theme]')
   })
 
   it('keeps the authenticated file route for local paths', () => {

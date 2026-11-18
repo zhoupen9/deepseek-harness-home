@@ -1,13 +1,14 @@
 /**
  * DOM projection of the background setting: the attribute and variables the
- * stylesheet consumes, and the theme override that clears the surfaces which
- * would otherwise hide the layer.
+ * stylesheet consumes, both palette opacities, and the theme override that
+ * clears the surfaces which would otherwise hide the layer.
  */
 import { readFileSync } from 'node:fs'
 import { afterEach, describe, expect, it, vi } from 'vitest'
 import { BackgroundPresenter } from '../src/client/presenter.ts'
 import {
-  BACKGROUND_ATTRIBUTE, BACKGROUND_IMAGE_VARIABLE, BACKGROUND_OPACITY_VARIABLE, DEFAULT_BACKGROUND_SETTINGS,
+  BACKGROUND_ATTRIBUTE, BACKGROUND_IMAGE_VARIABLE, BACKGROUND_OPACITY_DARK_VARIABLE,
+  BACKGROUND_OPACITY_LIGHT_VARIABLE, DEFAULT_BACKGROUND_SETTINGS,
 } from '../src/client/settings.ts'
 
 interface FakeBody {
@@ -54,7 +55,8 @@ describe('BackgroundPresenter', () => {
     expect(body.attributes.has(BACKGROUND_ATTRIBUTE)).toBe(true)
     expect(body.styles.get(BACKGROUND_IMAGE_VARIABLE))
       .toBe('url("http://127.0.0.1:41011/api/file?path=%2Ftmp%2Fbg.png")')
-    expect(body.styles.get(BACKGROUND_OPACITY_VARIABLE)).toBe('0.4')
+    expect(body.styles.get(BACKGROUND_OPACITY_LIGHT_VARIABLE)).toBe('0.4')
+    expect(body.styles.get(BACKGROUND_OPACITY_DARK_VARIABLE)).toBe('0.4')
     expect(overrideTokens).toHaveBeenCalledOnce()
     expect(overrideTokens).toHaveBeenCalledWith('@zar-desktop/ui-background', {
       '--dsw-alias-bg-base': { light: 'transparent', dark: 'transparent' },
@@ -62,13 +64,24 @@ describe('BackgroundPresenter', () => {
     })
   })
 
-  it('updates the image and opacity without stacking a second override', () => {
+  it('writes each palette opacity from its own value, falling back to the shared one', () => {
+    const { body, presenter } = mount()
+    presenter.apply({ enabled: true, image: '/tmp/bg.png', opacity: 0.4, opacityLight: 0.2 })
+    expect(body.styles.get(BACKGROUND_OPACITY_LIGHT_VARIABLE)).toBe('0.2')
+    expect(body.styles.get(BACKGROUND_OPACITY_DARK_VARIABLE)).toBe('0.4')
+    presenter.apply({ enabled: true, image: '/tmp/bg.png', opacity: 0.4, opacityDark: 0.9 })
+    expect(body.styles.get(BACKGROUND_OPACITY_LIGHT_VARIABLE)).toBe('0.4')
+    expect(body.styles.get(BACKGROUND_OPACITY_DARK_VARIABLE)).toBe('0.9')
+  })
+
+  it('updates the image and opacities without stacking a second override', () => {
     const { body, overrideTokens, presenter } = mount()
     presenter.apply({ enabled: true, image: '/tmp/a.png', opacity: 0.4 })
-    presenter.apply({ enabled: true, image: 'https://example.com/b.png', opacity: 1 })
+    presenter.apply({ enabled: true, image: 'https://example.com/b.png', opacity: 0.7, opacityDark: 1 })
     expect(overrideTokens).toHaveBeenCalledOnce()
     expect(body.styles.get(BACKGROUND_IMAGE_VARIABLE)).toBe('url("https://example.com/b.png")')
-    expect(body.styles.get(BACKGROUND_OPACITY_VARIABLE)).toBe('1')
+    expect(body.styles.get(BACKGROUND_OPACITY_LIGHT_VARIABLE)).toBe('0.7')
+    expect(body.styles.get(BACKGROUND_OPACITY_DARK_VARIABLE)).toBe('1')
   })
 
   it('retracts the layer and releases the override when disabled', () => {
@@ -77,7 +90,8 @@ describe('BackgroundPresenter', () => {
     presenter.apply({ enabled: false, image: '/tmp/a.png', opacity: 0.5 })
     expect(body.attributes.has(BACKGROUND_ATTRIBUTE)).toBe(false)
     expect(body.styles.has(BACKGROUND_IMAGE_VARIABLE)).toBe(false)
-    expect(body.styles.has(BACKGROUND_OPACITY_VARIABLE)).toBe(false)
+    expect(body.styles.has(BACKGROUND_OPACITY_LIGHT_VARIABLE)).toBe(false)
+    expect(body.styles.has(BACKGROUND_OPACITY_DARK_VARIABLE)).toBe(false)
     expect(release).toHaveBeenCalledOnce()
   })
 
@@ -102,8 +116,12 @@ describe('BackgroundPresenter', () => {
 
   it('keeps the stylesheet selectors in step with the presenter constants', () => {
     const css = readFileSync(new URL('../src/client/background.css', import.meta.url), 'utf8')
-    expect(css).toContain(`body[${BACKGROUND_ATTRIBUTE}]::before`)
+    // The palette base layer sits under the image layer, both behind content.
+    expect(css).toContain(`html:not([data-platform='darwin']) body[${BACKGROUND_ATTRIBUTE}]::before`)
+    expect(css).toContain(`body[${BACKGROUND_ATTRIBUTE}]::after`)
     expect(css).toContain(`var(${BACKGROUND_IMAGE_VARIABLE})`)
-    expect(css).toContain(`var(${BACKGROUND_OPACITY_VARIABLE}`)
+    expect(css).toContain(`var(${BACKGROUND_OPACITY_LIGHT_VARIABLE}`)
+    expect(css).toContain(`var(${BACKGROUND_OPACITY_DARK_VARIABLE}`)
+    expect(css).toContain('[data-ds-dark-theme]')
   })
 })

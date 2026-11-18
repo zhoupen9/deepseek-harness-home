@@ -1,6 +1,8 @@
 /** Row store mirroring the accepted background setting. */
 import { defineStore, type EngineStoreHandle } from '@deepseek-ai/dsh-client-store'
-import { DEFAULT_BACKGROUND_SETTINGS, type BackgroundSettings } from './settings.ts'
+import {
+  DEFAULT_BACKGROUND_SETTINGS, paletteOpacity, type BackgroundSettings,
+} from './settings.ts'
 
 /** Store state mirrored from the settings form. */
 export interface BackgroundRowState {
@@ -8,8 +10,10 @@ export interface BackgroundRowState {
   enabled: boolean
   /** Stored image source. */
   image: string
-  /** Stored layer opacity from 0 through 1. */
-  opacity: number
+  /** Light-palette layer opacity shown by the light slider. */
+  opacityLight: number
+  /** Dark-palette layer opacity shown by the dark slider. */
+  opacityDark: number
   /** Accepted namespace revision; -1 until the first sync so revision 0 lands as a change. */
   revision: number
 }
@@ -25,13 +29,20 @@ type BackgroundRowActions = {
  */
 export function createBackgroundRowStore(): EngineStoreHandle<BackgroundRowState, BackgroundRowActions> {
   return defineStore({
-    init: (): BackgroundRowState => ({ ...DEFAULT_BACKGROUND_SETTINGS, revision: -1 }),
+    init: (): BackgroundRowState => ({
+      enabled: DEFAULT_BACKGROUND_SETTINGS.enabled,
+      image: DEFAULT_BACKGROUND_SETTINGS.image,
+      opacityLight: paletteOpacity(DEFAULT_BACKGROUND_SETTINGS, 'light'),
+      opacityDark: paletteOpacity(DEFAULT_BACKGROUND_SETTINGS, 'dark'),
+      revision: -1,
+    }),
     actions: {
-      sync: (d, settings: BackgroundSettings, revision: number) => {
+      sync: (d, settings, revision) => {
         if (revision <= d.revision) return
         d.enabled = settings.enabled
         d.image = settings.image
-        d.opacity = settings.opacity
+        d.opacityLight = paletteOpacity(settings, 'light')
+        d.opacityDark = paletteOpacity(settings, 'dark')
         d.revision = revision
       },
     },

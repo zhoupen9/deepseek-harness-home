@@ -1,11 +1,12 @@
 /**
  * Pure behavior of the background setting: which image sources are accepted,
- * how a local path becomes an authenticated file URL, and how opacity is
- * clamped and rendered.
+ * how a local path becomes an authenticated file URL, how opacity resolves per
+ * palette, and how it is clamped and rendered.
  */
 import { describe, expect, it } from 'vitest'
 import {
   backgroundImageUrl, clampOpacity, DEFAULT_BACKGROUND_SETTINGS, isBackgroundImage, opacityPercent,
+  paletteOpacity, type BackgroundSettings,
 } from '../src/client/settings.ts'
 
 describe('isBackgroundImage', () => {
@@ -69,5 +70,23 @@ describe('opacity', () => {
 
   it('defaults match the host schema', () => {
     expect(DEFAULT_BACKGROUND_SETTINGS).toEqual({ enabled: false, image: '', opacity: 0.5 })
+  })
+})
+
+describe('paletteOpacity', () => {
+  const shared: BackgroundSettings = { enabled: true, image: '', opacity: 0.4 }
+
+  it('uses each palette value and falls back to the shared one', () => {
+    expect(paletteOpacity(shared, 'light')).toBe(0.4)
+    expect(paletteOpacity(shared, 'dark')).toBe(0.4)
+    expect(paletteOpacity({ ...shared, opacityLight: 0.2 }, 'light')).toBe(0.2)
+    expect(paletteOpacity({ ...shared, opacityLight: 0.2 }, 'dark')).toBe(0.4)
+    expect(paletteOpacity({ ...shared, opacityDark: 0.9 }, 'dark')).toBe(0.9)
+    expect(paletteOpacity({ ...shared, opacityDark: 0.9 }, 'light')).toBe(0.4)
+  })
+
+  it('clamps a stored per-palette value', () => {
+    expect(paletteOpacity({ ...shared, opacityLight: 1.4 }, 'light')).toBe(1)
+    expect(paletteOpacity({ ...shared, opacityDark: -1 }, 'dark')).toBe(0)
   })
 })

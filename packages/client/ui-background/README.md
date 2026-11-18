@@ -2,8 +2,8 @@
 
 A profile-local DSH plugin that adds one **Settings → General** row for a
 full-window background image. The image source, the master switch, and the
-image opacity are validated and persisted by the DSH settings service in the
-plugin row's own `ui-background` namespace.
+per-palette image opacity are validated and persisted by the DSH settings
+service in the plugin row's own `ui-background` namespace.
 
 ## What it does
 
@@ -11,26 +11,36 @@ plugin row's own `ui-background` namespace.
   absolute local path (`/home/me/bg.jpg`, `C:\pics\bg.jpg`). Local paths are
   rendered through the authenticated `/api/file` route, so the browser never
   needs `file://` access.
-- **Opacity** — a 0–100 % slider that sets the image layer's `opacity`; lower
-  values let the page palette show through for readability.
-- **Master switch** — turning it off retracts the layer and restores the
+- **Opacity per palette** — one 0–100 % slider for the light palette and one
+  for the dark palette, so a dark photo can stay strong in the dark theme and
+  faint over the light palette's near-black text. An absent per-palette value
+  follows the shared `opacity` field, which keeps the previous single-slider
+  configuration working.
+- **Palette base under the image** — the image layer blends against the
+  palette's base color, not against the window or canvas behind the page.
+  Clearing `--dsw-alias-bg-base` without it would expose the native backdrop
+  (a Linux Electron window keeps the color it was created with), and the light
+  palette would paint near-black text over it. The macOS desktop keeps its
+  transparent page and sidebar vibrancy.
+- **Master switch** — turning it off retracts both layers and restores the
   shipped surfaces, with no leftover styles or token overrides.
 - The schema is the persistence boundary: every edit, from the General row or
-  the settings API, is validated against the same three fields.
+  the settings API, is validated against the same fields.
 
 ## How it is wired
 
 | Surface | Value | Purpose |
 | --- | --- | --- |
 | Loader row | `ui-background` | Host half (`Config`, empty `apply`) owns the settings namespace |
-| Settings namespace | `ui-background` | `enabled`, `image`, `opacity` (all volatile) |
+| Settings namespace | `ui-background` | `enabled`, `image`, `opacity`, `opacityLight`, `opacityDark` (all volatile) |
 | Slot | `settings.general.item` id `background`, order 12 | the settings row |
-| Theme override | `--dsw-alias-bg-base`, `--dsw-specific-sidebar-fill` → `transparent` | lets the layer show through the frame and sidebar |
-| Body layer | `body[data-dsh-background]::before` with `--dsh-background-image` / `--dsh-background-opacity` | the fixed image layer |
+| Theme override | `--dsw-alias-bg-base`, `--dsw-specific-sidebar-fill` → `transparent` | lets the layers show through the frame and sidebar |
+| Base layer | `body[data-dsh-background]::before` with `--dsh-palette-bg-base-light` / `-dark`, else the shipped static alias | keeps the light palette's backdrop light on every host, following a custom palette |
+| Image layer | `body[data-dsh-background]::after` with `--dsh-background-image` and the per-palette opacity variable | the fixed image layer |
 
 The client half adopts accepted values through `ctx.configForms.get('ui-background')`.
-The image layer sits behind app content; menus, dialogs, and settings surfaces
-keep their own opaque fills.
+The base and image layers sit behind app content; menus, dialogs, and settings
+surfaces keep their own opaque fills.
 
 ## Source layout
 
@@ -46,8 +56,8 @@ keep their own opaque fills.
       src/client/BackgroundRow.tsx
       src/client/BackgroundRow.module.css
       src/client/background.css   # the body::before layer
-      src/client/presenter.ts     # body variables + theme override
-      src/client/settings.ts      # namespace, defaults, source classification
+      src/client/presenter.ts     # body variables (image + both opacities) + theme override
+      src/client/settings.ts      # namespace, defaults, source classification, per-palette opacity
       src/client/store.ts         # row store
       src/client/locales.ts       # zh/en dictionaries
       tests/                      # pure logic, presenter, schema, dictionaries, drift guard
@@ -64,9 +74,16 @@ root (`~/.dsh/node_modules`) so Node resolves it from the plugin's real path.
 
 ## Notes
 
-- The image is painted behind the app; content surfaces keep their own fills,
-  and the shipped macOS vibrancy path is unchanged. Readability depends on the
-  chosen image and opacity.
+- The image is painted behind the app over the palette base; content surfaces
+  keep their own fills, and the shipped macOS vibrancy path is unchanged.
+  Readability still depends on the chosen image and each palette's opacity.
+- A stored `opacity` remains the fallback for a palette without its own
+  `opacityLight` / `opacityDark`, so the row keeps showing the previous single
+  value until one slider is moved.
+- The base layer follows `--dsh-palette-bg-base-light` / `-dark` written by
+  `@zar-desktop/ui-palette`, and falls back to the shipped statics
+  (`--dsw-static-neutral-bluish-00` and `-950`) when that plugin is absent or
+  the page background is unset.
 - A local path is served only while it is the configured source; the
   `/api/file` route is the shipped authenticated reader used by path images in
   Markdown.

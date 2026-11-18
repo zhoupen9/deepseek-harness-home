@@ -9,7 +9,7 @@ window.__ModuleLoader__.load({
 		let react_jsx_runtime = require("react/jsx-runtime");
 		let _deepseek_ai_dsh_client_store = require("@deepseek-ai/dsh-client-store");
 		//#region \0dsh-inline-css:/home/zhoupeng/.dsh/packages/client/ui-background/src/client/background.css.mjs
-		var background_css_default = "body[data-dsh-background]:before{content:\"\";z-index:-1;background-image:var(--dsh-background-image);opacity:var(--dsh-background-opacity,.5);pointer-events:none;background-position:50%;background-repeat:no-repeat;background-size:cover;position:fixed;inset:0}";
+		var background_css_default = "html:not([data-platform=darwin]) body[data-dsh-background]:before{content:\"\";z-index:-2;background-color:var(--dsh-palette-bg-base-light,var(--dsw-static-neutral-bluish-00));pointer-events:none;position:fixed;inset:0}html:not([data-platform=darwin]) body[data-dsh-background][data-ds-dark-theme]:before{background-color:var(--dsh-palette-bg-base-dark,var(--dsw-static-neutral-bluish-950))}body[data-dsh-background]:after{content:\"\";z-index:-1;background-image:var(--dsh-background-image);opacity:var(--dsh-background-opacity-light,.5);pointer-events:none;background-position:50%;background-repeat:no-repeat;background-size:cover;position:fixed;inset:0}body[data-dsh-background][data-ds-dark-theme]:after{opacity:var(--dsh-background-opacity-dark,.5)}";
 		//#endregion
 		//#region src/client/settings.ts
 		/** Durable background preferences and image-source classification. */
@@ -19,14 +19,18 @@ window.__ModuleLoader__.load({
 		const BACKGROUND_ENABLED_FIELD = "enabled";
 		/** Settings field carrying the image source. */
 		const BACKGROUND_IMAGE_FIELD = "image";
-		/** Settings field carrying the layer opacity. */
-		const BACKGROUND_OPACITY_FIELD = "opacity";
-		/** Body attribute that paints the background layer. */
+		/** Settings field carrying the light-palette opacity. */
+		const BACKGROUND_OPACITY_LIGHT_FIELD = "opacityLight";
+		/** Settings field carrying the dark-palette opacity. */
+		const BACKGROUND_OPACITY_DARK_FIELD = "opacityDark";
+		/** Body attribute that paints the background layers. */
 		const BACKGROUND_ATTRIBUTE = "data-dsh-background";
 		/** Body variable carrying the resolved CSS `url(...)` value. */
 		const BACKGROUND_IMAGE_VARIABLE = "--dsh-background-image";
-		/** Body variable carrying the layer opacity. */
-		const BACKGROUND_OPACITY_VARIABLE = "--dsh-background-opacity";
+		/** Body variable carrying the light-palette layer opacity. */
+		const BACKGROUND_OPACITY_LIGHT_VARIABLE = "--dsh-background-opacity-light";
+		/** Body variable carrying the dark-palette layer opacity. */
+		const BACKGROUND_OPACITY_DARK_VARIABLE = "--dsh-background-opacity-dark";
 		/** Plugin identity used for the injected style tag and the theme override layer. */
 		const BACKGROUND_PLUGIN_ID = "@zar-desktop/ui-background";
 		/** Values the namespace resolves to when the user has not overridden anything. */
@@ -35,6 +39,14 @@ window.__ModuleLoader__.load({
 			image: "",
 			opacity: .5
 		});
+		/** Settings field carrying one palette's layer opacity. */
+		function opacityField(mode) {
+			return mode === "light" ? BACKGROUND_OPACITY_LIGHT_FIELD : BACKGROUND_OPACITY_DARK_FIELD;
+		}
+		/** Body variable carrying one palette's layer opacity. */
+		function opacityVariable(mode) {
+			return mode === "light" ? BACKGROUND_OPACITY_LIGHT_VARIABLE : BACKGROUND_OPACITY_DARK_VARIABLE;
+		}
 		const DATA_IMAGE = /^data:image\/[a-z0-9.+-]+[;,]/i;
 		const WINDOWS_ABSOLUTE = /^[A-Za-z]:[/\\]/;
 		const CONTROL_CHARACTER = /[\u0000-\u001f\u007f]/;
@@ -85,6 +97,15 @@ window.__ModuleLoader__.load({
 			return Number.isFinite(value) ? Math.min(1, Math.max(0, value)) : DEFAULT_BACKGROUND_SETTINGS.opacity;
 		}
 		/**
+		* Resolve the layer opacity for one palette: its own value, else the shared one.
+		* @param settings - accepted values from the `ui-background` namespace.
+		* @param mode - palette the document is using.
+		* @returns a finite opacity from 0 through 1.
+		*/
+		function paletteOpacity(settings, mode) {
+			return clampOpacity((mode === "light" ? settings.opacityLight : settings.opacityDark) ?? settings.opacity);
+		}
+		/**
 		* Render an opacity as a whole percentage.
 		* @param value - opacity from 0 through 1.
 		* @returns the rounded percentage from 0 through 100.
@@ -94,7 +115,7 @@ window.__ModuleLoader__.load({
 		}
 		//#endregion
 		//#region \0dsh-css:/home/zhoupeng/.dsh/packages/client/ui-background/src/client/BackgroundRow.module.css.mjs
-		const css = "._1jpLGq_row{border-bottom:.5px solid var(--dsw-alias-border-l2);flex-direction:column;gap:10px;padding:16px 0;display:flex}._1jpLGq_head{align-items:flex-start;gap:8px;display:flex}._1jpLGq_rowText{flex-direction:column;flex:1;gap:4px;min-width:0;padding-right:16px;display:flex}._1jpLGq_title{color:var(--dsw-alias-label-primary);font-size:14px;font-weight:400;line-height:22px}._1jpLGq_desc{color:var(--dsw-alias-label-tertiary);font-size:12px;font-weight:400;line-height:18px}._1jpLGq_master{margin-top:1px}._1jpLGq_fields{flex-direction:column;gap:10px;display:flex}._1jpLGq_imageField{width:100%}._1jpLGq_opacityRow{align-items:center;gap:8px;display:flex}._1jpLGq_opacityLabel{color:var(--dsw-alias-label-secondary);white-space:nowrap;font-size:12px;line-height:18px}._1jpLGq_slider{min-width:0;height:18px;accent-color:var(--dsw-alias-brand-primary);cursor:pointer;flex:1;margin:0}._1jpLGq_percent{text-align:right;font-variant-numeric:tabular-nums;min-width:34px;color:var(--dsw-alias-label-secondary);font-size:12px;line-height:18px}._1jpLGq_error{color:var(--dsw-alias-state-error-primary);font-size:12px;line-height:18px}@media (width<=767px){._1jpLGq_rowText{padding-right:0}}@media (pointer:coarse){._1jpLGq_imageField input{font-size:16px}}";
+		const css = "._1jpLGq_row{border-bottom:.5px solid var(--dsw-alias-border-l2);flex-direction:column;gap:10px;padding:16px 0;display:flex}._1jpLGq_head{align-items:flex-start;gap:8px;display:flex}._1jpLGq_rowText{flex-direction:column;flex:1;gap:4px;min-width:0;padding-right:16px;display:flex}._1jpLGq_title{color:var(--dsw-alias-label-primary);font-size:14px;font-weight:400;line-height:22px}._1jpLGq_desc{color:var(--dsw-alias-label-tertiary);font-size:12px;font-weight:400;line-height:18px}._1jpLGq_master{margin-top:1px}._1jpLGq_fields{flex-direction:column;gap:10px;display:flex}._1jpLGq_imageField{width:100%}._1jpLGq_opacityFields{flex-direction:column;gap:6px;display:flex}._1jpLGq_opacityRow{align-items:center;gap:8px;display:flex}._1jpLGq_opacityLabel{min-width:72px;color:var(--dsw-alias-label-secondary);white-space:nowrap;font-size:12px;line-height:18px}._1jpLGq_slider{min-width:0;height:18px;accent-color:var(--dsw-alias-brand-primary);cursor:pointer;flex:1;margin:0}._1jpLGq_percent{text-align:right;font-variant-numeric:tabular-nums;min-width:34px;color:var(--dsw-alias-label-secondary);font-size:12px;line-height:18px}._1jpLGq_error{color:var(--dsw-alias-state-error-primary);font-size:12px;line-height:18px}@media (width<=767px){._1jpLGq_rowText{padding-right:0}}@media (pointer:coarse){._1jpLGq_imageField input{font-size:16px}}";
 		const tagId = "@zar-desktop/ui-background/BackgroundRow.module.css";
 		if (typeof document !== "undefined" && document.querySelector("style[data-plugin-css=" + JSON.stringify(tagId) + "]") === null) {
 			const tag = document.createElement("style");
@@ -110,6 +131,7 @@ window.__ModuleLoader__.load({
 			"head": "_1jpLGq_head",
 			"imageField": "_1jpLGq_imageField",
 			"master": "_1jpLGq_master",
+			"opacityFields": "_1jpLGq_opacityFields",
 			"opacityLabel": "_1jpLGq_opacityLabel",
 			"opacityRow": "_1jpLGq_opacityRow",
 			"percent": "_1jpLGq_percent",
@@ -122,10 +144,10 @@ window.__ModuleLoader__.load({
 		//#region src/client/BackgroundRow.tsx
 		/**
 		* Background preference row registered into the General section item slot:
-		* title and description with the master switch, then the image field and the
-		* opacity slider. The displayed values follow the persisted setting, never the
-		* click echo; the image field commits on blur or Enter and rejects an
-		* unsupported source with an inline message.
+		* title and description with the master switch, then the image field and one
+		* opacity slider per palette mode. The displayed values follow the persisted
+		* setting, never the click echo; the image field commits on blur or Enter and
+		* rejects an unsupported source with an inline message.
 		*/
 		/**
 		* Render the background row.
@@ -135,22 +157,23 @@ window.__ModuleLoader__.load({
 		function BackgroundRow({ t, setEnabled, setImage, setOpacity, useStore }) {
 			const enabled = useStore((s) => s.enabled);
 			const image = useStore((s) => s.image);
-			const opacity = useStore((s) => s.opacity);
+			const opacityLight = useStore((s) => s.opacityLight);
+			const opacityDark = useStore((s) => s.opacityDark);
 			const [draft, setDraft] = (0, react.useState)(void 0);
 			const [invalid, setInvalid] = (0, react.useState)(false);
-			const [opacityDraft, setOpacityDraft] = (0, react.useState)(void 0);
+			const [opacityDrafts, setOpacityDrafts] = (0, react.useState)({});
 			const errorId = (0, react.useId)();
-			const opacityId = (0, react.useId)();
+			const lightId = (0, react.useId)();
+			const darkId = (0, react.useId)();
 			(0, react.useEffect)(() => {
 				setDraft(void 0);
 				setInvalid(false);
 			}, [image]);
 			(0, react.useEffect)(() => {
-				setOpacityDraft(void 0);
-			}, [opacity]);
+				setOpacityDrafts({});
+			}, [opacityLight, opacityDark]);
 			const shownImage = draft ?? image;
 			const shownInvalid = invalid || draft === void 0 && !isBackgroundImage(image);
-			const percent = opacityPercent(opacityDraft ?? opacity);
 			const commitImage = (value) => {
 				const next = value.trim();
 				setDraft(next);
@@ -165,11 +188,26 @@ window.__ModuleLoader__.load({
 				}
 				setImage(next);
 			};
-			const commitOpacity = () => {
-				if (opacityDraft === void 0) return;
-				if (opacityDraft !== opacity) setOpacity(opacityDraft);
-				setOpacityDraft(void 0);
+			const commitOpacity = (slider) => {
+				const next = opacityDrafts[slider.mode];
+				if (next === void 0) return;
+				if (next !== slider.stored) setOpacity(slider.mode, next);
+				setOpacityDrafts((current) => ({
+					...current,
+					[slider.mode]: void 0
+				}));
 			};
+			const sliders = [{
+				mode: "light",
+				labelKey: "opacity.light",
+				id: lightId,
+				stored: opacityLight
+			}, {
+				mode: "dark",
+				labelKey: "opacity.dark",
+				id: darkId,
+				stored: opacityDark
+			}];
 			return /* @__PURE__ */ (0, react_jsx_runtime.jsxs)("div", {
 				className: BackgroundRow_module_css_default.row,
 				children: [/* @__PURE__ */ (0, react_jsx_runtime.jsxs)("div", {
@@ -219,36 +257,51 @@ window.__ModuleLoader__.load({
 							role: "alert",
 							children: t("invalid")
 						}),
-						/* @__PURE__ */ (0, react_jsx_runtime.jsxs)("div", {
-							className: BackgroundRow_module_css_default.opacityRow,
-							children: [
-								/* @__PURE__ */ (0, react_jsx_runtime.jsx)("label", {
-									className: BackgroundRow_module_css_default.opacityLabel,
-									htmlFor: opacityId,
-									children: t("opacity")
-								}),
-								/* @__PURE__ */ (0, react_jsx_runtime.jsx)("input", {
-									id: opacityId,
-									className: BackgroundRow_module_css_default.slider,
-									type: "range",
-									min: 0,
-									max: 100,
-									step: 1,
-									value: percent,
-									"aria-valuetext": `${percent}%`,
-									onChange: (event) => {
-										setOpacityDraft(Math.round(Number(event.currentTarget.value)) / 100);
-									},
-									onPointerUp: commitOpacity,
-									onKeyUp: commitOpacity,
-									onBlur: commitOpacity
-								}),
-								/* @__PURE__ */ (0, react_jsx_runtime.jsxs)("span", {
-									className: BackgroundRow_module_css_default.percent,
-									"aria-hidden": "true",
-									children: [percent, "%"]
-								})
-							]
+						/* @__PURE__ */ (0, react_jsx_runtime.jsx)("div", {
+							className: BackgroundRow_module_css_default.opacityFields,
+							children: sliders.map((slider) => {
+								const percent = opacityPercent(opacityDrafts[slider.mode] ?? slider.stored);
+								return /* @__PURE__ */ (0, react_jsx_runtime.jsxs)("div", {
+									className: BackgroundRow_module_css_default.opacityRow,
+									children: [
+										/* @__PURE__ */ (0, react_jsx_runtime.jsx)("label", {
+											className: BackgroundRow_module_css_default.opacityLabel,
+											htmlFor: slider.id,
+											children: t(slider.labelKey)
+										}),
+										/* @__PURE__ */ (0, react_jsx_runtime.jsx)("input", {
+											id: slider.id,
+											className: BackgroundRow_module_css_default.slider,
+											type: "range",
+											min: 0,
+											max: 100,
+											step: 1,
+											value: percent,
+											"aria-valuetext": `${percent}%`,
+											onChange: (event) => {
+												setOpacityDrafts((current) => ({
+													...current,
+													[slider.mode]: Math.round(Number(event.currentTarget.value)) / 100
+												}));
+											},
+											onPointerUp: () => {
+												commitOpacity(slider);
+											},
+											onKeyUp: () => {
+												commitOpacity(slider);
+											},
+											onBlur: () => {
+												commitOpacity(slider);
+											}
+										}),
+										/* @__PURE__ */ (0, react_jsx_runtime.jsxs)("span", {
+											className: BackgroundRow_module_css_default.percent,
+											"aria-hidden": "true",
+											children: [percent, "%"]
+										})
+									]
+								}, slider.mode);
+							})
 						})
 					]
 				})]
@@ -266,7 +319,8 @@ window.__ModuleLoader__.load({
 			"enabled": "启用背景图片",
 			"image": "图片",
 			"imagePlaceholder": "https://… 或 /图片/路径.jpg",
-			"opacity": "不透明度",
+			"opacity.light": "浅色不透明度",
+			"opacity.dark": "深色不透明度",
 			"invalid": "请填写 https 链接、data 图片 URI 或本地绝对路径。"
 		};
 		/** English dictionary, checked complete against the Chinese source of truth. */
@@ -276,7 +330,8 @@ window.__ModuleLoader__.load({
 			"enabled": "Enable background image",
 			"image": "Image",
 			"imagePlaceholder": "https://… or /path/to/image.jpg",
-			"opacity": "Opacity",
+			"opacity.light": "Light opacity",
+			"opacity.dark": "Dark opacity",
 			"invalid": "Enter an https URL, a data image URI, or an absolute file path."
 		};
 		//#endregion
@@ -292,7 +347,7 @@ window.__ModuleLoader__.load({
 				dark: "transparent"
 			}
 		};
-		/** Writes the background layer and the theme override that lets it show; one instance per plugin fiber. */
+		/** Writes the image layer, both palette opacities, and the theme override that lets them show. */
 		var BackgroundPresenter = class {
 			ctx;
 			override;
@@ -316,7 +371,7 @@ window.__ModuleLoader__.load({
 				const body = document.body;
 				body.setAttribute(BACKGROUND_ATTRIBUTE, "");
 				body.style.setProperty(BACKGROUND_IMAGE_VARIABLE, `url(${JSON.stringify(url)})`);
-				body.style.setProperty(BACKGROUND_OPACITY_VARIABLE, String(clampOpacity(settings.opacity)));
+				for (const mode of ["light", "dark"]) body.style.setProperty(opacityVariable(mode), String(paletteOpacity(settings, mode)));
 				if (!this.painted) {
 					this.override = this.ctx.theme.overrideTokens(BACKGROUND_PLUGIN_ID, TRANSPARENT_SURFACES);
 					this.painted = true;
@@ -332,7 +387,7 @@ window.__ModuleLoader__.load({
 				if (typeof document !== "undefined" && document.body !== null) {
 					document.body.removeAttribute(BACKGROUND_ATTRIBUTE);
 					document.body.style.removeProperty(BACKGROUND_IMAGE_VARIABLE);
-					document.body.style.removeProperty(BACKGROUND_OPACITY_VARIABLE);
+					for (const mode of ["light", "dark"]) document.body.style.removeProperty(opacityVariable(mode));
 				}
 				this.override?.();
 				this.override = void 0;
@@ -348,14 +403,18 @@ window.__ModuleLoader__.load({
 		function createBackgroundRowStore() {
 			return (0, _deepseek_ai_dsh_client_store.defineStore)({
 				init: () => ({
-					...DEFAULT_BACKGROUND_SETTINGS,
+					enabled: DEFAULT_BACKGROUND_SETTINGS.enabled,
+					image: DEFAULT_BACKGROUND_SETTINGS.image,
+					opacityLight: paletteOpacity(DEFAULT_BACKGROUND_SETTINGS, "light"),
+					opacityDark: paletteOpacity(DEFAULT_BACKGROUND_SETTINGS, "dark"),
 					revision: -1
 				}),
 				actions: { sync: (d, settings, revision) => {
 					if (revision <= d.revision) return;
 					d.enabled = settings.enabled;
 					d.image = settings.image;
-					d.opacity = settings.opacity;
+					d.opacityLight = paletteOpacity(settings, "light");
+					d.opacityDark = paletteOpacity(settings, "dark");
 					d.revision = revision;
 				} }
 			});
@@ -369,7 +428,7 @@ window.__ModuleLoader__.load({
 			"configForms",
 			"theme"
 		];
-		/** Mount the row's global sheet; it owns only the `body::before` layer. */
+		/** Mount the row's global sheet; it owns only the `body` layers. */
 		function installStyles(ctx) {
 			if (typeof document === "undefined") return;
 			ctx.effect(() => {
@@ -384,8 +443,8 @@ window.__ModuleLoader__.load({
 			}, "ui-background: layer stylesheet");
 		}
 		/**
-		* Client plugin body: adopt the durable setting, paint the layer, and register
-		* the General row that writes the three fields.
+		* Client plugin body: adopt the durable setting, paint the layers, and
+		* register the General row that writes the fields.
 		* @param ctx - client plugin context.
 		*/
 		function apply(ctx) {
@@ -426,8 +485,8 @@ window.__ModuleLoader__.load({
 						setImage: (image) => {
 							form.set(BACKGROUND_IMAGE_FIELD, image);
 						},
-						setOpacity: (opacity) => {
-							form.set(BACKGROUND_OPACITY_FIELD, opacity);
+						setOpacity: (mode, opacity) => {
+							form.set(opacityField(mode), clampOpacity(opacity));
 						}
 					};
 				}

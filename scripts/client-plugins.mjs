@@ -2,12 +2,12 @@
 /**
  * Client-plugin maintenance for this home repo.
  *
- * `pnpm setup`  — install the build toolchain and both profiles, build the eight
+ * `pnpm setup`  — install the build toolchain and both profiles, build the nine
  *                 client plugins, then verify the result. Run this after every
  *                 `git pull`: the profile `node_modules` links are gitignored, so
  *                 a pull that renames or adds a package leaves the profile
  *                 resolving nothing until the links are recreated.
- * `pnpm build`  — rebuild the eight plugins only (regenerates `lib/` from `src/`).
+ * `pnpm build`  — rebuild the nine plugins only (regenerates `lib/` from `src/`).
  * `pnpm verify` — read-only checks: built identity strings, profile links, and
  *                 that both profiles select the `@zhp-dev/zar-desktop` bundle.
  *
@@ -32,6 +32,7 @@ const PLUGINS = [
   'ui-chat-tab-icons',
   'ui-todo-pill',
   'ui-background',
+  'ui-palette',
   'ui-composer-pills',
 ]
 

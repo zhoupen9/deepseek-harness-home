@@ -8,9 +8,11 @@ import z from "@deepseek-ai/schemastery";
 const Config = z.object({
 	enabled: z.boolean().default(false).volatile(),
 	image: z.string().default("").volatile(),
-	opacity: z.number().min(0).max(1).default(.5).volatile()
+	opacity: z.number().min(0).max(1).default(.5).volatile(),
+	opacityLight: z.number().min(0).max(1).volatile(),
+	opacityDark: z.number().min(0).max(1).volatile()
 });
-/** No host-side behavior; the client half paints the layer and registers the settings row. */
+/** No host-side behavior; the client half paints the layers and registers the settings row. */
 function apply() {}
 //#endregion
 export { Config, apply };
