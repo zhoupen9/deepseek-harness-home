@@ -106,6 +106,7 @@
     image: /home/zhoupeng/Pictures/Wallpapers/4k/pexels-pok-rie-982263.jpg
     opacity: 0.16
     opacityLight: 0.06
+    opacityDark: 0.09
 - id: ui-composer-pills
   name: "@zar-desktop/ui-composer-pills"
   config:
